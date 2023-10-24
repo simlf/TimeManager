@@ -7,6 +7,8 @@ defmodule TimeManagerWeb.Router do
 
   scope "/api", TimeManagerWeb do
     pipe_through :api
+    get "/clocks/:userId",ClockController, :showClocksByUserId
+
   end
 
   # Enable LiveDashboard in development
