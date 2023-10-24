@@ -5,7 +5,7 @@ defmodule TimeManager.Clocks.Clock do
   schema "clocks" do
     field :time, :naive_datetime
     field :status, :boolean
-    belongs_to :user, TimeManager.Users.User, foreign_key: :user_id
+    belongs_to :user, TimeManager.Accounts.User, foreign_key: :user_id
     timestamps()
   end
 
