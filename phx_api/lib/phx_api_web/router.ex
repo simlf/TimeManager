@@ -1,4 +1,5 @@
 defmodule TimeManagerWeb.Router do
+  alias TimeManagerWeb.ClockController
   use TimeManagerWeb, :router
 
   pipeline :api do
@@ -10,6 +11,7 @@ defmodule TimeManagerWeb.Router do
 
     post "/users", UserController, :create
     post "/workingtimes/:id", WorkingTimeController, :create
+    get "/clocks/users/:userId", ClockController, :showClocksByUserId
 
   end
 

@@ -15,11 +15,11 @@ defmodule TimeManagerWeb.ClockController do
     with {:ok, %Clock{} = clock} <- Clocks.create_clock(clock_params) do
       conn
       |> put_status(:created)
-      |> put_resp_header("location", ~p"/api/clocks/#{clock}")
       |> render(:show, clock: clock)
     end
   end
 
+  @spec showClocksByUserId(Plug.Conn.t(), map()) :: Plug.Conn.t()
   def showClocksByUserId(conn, %{"userId" => userId}) do
     clocks = Clocks.get_clocks_by_userId!(userId)
     #user = Users.get_user!(task.user_id)
