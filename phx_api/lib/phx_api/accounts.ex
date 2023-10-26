@@ -6,19 +6,63 @@ defmodule TimeManager.Accounts do
   import Ecto.Query, warn: false
   alias TimeManager.Repo
 
-  alias TimeManager.Accounts.User
+  alias TimeManager.Accounts.{User, UserToken}
+
+  ## Database getters
+
+  defp base_query() do
+    from(u in User)
+  end
+
+  def list_users(username, email) do
+    query = base_query()
+
+    if username != "" do
+      IO.inspect("DANS IF")
+      IO.inspect(email)
+      query = query
+      |> where([u], u.username == ^username)
+      Repo.all(query)
+    else
+      Repo.all(query)
+    end
+    # def get_tasks_by_user_id(idUser) do
+    #   Repo.all(from(t in Task, where: t.user_id == ^idUser))
+    # end
+  end
 
   @doc """
-  Returns the list of users.
+  Gets a user by email.
 
   ## Examples
 
-      iex> list_users()
-      [%User{}, ...]
+      iex> get_user_by_email("foo@example.com")
+      %User{}
+
+      iex> get_user_by_email("unknown@example.com")
+      nil
 
   """
-  def list_users do
-    Repo.all(User)
+  def get_user_by_email(email) when is_binary(email) do
+    Repo.get_by(User, email: email)
+  end
+
+  @doc """
+  Gets a user by email and password.
+
+  ## Examples
+
+      iex> get_user_by_email_and_password("foo@example.com", "correct_password")
+      %User{}
+
+      iex> get_user_by_email_and_password("foo@example.com", "invalid_password")
+      nil
+
+  """
+  def get_user_by_email_and_password(email, password)
+      when is_binary(email) and is_binary(password) do
+    user = Repo.get_by(User, email: email)
+    if User.valid_password?(user, password), do: user
   end
 
   @doc """
@@ -37,40 +81,24 @@ defmodule TimeManager.Accounts do
   """
   def get_user!(id), do: Repo.get!(User, id)
 
+  ## User registration
+
   @doc """
-  Creates a user.
+  Registers a user.
 
   ## Examples
 
-      iex> create_user(%{field: value})
+      iex> register_user(%{field: value})
       {:ok, %User{}}
 
-      iex> create_user(%{field: bad_value})
+      iex> register_user(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_user(attrs \\ %{}) do
+  def register_user(attrs) do
     %User{}
-    |> User.changeset(attrs)
+    |> User.registration_changeset(attrs)
     |> Repo.insert()
-  end
-
-  @doc """
-  Updates a user.
-
-  ## Examples
-
-      iex> update_user(user, %{field: new_value})
-      {:ok, %User{}}
-
-      iex> update_user(user, %{field: bad_value})
-      {:error, %Ecto.Changeset{}}
-
-  """
-  def update_user(%User{} = user, attrs) do
-    user
-    |> User.changeset(attrs)
-    |> Repo.update()
   end
 
   @doc """
@@ -89,16 +117,31 @@ defmodule TimeManager.Accounts do
     Repo.delete(user)
   end
 
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking user changes.
+  ## Session
 
-  ## Examples
-
-      iex> change_user(user)
-      %Ecto.Changeset{data: %User{}}
-
+    @doc """
+  Generates a session token.
   """
-  def change_user(%User{} = user, attrs \\ %{}) do
-    User.changeset(user, attrs)
+  def generate_user_session_token(user) do
+    {token, user_token} = UserToken.build_session_token(user)
+    IO.inspect(user_token)
+    Repo.insert!(user_token)
+    token
+  end
+
+  @doc """
+  Gets the user with the given signed token.
+  """
+  def get_user_by_session_token(token) do
+    {:ok, query} = UserToken.verify_session_token_query(token)
+    Repo.one(query)
+  end
+
+  @doc """
+  Deletes the signed token with the given context.
+  """
+  def delete_user_session_token(token) do
+    Repo.delete_all(UserToken.token_and_context_query(token, "session"))
+    :ok
   end
 end
