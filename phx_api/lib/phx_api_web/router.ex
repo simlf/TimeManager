@@ -9,7 +9,14 @@ defmodule TimeManagerWeb.Router do
     pipe_through :api
 
     post "/users", UserController, :create
-    post "/workingtimes/:id", WorkingTimeController, :create
+    get "/users/:id", UserController, :show
+
+    post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
+    get "/workingtimes/:user_id/:id", WorkingtimesController, :get_by_id
+    delete "/workingtimes/:id", WorkingtimesController, :delete
+    put "/workingtimes/:id", WorkingtimesController, :update
+    get "/workingtimes/:user_id", WorkingtimesController, :get_all_by_id
+
 
   end
 
