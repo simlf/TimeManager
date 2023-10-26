@@ -107,6 +107,6 @@ defmodule TimeManager.Clocks do
       from(c in Clock,
         where: c.user_id == ^id
       )
-    Repo.all(query)
+    Repo.one(query)
   end
 end
