@@ -5,7 +5,6 @@ defmodule TimeManager.Workingtime do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
-  use Timex
   alias TimeManager.Workingtime.Workingtimes
 
   @doc """

@@ -1,6 +1,5 @@
 defmodule TimeManagerWeb.WorkingtimesJSON do
   alias TimeManager.Workingtime.Workingtimes
-  alias TimeManager.Accounts.User
 
 
   @doc """
