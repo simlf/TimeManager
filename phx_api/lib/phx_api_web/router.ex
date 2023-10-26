@@ -2,6 +2,7 @@ defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
 
   pipeline :api do
+    plug :fetch_session
     plug :accepts, ["json"]
   end
 
@@ -9,7 +10,7 @@ defmodule TimeManagerWeb.Router do
     pipe_through :api
 
     post "/users", UserController, :create
-    post "/workingtimes/:id", WorkingTimeController, :create
+    post "/connection", UserController, :connection
 
   end
 
