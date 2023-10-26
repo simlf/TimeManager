@@ -1,21 +1,31 @@
 defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
 
+  import TimeManager.UserAuth
+
   pipeline :api do
     plug :fetch_session
     plug :accepts, ["json"]
+    plug :put_secure_browser_headers
+    plug :fetch_current_user
   end
 
   scope "/api", TimeManagerWeb do
     pipe_through :api
 
     post "/users", UserController, :create
-    post "/connection", UserController, :connection
-    post "/workingtimes/:id", WorkingTimeController, :create
+    post "/users/log_in", UserController, :connection
+
     get "/clocks/users/:userId", ClockController, :showClocksByUserId
     post "/clocks/users/:userId", ClockController, :create
     put "/clocks/users/:userId", ClockController, :update
+  end
 
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_user]
+
+    resources "/users", UserController, except: [:edit, :create]
+    put "/users/update_password/:id", UserController, :password_update
   end
 
   # Enable LiveDashboard in development
