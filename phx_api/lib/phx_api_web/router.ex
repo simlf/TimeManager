@@ -16,6 +16,12 @@ defmodule TimeManagerWeb.Router do
     post "/users", UserController, :create
     post "/users/log_in", UserController, :connection
 
+    post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
+    get "/workingtimes/:user_id/:id", WorkingtimesController, :get_by_id
+    delete "/workingtimes/:id", WorkingtimesController, :delete
+    put "/workingtimes/:id", WorkingtimesController, :update
+    get "/workingtimes/:user_id", WorkingtimesController, :get_all_by_id
+
     get "/clocks/users/:userId", ClockController, :showClocksByUserId
     post "/clocks/users/:userId", ClockController, :create
     put "/clocks/users/:userId", ClockController, :update

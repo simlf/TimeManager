@@ -6,14 +6,14 @@ defmodule TimeManagerWeb.WorkingtimesControllerTest do
   alias TimeManager.Workingtime.Workingtimes
 
   @create_attrs %{
-    end: ~U[2023-10-23 12:28:00Z],
+    end_time: ~U[2023-10-23 12:28:00Z],
     start: ~U[2023-10-23 12:28:00Z]
   }
   @update_attrs %{
-    end: ~U[2023-10-24 12:28:00Z],
+    end_time: ~U[2023-10-24 12:28:00Z],
     start: ~U[2023-10-24 12:28:00Z]
   }
-  @invalid_attrs %{end: nil, start: nil}
+  @invalid_attrs %{end_time: nil, start: nil}
 
   setup %{conn: conn} do
     {:ok, conn: put_req_header(conn, "accept", "application/json")}
@@ -35,7 +35,7 @@ defmodule TimeManagerWeb.WorkingtimesControllerTest do
 
       assert %{
                "id" => ^id,
-               "end" => "2023-10-23T12:28:00Z",
+               "end_time" => "2023-10-23T12:28:00Z",
                "start" => "2023-10-23T12:28:00Z"
              } = json_response(conn, 200)["data"]
     end
@@ -57,7 +57,7 @@ defmodule TimeManagerWeb.WorkingtimesControllerTest do
 
       assert %{
                "id" => ^id,
-               "end" => "2023-10-24T12:28:00Z",
+               "end_time" => "2023-10-24T12:28:00Z",
                "start" => "2023-10-24T12:28:00Z"
              } = json_response(conn, 200)["data"]
     end

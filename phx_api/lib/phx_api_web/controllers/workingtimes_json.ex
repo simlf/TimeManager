@@ -1,6 +1,7 @@
 defmodule TimeManagerWeb.WorkingtimesJSON do
   alias TimeManager.Workingtime.Workingtimes
 
+
   @doc """
   Renders a list of workingtimes.
   """
@@ -19,7 +20,8 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
     %{
       id: workingtimes.id,
       start: workingtimes.start,
-      end: workingtimes.end
+      end_time: workingtimes.end_time,
+      user_id: workingtimes.user_id
     }
   end
 end
