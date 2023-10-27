@@ -1,5 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
+import ClockManagerView from '../views/ClockManager.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -21,6 +22,12 @@ const router = createRouter({
       path: '/chartManager',
       name: 'chartManager',
       component: () => import('../components/ChartManager.vue')
+    }
+    ,
+    {
+      path: '/clockManager',
+      name: 'clockManager',
+      component: ClockManagerView
     }
   ]
 })
