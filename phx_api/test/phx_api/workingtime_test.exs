@@ -8,7 +8,7 @@ defmodule TimeManager.WorkingtimeTest do
 
     import TimeManager.WorkingtimeFixtures
 
-    @invalid_attrs %{end: nil, start: nil}
+    @invalid_attrs %{end_time: nil, start: nil}
 
     test "list_workingtimes/0 returns all workingtimes" do
       workingtimes = workingtimes_fixture()
@@ -21,10 +21,10 @@ defmodule TimeManager.WorkingtimeTest do
     end
 
     test "create_workingtimes/1 with valid data creates a workingtimes" do
-      valid_attrs = %{end: ~U[2023-10-23 12:28:00Z], start: ~U[2023-10-23 12:28:00Z]}
+      valid_attrs = %{end_time: ~U[2023-10-23 12:28:00Z], start: ~U[2023-10-23 12:28:00Z]}
 
       assert {:ok, %Workingtimes{} = workingtimes} = Workingtime.create_workingtimes(valid_attrs)
-      assert workingtimes.end == ~U[2023-10-23 12:28:00Z]
+      assert workingtimes.end_time == ~U[2023-10-23 12:28:00Z]
       assert workingtimes.start == ~U[2023-10-23 12:28:00Z]
     end
 
@@ -34,10 +34,10 @@ defmodule TimeManager.WorkingtimeTest do
 
     test "update_workingtimes/2 with valid data updates the workingtimes" do
       workingtimes = workingtimes_fixture()
-      update_attrs = %{end: ~U[2023-10-24 12:28:00Z], start: ~U[2023-10-24 12:28:00Z]}
+      update_attrs = %{end_time: ~U[2023-10-24 12:28:00Z], start: ~U[2023-10-24 12:28:00Z]}
 
       assert {:ok, %Workingtimes{} = workingtimes} = Workingtime.update_workingtimes(workingtimes, update_attrs)
-      assert workingtimes.end == ~U[2023-10-24 12:28:00Z]
+      assert workingtimes.end_time == ~U[2023-10-24 12:28:00Z]
       assert workingtimes.start == ~U[2023-10-24 12:28:00Z]
     end
 

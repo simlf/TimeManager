@@ -5,7 +5,6 @@ defmodule TimeManager.Workingtime do
 
   import Ecto.Query, warn: false
   alias TimeManager.Repo
-
   alias TimeManager.Workingtime.Workingtimes
 
   @doc """
@@ -36,6 +35,9 @@ defmodule TimeManager.Workingtime do
 
   """
   def get_workingtimes!(id), do: Repo.get!(Workingtimes, id)
+
+
+
 
   @doc """
   Creates a workingtimes.
@@ -101,4 +103,18 @@ defmodule TimeManager.Workingtime do
   def change_workingtimes(%Workingtimes{} = workingtimes, attrs \\ %{}) do
     Workingtimes.changeset(workingtimes, attrs)
   end
+
+  def list_workingtimes_filtered(user_id, start, end_time) when is_binary(user_id) and is_binary(start) and is_binary(end_time) do
+    query = from(w in Workingtimes,
+                where: w.user_id == ^user_id and
+                       w.start >= ^start and
+                       w.end_time <= ^end_time,
+                order_by: [desc: w.start],
+                select: w,
+               )
+    query_with_preload = Ecto.Query.preload(query, :user)
+    workingtimes = Repo.all(query_with_preload)
+    workingtimes
+  end
+
 end

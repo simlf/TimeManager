@@ -102,6 +102,44 @@ defmodule TimeManager.Accounts do
   end
 
   @doc """
+  Updates a user.
+
+  ## Examples
+
+      iex> update_user(user, %{field: new_value})
+      {:ok, %Clock{}}
+
+      iex> update_user(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user(%User{} = user, attrs) do
+    email = Map.get(attrs, "email", user.email)
+    username = Map.get(attrs, "username", user.username)
+    user
+    |> User.user_update_changeset(%{email: email, username: username})
+    |> Repo.update()
+  end
+
+  @doc """
+  Updates a user.
+
+  ## Examples
+
+      iex> update_user_password(user, %{field: new_value})
+      {:ok, %Clock{}}
+
+      iex> update_user_password(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_user_password(%User{} = user, attrs) do
+    user
+    |> User.password_changeset(attrs)
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a user.
 
   ## Examples

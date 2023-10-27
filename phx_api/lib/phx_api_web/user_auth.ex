@@ -27,8 +27,7 @@ defmodule TimeManager.UserAuth do
   """
   def log_in_user(conn, user, params \\ %{}) do
     token = Accounts.generate_user_session_token(user)
-    user_return_to = get_session(conn, :user_return_to)
-    IO.inspect("JE VAIS LA AU MOINS ?")
+    get_session(conn, :user_return_to)
     conn
     |> renew_session()
     |> put_token_in_session(token)
@@ -162,7 +161,7 @@ defmodule TimeManager.UserAuth do
     socket = mount_current_user(socket, session)
 
     if socket.assigns.current_user do
-      {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
+      # {:halt, Phoenix.LiveView.redirect(socket, to: signed_in_path(socket))}
     else
       {:cont, socket}
     end
@@ -182,7 +181,7 @@ defmodule TimeManager.UserAuth do
   def redirect_if_user_is_authenticated(conn, _opts) do
     if conn.assigns[:current_user] do
       conn
-      |> redirect(to: signed_in_path(conn))
+      # |> redirect(to: signed_in_path(conn))
       |> halt()
     else
       conn
@@ -196,6 +195,8 @@ defmodule TimeManager.UserAuth do
   they use the application at all, here would be a good place.
   """
   def require_authenticated_user(conn, _opts) do
+    IO.inspect("JE PASSE PAR LA ROUTE PROTECTED")
+    IO.inspect(conn.assigns[:current_user])
     if conn.assigns[:current_user] do
       conn
     else
@@ -218,5 +219,5 @@ defmodule TimeManager.UserAuth do
 
   defp maybe_store_return_to(conn), do: conn
 
-  defp signed_in_path(_conn), do: ~p"/"
+  # defp signed_in_path(_conn), do: ~p"/"
 end
