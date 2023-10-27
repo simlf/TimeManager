@@ -1,3 +1,16 @@
+<template>
+  <div>
+    <h1>{{ startDateTime }}</h1>
+    <h1>{{ clockIn }}</h1>
+  </div>
+
+  <div>
+    <button @click="refresh()">Refresh</button>
+    <br />
+    <button @click="clock()">Clock</button>
+  </div>
+</template>
+
 <script setup lang="ts">
 // ClockManager
 // – used to declare hours worked ;
@@ -13,35 +26,38 @@ import axios from 'axios'
 const route = useRoute()
 const router = useRouter()
 const user_id = 1
-const urlGetClockByUser = `http://localhost:4000/api/clocks/users/${user_id}`
-let startDateTime = null
-let clockIn = false
+const API_URL_clock = `http://localhost:4000/api/clocks/users/${user_id}`
 
+const startDateTime = ref(null)
+const clockIn = ref(false)
 const clock = () => {
-  console.log('Status: ' + clockIn)
-  clockIn = !clockIn
-  console.log('Status: ' + clockIn)
+  console.log('Status: ' + clockIn.value)
+  clockIn.value = !clockIn.value
+  console.log('Status: ' + clockIn.value)
 }
 const findClock = (response) => {
   console.log('Find Clock: ' + response.data)
-  clockIn = response.data.data.status
+  startDateTime.value = response.data.data.time
+  console.log('startDateTime: ' + startDateTime.value)
+
+  clockIn.value = response.data.data.status
 }
 
 const requestFailed = (error) => {
   console.log(error)
 }
-
-const makeAxiosRequestAsync = async (requestUrl, acceptCallback, rejectCallback) => {
-  axios.get(requestUrl).then(acceptCallback, rejectCallback)
-}
-
 const refresh = () => {
-  console.log(urlGetClockByUser)
-  makeAxiosRequestAsync(urlGetClockByUser, findClock, requestFailed)
+    axios.get(API_URL_clock).then(findClock, requestFailed);
+}
+const updateClock =() => {
+    let clockUpdate = {
+        
+    }
+    axios.put(API_URL_clock).then(findClock, requestFailed);
+
 }
 
 refresh()
-clock()
 </script>
 
 <style scoped></style>

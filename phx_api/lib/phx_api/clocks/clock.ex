@@ -18,7 +18,7 @@ defmodule TimeManager.Clocks.Clock do
     clock
     |> cast(attrs, @required_fields, @optional_fields)
     |> validate_required(@required_fields)
-    |> unique_constraint(:email)
+    |> unique_constraint(:user_id)
     |> foreign_key_constraint(:user_id)
   end
 end

@@ -27,13 +27,13 @@ defmodule TimeManagerWeb.ClockController do
 
   def show(conn, %{"id" => id}) do
     clock = Clocks.get_clock!(id)
-    render(conn, "show", clock: clock)
+    render(conn, "show.json", clock: clock)
   end
 
   def update(conn, %{"userId" => userId, "clock" => clock_params}) do
     clock = Clocks.get_clocks_by_userId!(userId)
     with {:ok, %Clock{} = clock} <- Clocks.update_clock(clock, clock_params) do
-      render(conn, "show", clock: clock)
+      render(conn, "show.json", clock: clock)
     end
   end
 

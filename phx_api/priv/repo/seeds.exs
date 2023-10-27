@@ -54,12 +54,12 @@ end)
 IO.puts("Seeds Clocks inserted successfully")
 
 workingTimes = [
-  %{start: "2000-01-01T08:00:07Z", end: "2000-01-01T17:00:07Z", user_id: 1},
-  %{start: "2000-06-01T09:00:07Z", end: "2000-06-01T18:00:07Z", user_id: 1},
-  %{start: "2000-01-01T08:00:07Z", end: "2000-01-01T17:00:07Z", user_id: 2},
-  %{start: "2000-06-02T09:00:07Z", end: "2000-06-02T18:00:07Z", user_id: 2},
-  %{start: "2000-06-03T08:00:07Z", end: "2000-06-03T12:00:07Z", user_id: 2},
-  %{start: "2000-06-03T15:00:07Z", end: "2000-06-03T18:00:07Z", user_id: 2}
+  %{start: "2000-01-01T08:00:07Z", end_time: "2000-01-01T17:00:07Z", user_id: 1},
+  %{start: "2000-06-01T09:00:07Z", end_time: "2000-06-01T18:00:07Z", user_id: 1},
+  %{start: "2000-01-01T08:00:07Z", end_time: "2000-01-01T17:00:07Z", user_id: 2},
+  %{start: "2000-06-02T09:00:07Z", end_time: "2000-06-02T18:00:07Z", user_id: 2},
+  %{start: "2000-06-03T08:00:07Z", end_time: "2000-06-03T12:00:07Z", user_id: 2},
+  %{start: "2000-06-03T15:00:07Z", end_time: "2000-06-03T18:00:07Z", user_id: 2}
 ]
 
 Repo.transaction(fn ->
