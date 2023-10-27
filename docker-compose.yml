@@ -21,3 +21,13 @@ services:
       - POSTGRES_PASSWORD=yN5ehRPdEiDrszR#!neYDQ8HXPQF*
     ports:
       - "5432:5432"
+  front:
+    build: ./web_app
+    ports:
+      - "5173:5173"
+    volumes:
+      - .:/web_app
+    depends_on:
+      - api
+    tty: true
+    
