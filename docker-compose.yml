@@ -26,8 +26,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - .:/web_app
+      - ./web_app:/web_app
     depends_on:
       - api
-    tty: true
+    tty: true 
     
