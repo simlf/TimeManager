@@ -26,7 +26,7 @@ import axios from 'axios'
 const route = useRoute()
 const router = useRouter()
 const user_id = 1
-const API_URL_clock = `http://localhost:4000/api/clocks/users/${user_id}`
+const API_URL_clock = `http://localhost:4000/api/clocks/${user_id}`
 
 const startDateTime = ref(null)
 const clockIn = ref(false)
