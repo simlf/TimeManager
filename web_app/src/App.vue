@@ -8,6 +8,7 @@ import { RouterLink, RouterView } from 'vue-router'
     <div class="wrapper">
       <nav>
         <RouterLink to="/login">Login</RouterLink>
+        <RouterLink to="/workedTimes">Worked Times Test</RouterLink>
       </nav>
     </div>
   </header>
