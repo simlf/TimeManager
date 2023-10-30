@@ -23,9 +23,9 @@ defmodule TimeManagerWeb.Router do
     put "/workingtimes/:id", WorkingtimesController, :update
     get "/workingtimes/:user_id", WorkingtimesController, :get_all_by_id
 
-    get "/clocks/users/:userId", ClockController, :showClocksByUserId
-    post "/clocks/users/:userId", ClockController, :create
-    put "/clocks/users/:userId", ClockController, :update
+    get "/clocks/:userId", ClockController, :showClocksByUserId
+    post "/clocks/:userId", ClockController, :create
+    put "/clocks/:userId", ClockController, :update
   end
 
   scope "/api", TimeManagerWeb do

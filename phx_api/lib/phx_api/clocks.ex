@@ -102,7 +102,7 @@ defmodule TimeManager.Clocks do
     Clock.changeset(clock, attrs)
   end
 
-  def get_clocks_by_userId!(id)do
+  def get_clocks_by_userId!(id) do
     query =
       from(c in Clock,
         where: c.user_id == ^id

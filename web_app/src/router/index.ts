@@ -11,6 +11,11 @@ const router = createRouter({
       component: () => import('@/components/ChartManager.vue')
     },
     {
+      path: '/clockManager/:username',
+      name: 'clockManager',
+      component: () => import('../components/ClockManager.vue')
+    },
+    {
       path: '/login',
       name: 'Login',
       component: () => import('@/components/user/Login.vue')
