@@ -10,18 +10,16 @@
     const params = route.params;
     const userId = params.userId;
 
-    var requestUrl = "http://localhost:4000/api/workingtimes/";
+    var requestUrl = "http://localhost:4000/api/workingtimes/" + userId;
 
-    // todo
     function getWorkingTimes(start: string = "", end: string = "") {
-        requestUrl += userId;
         requestUrl += (start) ? "&start=" + start : "";
         requestUrl += (end) ? "&end=" + end : "";
-        console.log(requestUrl);
 
         axios.get(requestUrl)
           .then((response) => {
             var data = response.data;
+            // todo
 
           }).catch((error) => {
             console.error('Erreur API', error);
@@ -31,7 +29,6 @@
     const dateValue = ref([]);
 
     function dDate(date: object) {
-      console.log(typeof(date))
       return date > new Date() 
     }
 
@@ -60,7 +57,6 @@
       { start: '2023-10-13 08:51', end: '2023-10-10 16:44' }, 
   
   ];
-  console.log(workingTimes)
 
   const workingTimesRef = ref(workingTimes);
 
@@ -95,7 +91,7 @@
       };
     },
     methods: {
-      calculateDuration(startTime: object, endTime: object) {
+      calculateDuration(startTime: string, endTime: string) {
         const startMoment = moment(startTime, 'YYYY-MM-DD HH:mm');
         const endMoment = moment(endTime, 'YYYY-MM-DD HH:mm');
         const duration = moment.duration(endMoment.diff(startMoment));
