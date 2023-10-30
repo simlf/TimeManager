@@ -8,22 +8,23 @@
 
     const route = useRoute();
     const params = route.params;
-    const userId = params.userId;
+    // const userId = params.userId;
 
-    var requestUrl = "http://localhost:4000/api/workingtimes/" + userId;
+    // debug
+    var userId = 1;
 
-    function getWorkingTimes(start: string = "", end: string = "") {
-        requestUrl += (start) ? "&start=" + start : "";
-        requestUrl += (end) ? "&end=" + end : "";
+    function getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
+      const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start=${start}&end_time=${end}`;
 
-        axios.get(requestUrl)
-          .then((response) => {
-            var data = response.data;
-            // todo
+      axios.get(requestUrl)
+        .then((response) => {
+          const data = response.data;
+          console.log(data);
+          // Faites quelque chose avec les données reçues
 
-          }).catch((error) => {
-            console.error('Erreur API', error);
-          });
+        }).catch((error) => {
+          console.error('Erreur API', error);
+        });
     }
 
     const dateValue = ref([]);
@@ -98,7 +99,6 @@
         return duration.asHours();
       },
       updateChartData() {
-        console.log(this.chartData);
         this.chartData.labels = this.workingTimes.map(item => moment(item.start).format('YYYY-MM-DD'));
         this.chartData.datasets[0].data = this.workingTimes.map(item => {
           return this.calculateDuration(item.start, item.end);
