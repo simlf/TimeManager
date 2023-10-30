@@ -13,7 +13,9 @@
     // debug
     var userId = 1;
 
-    function getWorkingTimes(start: string = '2023-01-01T00:00:00Z', end: string = moment().format('YYYY-MM-DD') + "00:00:00Z") {
+    function getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
+      start += "%2000:00:00";
+      end += "%2000:00:00";
       const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start=${start}&end_time=${end}`;
 
       axios.get(requestUrl)
