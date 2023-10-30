@@ -1,13 +1,11 @@
 FROM node:18
 
+COPY . /web_app
+COPY entrypoint.sh /entrypoint.sh
+RUN chmod u+x /entrypoint.sh
+
 WORKDIR /web_app
-
-COPY package*.json ./
-
-RUN npm install
-
-COPY . .
 
 EXPOSE 5173
 
-CMD ["npm", "run", "dev", "--host"]
+CMD ["/entrypoint.sh"]

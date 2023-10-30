@@ -1,7 +1,7 @@
 <template>
   <div>
     <div>
-      <UserForm formTitle="Register Form" submitLabel="Register" @form-submit="handleRegister" />
+      <UserForm formTitle="Register Form" submitLabel="Register" @form-submit="createUser" />
     </div>
   </div>
 </template>
@@ -15,7 +15,7 @@ export default defineComponent({
     UserForm
   },
   methods: {
-    handleRegister(data: { email: string; password: string }) {
+    createUser(data: { email: string; password: string }) {
       // TODO: Perform register logic with API
       console.log('Register:', data);
       // Redirect to root page
