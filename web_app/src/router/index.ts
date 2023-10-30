@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {useAuthStore} from "@/stores/auth.store";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -6,19 +7,36 @@ const router = createRouter({
     {
       path: '/chartManager',
       name: 'chartManager',
-      component: () => import('../components/ChartManager.vue')
+      meta: { requiresAuth: true },
+      component: () => import('@/components/ChartManager.vue')
     },
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../components/user/Login.vue')
+      name: 'Login',
+      component: () => import('@/components/user/Login.vue')
     },
     {
       path: '/register',
-      name: 'register',
-      component: () => import('../components/user/Register.vue')
-    },
+      name: 'Register',
+      component: () => import('@/components/user/Register.vue')
+    }
   ]
 })
+
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth;
+  const authStore = useAuthStore();
+
+  if (requiresAuth) {
+    const isAuthenticated = await authStore.checkAuth();
+    if (isAuthenticated) {
+      next();
+    } else {
+      next({ name: 'Login' });
+    }
+  } else {
+    next();
+  }
+});
 
 export default router
