@@ -45,5 +45,13 @@ defmodule TimeManagerWeb.Endpoint do
   plug Plug.MethodOverride
   plug Plug.Head
   plug Plug.Session, @session_options
+  plug CORSPlug,
+      origin: System.get_env("CORS_ORIGIN"),
+      allow_headers: ["authorization", "content-type"],
+      allow_methods: ["GET", "POST", "PUT", "PATCH", "DELETE"],
+      allow_credentials: true,
+      credentials: "include",
+      match: :all,
+      send_preflight: true
   plug TimeManagerWeb.Router
 end
