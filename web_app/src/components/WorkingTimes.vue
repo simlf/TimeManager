@@ -1,10 +1,12 @@
 <script setup lang="ts">
-  import { ref } from 'vue'
+  import { ref, onMounted } from 'vue'
   import { useRoute } from 'vue-router'
   import { Bar } from 'vue-chartjs'
   import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
   import moment from 'moment'
   import axios from 'axios'
+
+  ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
   const route = useRoute();
   const params = route.params;
@@ -14,21 +16,23 @@
 <script lang="ts">
   // debug
   var userId = 1;
+  let workingTimesRef = ref();
 
-  function getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
+  async function getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
     start += "2000:00:00";
     end += "2000:00:00";
     const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start=${start}&end_time=${end}`;
 
-    axios.get(requestUrl)
-      .then((response) => {
-        const data = response.data;
-        console.log(data);
-        const workingTimes = data;
+    console.log(requestUrl);
 
-      }).catch((error) => {
-        console.error('Erreur API', error);
-      });
+    try {
+      const response = await axios.get(requestUrl);
+      const data = response.data;
+      workingTimesRef.value = data.data; 
+
+    } catch (error) {
+      console.error('Erreur API', error);
+    }
   }
 
   const dateValue = ref([]);
@@ -50,20 +54,7 @@
     getWorkingTimes(start, end);
 
   }
-    
-  // todo data depuis api
-  const workingTimes = [
-      { start: '2023-10-10 08:44', end: '2023-10-10 18:24' }, 
-      { start: '2023-10-11 08:45', end: '2023-10-10 16:34' }, 
-      { start: '2023-10-12 08:50', end: '2023-10-10 15:54' }, 
-      { start: '2023-10-13 08:51', end: '2023-10-10 16:44' }, 
   
-  ];
-  
-  const workingTimesRef = ref(workingTimes);
-
-  ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
-
   export default {
     name: 'BarChart',
     components: { Bar },
@@ -146,7 +137,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" v-for="(time, index) in workingTimes" :key="index">
+                        <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" v-for="(time, index) in workingTimesRef" :key="index">
                             <td class="px-6 py-4">{{ moment(time.start).format('YYYY-MM-DD') }}</td>
                             <td class="px-6 py-4">{{ moment(time.start).format('HH:MM') }}</td>
                             <td class="px-6 py-4">{{ moment(time.end).format('HH:MM') }}</td>
