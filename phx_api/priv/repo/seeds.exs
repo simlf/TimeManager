@@ -11,21 +11,22 @@
 # and so on) as they will fail if something goes wrong.
 # priv/repo/seeds/seed.exs
 
-import Ecto.Query, only: [from: 2]
 alias TimeManager.Repo
 alias TimeManager.Accounts.User
 alias TimeManager.Clocks.Clock
 alias TimeManager.Workingtime.Workingtimes
 
+
+
 users = [
-  %{username: "John Doe", email: "john@example.com"},
-  %{username: "Jane Smith", email: "jane@example.com"},
+  %{username: "John Doe", password: "azerty", email: "john@example.com", },
+  %{username: "Jane Smith", password: "JaneSmithPass", email: "jane@example.com"},
 ]
 
 Repo.transaction(fn ->
   Enum.each(users, fn user_params ->
     user = %User{}
-    |> User.changeset(user_params)
+    |> User.registration_changeset(user_params)
     |> Repo.insert()
     case user do
       {:ok, _} -> IO.puts("User created successfully")
@@ -53,12 +54,12 @@ end)
 IO.puts("Seeds Clocks inserted successfully")
 
 workingTimes = [
-  %{start: "2000-01-01T08:00:07Z", end: "2000-01-01T17:00:07Z", user_id: 1},
-  %{start: "2000-06-01T09:00:07Z", end: "2000-06-01T18:00:07Z", user_id: 1},
-  %{start: "2000-01-01T08:00:07Z", end: "2000-01-01T17:00:07Z", user_id: 2},
-  %{start: "2000-06-02T09:00:07Z", end: "2000-06-02T18:00:07Z", user_id: 2},
-  %{start: "2000-06-03T08:00:07Z", end: "2000-06-03T12:00:07Z", user_id: 2},
-  %{start: "2000-06-03T15:00:07Z", end: "2000-06-03T18:00:07Z", user_id: 2}
+  %{start: "2000-01-01T08:00:07Z", end_time: "2000-01-01T17:00:07Z", user_id: 1},
+  %{start: "2000-06-01T09:00:07Z", end_time: "2000-06-01T18:00:07Z", user_id: 1},
+  %{start: "2000-01-01T08:00:07Z", end_time: "2000-01-01T17:00:07Z", user_id: 2},
+  %{start: "2000-06-02T09:00:07Z", end_time: "2000-06-02T18:00:07Z", user_id: 2},
+  %{start: "2000-06-03T08:00:07Z", end_time: "2000-06-03T12:00:07Z", user_id: 2},
+  %{start: "2000-06-03T15:00:07Z", end_time: "2000-06-03T18:00:07Z", user_id: 2}
 ]
 
 Repo.transaction(fn ->
