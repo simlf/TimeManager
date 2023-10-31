@@ -11,7 +11,7 @@ const authStore = useAuthStore();
             <RouterView></RouterView>
         </div>
         <div v-else>
-            <p>Welcome back {{ authStore.user.email }}</p>
+            <p>Welcome back {{ authStore.email }}</p>
         </div>
     </div>
 </template>

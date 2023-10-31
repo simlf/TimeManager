@@ -30,6 +30,12 @@ const router = createRouter({
       name: 'workingTimes',
       component: () => import('../components/WorkingTimes.vue')
     },
+    {
+      path: '/updateUser',
+      meta: { requiresAuth: true },
+      name: 'UpdateUser',
+      component: () => import('@/components/user/UpdateUser.vue')
+    }
   ]
 })
 

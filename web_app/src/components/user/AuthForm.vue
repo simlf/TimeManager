@@ -1,36 +1,44 @@
 <template>
-  <div class="max-w-md mx-auto">
-    <form @submit.prevent="handleSubmit" class="bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
-      <h2 class="text-2xl mb-6 text-green-500">{{ formTitle }}</h2>
-        <div v-if="submitLabel === 'Register'" class="mb-4">
-            <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Username:</label>
-            <input v-model="formInfo.username" type="text" placeholder="Jean001" required
-                   class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
+    <div class="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+        <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+            <img class="mx-auto h-10 w-auto" src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600" alt="Your Company" />
+            <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">{{ formTitle }}</h2>
         </div>
 
-        <div class="mb-4">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="email">Email:</label>
-        <input v-model="formInfo.email" type="text" placeholder="jean@gmail.com" required
-               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
-      </div>
+        <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+            <form @submit.prevent="handleSubmit" class="space-y-6">
+                <div v-if="submitLabel === 'Register'">
+                    <label for="username" class="block text-sm font-medium leading-6 text-gray-900">Username</label>
+                    <div class="mt-2">
+                        <input v-model="formInfo.username" type="text" autocomplete="text" placeholder="Jean007" required="" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    </div>
+                </div>
+                <div>
+                    <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
+                    <div class="mt-2">
+                        <input v-model="formInfo.email" type="email" autocomplete="email" placeholder="jean007@gmail.com" required="" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    </div>
+                </div>
 
-      <div class="mb-6">
-        <label class="block text-gray-700 text-sm font-bold mb-2" for="password">Password:</label>
-        <input v-model="formInfo.password" type="password" placeholder="Mot de passe" required
-               class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"/>
-      </div>
+                <div>
+                    <div class="flex items-center justify-between">
+                        <label for="password" class="block text-sm font-medium leading-6 text-gray-900">Password</label>
+                    </div>
+                    <div class="mt-2">
+                        <input v-model="formInfo.password" name="password" type="password" autocomplete="current-password" placeholder="Password" required="" class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                    </div>
+                </div>
 
-      <div class="flex items-center justify-between">
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-          {{ submitLabel }}
-        </button>
-      </div>
-    </form>
-  </div>
+                <div>
+                    <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">{{ submitLabel }}</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </template>
 
 <script setup lang="ts">
-import { ref, defineProps, defineEmits } from 'vue';
+import { ref } from 'vue'
 
 // Define props
 const props = defineProps({
