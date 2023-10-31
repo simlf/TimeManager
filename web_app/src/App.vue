@@ -1,20 +1,17 @@
 <script setup lang="ts">
 import { RouterLink, RouterView } from 'vue-router'
-import User from './components/user/User.vue'
+import User from "@/components/user/User.vue";
 
 </script>
 
 <template>
-  <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
-    <div class="wrapper">
-      <!-- <Login></Login> -->
-      <User></User>
-        <!-- <RouterLink to="/login">Login</RouterLink> -->
-        <!-- <RouterLink to="/login">Login</RouterLink> -->
-    </div>
-  </header>
-  <!-- <RouterView /> -->
+    <header>
+        <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+        <div class="wrapper">
+<!--            <User></User>-->
+            <RouterView></RouterView>
+        </div>
+    </header>
 </template>
 
 <style scoped>

@@ -1,13 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import {useAuthStore} from "@/stores/auth.store";
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/App.vue')
+    },
+    {
       path: '/chartManager',
       name: 'chartManager',
-      component: () => import('../components/ChartManager.vue')
-    }
-    ,
+      meta: { requiresAuth: true },
+      component: () => import('@/components/ChartManager.vue')
+    },
     {
       path: '/clockManager/:username',
       name: 'clockManager',
@@ -15,15 +22,42 @@ const router = createRouter({
     },
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../components/user/Login.vue')
+      name: 'Login',
+      component: () => import('@/components/user/Login.vue')
     },
     {
       path: '/register',
-      name: 'register',
-      component: () => import('../components/user/Register.vue')
+      name: 'Register',
+      component: () => import('@/components/user/Register.vue')
+    },
+    {
+      path: '/updateUser',
+      meta: { requiresAuth: true },
+      name: 'UpdateUser',
+      component: () => import('@/components/user/UpdateUser.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found',
+      component: () => import('@/components/PageNotFound.vue')
     },
   ]
 })
+
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth;
+  const authStore = useAuthStore();
+
+  if (requiresAuth) {
+    const isAuthenticated = await authStore.checkAuth();
+    if (isAuthenticated) {
+      next();
+    } else {
+      next({ name: 'Login' });
+    }
+  } else {
+    next();
+  }
+});
 
 export default router
