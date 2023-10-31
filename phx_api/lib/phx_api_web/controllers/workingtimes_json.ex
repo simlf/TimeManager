@@ -13,11 +13,11 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
   Renders a single workingtimes.
   """
   def show(%{workingtimes: workingtimes}) do
-    %{data: data(workingtimes)}
+    %{data: {data(workingtimes)}}
   end
 
-  def showHours(%{hours: hours}) do
-    %{hours: hours}
+  def showTimes(%{hours: hours, minutes: minutes, seconds: seconds}) do
+    %{data: %{hours: hours, minutes: minutes, seconds: seconds}}
   end
 
   defp data(%Workingtimes{} = workingtimes) do
@@ -28,4 +28,6 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
       user_id: workingtimes.user_id
     }
   end
+
+
 end

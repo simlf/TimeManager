@@ -83,29 +83,34 @@ defmodule TimeManagerWeb.WorkingtimesController do
     end_time = conn.query_params["end"]
 
     workingtimes = Workingtime.list_workingtimes_filtered(user_id, start, end_time)
-    total_hours = calculate_total_hours(workingtimes)
-    IO.inspect("hours_worked : " <> Integer.to_string(total_hours))
+    total_seconds = calculate_total_hours(workingtimes)
+    IO.inspect("hours_worked : " <> Integer.to_string(total_seconds))
 
-    render(conn, "showHours.json", hours: total_hours)
+    hours = div(total_seconds, 3600)
+    remaining_seconds = rem(total_seconds, 3600)
+    minutes = div(remaining_seconds, 60)
+    seconds = rem(remaining_seconds, 60)
+
+    render(conn, "showTimes.json", hours: hours,minutes: minutes, seconds: seconds)
   end
 
   defp calculate_total_hours(workingtimes, total_hours \\ 0) do
   case workingtimes do
     [] -> total_hours
     [workingtime | rest] ->
-      hours_worked = calculate_workingtime_hours(workingtime)
-      updated_total_hours = total_hours + hours_worked
+      time_worked = calculate_workingtime(workingtime)
+      updated_total_hours = total_hours + time_worked
       calculate_total_hours(rest, updated_total_hours)
   end
 end
 
-  defp calculate_workingtime_hours(workingtime) do
+  defp calculate_workingtime(workingtime) do
 
     start_time = Timex.parse!(Timex.format!(workingtime.start, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
     end_time = Timex.parse!(Timex.format!(workingtime.end_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
-    hours_worked = Timex.diff(end_time, start_time, :hour) # Utilisez :second (au singulier)
+    time_worked = Timex.diff(end_time, start_time, :second) # Utilisez :second (au singulier)
 
-    hours_worked
+    time_worked
   end
 
 end
