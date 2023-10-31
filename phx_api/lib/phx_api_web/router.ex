@@ -15,6 +15,7 @@ defmodule TimeManagerWeb.Router do
 
     post "/users", UserController, :create
     post "/users/log_in", UserController, :connection
+    get "/users/check_auth", UserController, :check_auth
 
     post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
     get "/workingtimes/:user_id/:id", WorkingtimesController, :get_by_id
