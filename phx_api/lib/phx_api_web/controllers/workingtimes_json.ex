@@ -16,6 +16,10 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
     %{data: data(workingtimes)}
   end
 
+  def showHours(%{hours: hours}) do
+    %{hours: hours}
+  end
+
   defp data(%Workingtimes{} = workingtimes) do
     %{
       id: workingtimes.id,

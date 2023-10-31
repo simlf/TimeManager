@@ -18,22 +18,3 @@ EXPOSE 5173
 
 # Commande de démarrage pour Vite avec HMR
 CMD ["npm", "run", "dev"]
-
-# WORKDIR /web-app
-# COPY ./package*.json ./
-# RUN npm install
-# COPY ./ ./
-# RUN node node_modules/esbuild/install.js
-# EXPOSE 5173
-
-# CMD [ "npm", "run", "dev" ]
-
-# COPY . /web_app
-# COPY entrypoint.sh /entrypoint.sh
-# RUN chmod u+x /entrypoint.sh
-
-# WORKDIR /web_app
-#EXPOSE 5173
-
-
-# CMD ["/entrypoint.sh"]

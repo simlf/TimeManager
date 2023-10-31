@@ -1,6 +1,6 @@
 defmodule TimeManagerWeb.WorkingtimesController do
   use TimeManagerWeb, :controller
-
+  use Timex
   alias TimeManager.Workingtime
   alias TimeManager.Workingtime.Workingtimes
 
@@ -47,7 +47,7 @@ defmodule TimeManagerWeb.WorkingtimesController do
 
   def get_all_by_id(conn, %{"user_id" => user_id}) do
     start = conn.query_params["start"]
-    end_time = conn.query_params["end_time"]
+    end_time = conn.query_params["end"]
 
     workingtimes = Workingtime.list_workingtimes_filtered(user_id, start, end_time)
 
@@ -77,4 +77,35 @@ defmodule TimeManagerWeb.WorkingtimesController do
       |> text("User ID:#{id} Deleted")
     end
   end
+
+  def get_countHours_by_id(conn, %{"user_id" => user_id})do
+    start = conn.query_params["start"]
+    end_time = conn.query_params["end"]
+
+    workingtimes = Workingtime.list_workingtimes_filtered(user_id, start, end_time)
+    total_hours = calculate_total_hours(workingtimes)
+    IO.inspect("hours_worked : " <> Integer.to_string(total_hours))
+
+    render(conn, "showHours.json", hours: total_hours)
+  end
+
+  defp calculate_total_hours(workingtimes, total_hours \\ 0) do
+  case workingtimes do
+    [] -> total_hours
+    [workingtime | rest] ->
+      hours_worked = calculate_workingtime_hours(workingtime)
+      updated_total_hours = total_hours + hours_worked
+      calculate_total_hours(rest, updated_total_hours)
+  end
+end
+
+  defp calculate_workingtime_hours(workingtime) do
+
+    start_time = Timex.parse!(Timex.format!(workingtime.start, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
+    end_time = Timex.parse!(Timex.format!(workingtime.end_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
+    hours_worked = Timex.diff(end_time, start_time, :hour) # Utilisez :second (au singulier)
+
+    hours_worked
+  end
+
 end

@@ -32,6 +32,7 @@ defmodule TimeManager.MixProject do
   # Type `mix help deps` for examples and options.
   defp deps do
     [
+      {:timex, "~> 3.7"},
       {:cors_plug, "~> 3.0"},
       {:phoenix, "~> 1.7.9"},
       {:phoenix_ecto, "~> 4.4"},
