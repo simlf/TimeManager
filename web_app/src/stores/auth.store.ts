@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia';
 import axios from 'axios';
-import type { AxiosResponse } from 'axios';
 import router from "@/router";
 
 const API_BASE_URL = 'http://localhost:4000/api/users';
@@ -23,6 +22,7 @@ export const useAuthStore = defineStore({
         user: null as { username?: string; email: string } | null,
         isAuthenticated: false,
         error: null as Error | null,
+        success: null as string | null,
         returnUrl: null,
     }),
     getters: {
@@ -56,7 +56,7 @@ export const useAuthStore = defineStore({
                 await axios.post(`${API_BASE_URL}/`, payload)
                 this.redirectTo('/login')
             } catch (error: Error | any) {
-                this.handleError(error, 'Error registering user')
+                this.handleError(error, 'Error registering user, your password should be at least 6 characters long and the email should be less than 20 characters long')
             }
         },
         async login(credentials: { email: string; password: string }) {
@@ -77,6 +77,7 @@ export const useAuthStore = defineStore({
         },
         async updateUser(credentials: { id: number, username: string, email: string }) {
             this.error = null;
+            this.success = null;
             const payload = createPayload({
                 username: credentials.username,
                 email: credentials.email,
@@ -86,14 +87,14 @@ export const useAuthStore = defineStore({
 
                 this.user = response.data.data;
                 this.isAuthenticated = true;
-                // Redirect to the returnUrl or a default route
-                this.redirectTo('/chartManager')
+                this.success = 'User updated successfully'
             } catch (error: Error | any) {
-                this.handleError(error, 'Error updating user')
+                this.handleError(error, 'Make sure the email is valid')
             }
         },
         async updateUserPassword(credentials: { id: number, password: string }) {
             this.error = null;
+            this.success = null;
             const payload = createPayload({
                 password: credentials.password,
             })
@@ -102,8 +103,7 @@ export const useAuthStore = defineStore({
 
                 this.user = response.data.data;
                 this.isAuthenticated = true;
-                // Redirect to the returnUrl or a default route
-                this.redirectTo('/chartManager')
+                this.success = 'Password updated successfully'
             } catch (error: Error | any) {
                 this.handleError(error, 'Error updating user password')
             }
@@ -124,7 +124,6 @@ export const useAuthStore = defineStore({
                 errorMessage += ` (HTTP ${error.response.status})`
             }
             this.error = new Error(errorMessage)
-        }
+        },
     },
-
 });
