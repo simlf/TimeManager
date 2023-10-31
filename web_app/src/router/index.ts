@@ -24,6 +24,12 @@ const router = createRouter({
       path: '/register',
       name: 'Register',
       component: () => import('@/components/user/Register.vue')
+    },
+    {
+      path: '/updateUser',
+      meta: { requiresAuth: true },
+      name: 'UpdateUser',
+      component: () => import('@/components/user/UpdateUser.vue')
     }
   ]
 })
