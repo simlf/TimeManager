@@ -18,23 +18,6 @@
   var userId = 1;
   let workingTimesRef = ref();
 
-  async function getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
-    start += "2000:00:00";
-    end += "2000:00:00";
-    const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start=${start}&end_time=${end}`;
-
-    console.log(requestUrl);
-
-    try {
-      const response = await axios.get(requestUrl);
-      const data = response.data;
-      workingTimesRef.value = data.data; 
-
-    } catch (error) {
-      console.error('Erreur API', error);
-    }
-  }
-
   const dateValue = ref([]);
 
   function dDate(date: object) {
@@ -47,43 +30,68 @@
     month: 'MMM',
   })
 
-  const handleDate = (modelData: Array<string>) => {
-    var start = modelData[0] + "%";
-    var end = modelData[1] + "%";
-
-    getWorkingTimes(start, end);
-
-  }
-  
   export default {
     name: 'BarChart',
     components: { Bar },
     data() {
       return {
-        workingTimes: [
-          { start: '2023-10-10 08:44', end: '2023-10-10 18:24' },
-          { start: '2023-10-11 08:45', end: '2023-10-11 16:34' },
-          { start: '2023-10-12 08:50', end: '2023-10-12 15:54' },
-          { start: '2023-10-13 08:51', end: '2023-10-13 16:44' },
-        ],
         chartData: {
-          labels: [],
+          labels: ["t1", "t2"],
           datasets: [
             {
               label: 'Heures de travail',
               backgroundColor: 'rgba(75, 192, 192, 0.2)',
               borderColor: 'rgba(75, 192, 192, 1)',
               borderWidth: 1,
-              data: [],
+              // data: []
+              data: [10, 20, 30], // Données de test par défaut
             },
           ],
         },
-        chartOptions: {
-          responsive: true,
-        },
       };
     },
+    computed: {
+      chartOptions() {
+        return {
+          responsive: true,
+          maintainAspectRatio: false,
+        };
+      },
+      // chartData() {
+      //   return {
+      //     labels: ["t1", "t2"],
+      //     datasets: [
+      //       {
+      //         label: 'Heures de travail',
+      //         backgroundColor: 'rgba(75, 192, 192, 0.2)',
+      //         borderColor: 'rgba(75, 192, 192, 1)',
+      //         borderWidth: 1,
+      //         data: [14, 50]
+      //       }
+      //     ]
+      //   }      
+      // }      
+    },
     methods: {
+      async getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
+        start += "2000:00:00";
+        end += "2000:00:00";
+        const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start=${start}&end_time=${end}`;
+
+        console.log(requestUrl);
+
+        try {
+          const response = await axios.get(requestUrl);
+          const data = response.data;
+          workingTimesRef.value = data.data;
+
+          // Mise à jour du graphique
+          this.updateChartData();
+          
+        } catch (error) {
+          console.error('Erreur API', error);
+        }
+      },
       calculateDuration(startTime: string, endTime: string) {
         const startMoment = moment(startTime, 'YYYY-MM-DD HH:mm');
         const endMoment = moment(endTime, 'YYYY-MM-DD HH:mm');
@@ -91,16 +99,30 @@
         return duration.asHours();
       },
       updateChartData() {
-        this.chartData.labels = this.workingTimes.map(item => moment(item.start).format('YYYY-MM-DD'));
-        this.chartData.datasets[0].data = this.workingTimes.map(item => {
-          return this.calculateDuration(item.start, item.end);
-        });
+        this.chartData.labels = workingTimesRef.value.map(item =>
+          moment(item.start).format('YYYY-MM-DD')
+        );
+        this.chartData.datasets[0].data = workingTimesRef.value.map(item => 
+          this.calculateDuration(item.start, item.end_time)
+        );
+        
+        this.triggerChartDataUpdate()
+
       },
+      handleDateClick(modelData: Array<string>) {
+        const start = modelData[0] + "%";
+        const end = modelData[1] + "%";
+
+        this.getWorkingTimes(start, end);
+      },
+      triggerChartDataUpdate(){
+        this.chartData = {...this.chartData, datasets: [...this.chartData.datasets], labels: [...this.chartData.labels]}
+      }
+
     },
-    created() {
-      this.updateChartData();
-    },
+    
   };
+
 </script>
 
 <template>
@@ -113,34 +135,34 @@
           v-model="dateValue" 
           :disable-date="dDate"
           :formatter="formatter"
-          @update:model-value="handleDate"
+          @update:model-value="handleDateClick"
         />
 
         <div>
-            <Bar id="my-chart-id" :options="chartOptions" :data="chartData"/>
+            <Bar id="my-chart-id" :options="chartOptions" :data="chartData" ref="bar"/>
     
         </div>
         
             <div class="relative overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
-                        <tr>
-                            <th scope="col" class="px-6 py-3">
-                                Date
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                Start Time
-                            </th>
-                            <th scope="col" class="px-6 py-3">
-                                End Time
-                            </th>
-                        </tr>
+                      <tr>
+                        <th scope="col" class="px-6 py-3">
+                          Date
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                          Start Time
+                        </th>
+                        <th scope="col" class="px-6 py-3">
+                          End Time
+                        </th>
+                      </tr>
                     </thead>
                     <tbody>
                         <tr class="bg-white border-b dark:bg-gray-800 dark:border-gray-700" v-for="(time, index) in workingTimesRef" :key="index">
-                            <td class="px-6 py-4">{{ moment(time.start).format('YYYY-MM-DD') }}</td>
-                            <td class="px-6 py-4">{{ moment(time.start).format('HH:MM') }}</td>
-                            <td class="px-6 py-4">{{ moment(time.end).format('HH:MM') }}</td>
+                          <td class="px-6 py-4">{{ moment(time.start).utc(false).format('YYYY-MM-DD') }}</td>
+                          <td class="px-6 py-4">{{ moment(time.start).utc(false).format('HH:mm') }}</td>
+                          <td class="px-6 py-4">{{ moment(time.end_time).utc(false).format('HH:mm') }}</td>
                         </tr>
                     </tbody>
                 </table>
