@@ -5,6 +5,11 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/App.vue')
+    },
+    {
       path: '/chartManager',
       name: 'chartManager',
       meta: { requiresAuth: true },
@@ -30,7 +35,12 @@ const router = createRouter({
       meta: { requiresAuth: true },
       name: 'UpdateUser',
       component: () => import('@/components/user/UpdateUser.vue')
-    }
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found',
+      component: () => import('@/components/PageNotFound.vue')
+    },
   ]
 })
 
