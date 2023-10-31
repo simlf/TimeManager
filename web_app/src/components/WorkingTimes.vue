@@ -1,5 +1,5 @@
 <script setup lang="ts">
-  import { ref, onMounted } from 'vue'
+  import { ref } from 'vue'
   import { useRoute } from 'vue-router'
   import { Bar } from 'vue-chartjs'
   import { Chart as ChartJS, Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale } from 'chart.js'
@@ -10,12 +10,13 @@
 
   const route = useRoute();
   const params = route.params;
-  // const userId = params.userId;
+  // let userId = params.userId;
 </script>
 
 <script lang="ts">
   // debug
   var userId = 1;
+  
   let workingTimesRef = ref();
 
   const dateValue = ref([]);
@@ -57,20 +58,6 @@
           maintainAspectRatio: false,
         };
       },
-      // chartData() {
-      //   return {
-      //     labels: ["t1", "t2"],
-      //     datasets: [
-      //       {
-      //         label: 'Heures de travail',
-      //         backgroundColor: 'rgba(75, 192, 192, 0.2)',
-      //         borderColor: 'rgba(75, 192, 192, 1)',
-      //         borderWidth: 1,
-      //         data: [14, 50]
-      //       }
-      //     ]
-      //   }      
-      // }      
     },
     methods: {
       async getWorkingTimes(start: string = '2023-01-01', end: string = moment().format('YYYY-MM-DD')) {
@@ -127,7 +114,6 @@
 
 <template>
   <div>
-
     <div class="grid grid-rows-2">
         <vue-tailwind-datepicker 
           as-single use-range
@@ -139,10 +125,8 @@
         />
 
         <div>
-            <Bar id="my-chart-id" :options="chartOptions" :data="chartData" ref="bar"/>
-    
+          <Bar id="my-chart-id" :options="chartOptions" :data="chartData" ref="bar"/>
         </div>
-        
             <div class="relative overflow-x-auto">
                 <table class="w-full text-sm text-left text-gray-500 dark:text-gray-400">
                     <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">

@@ -6,7 +6,10 @@ import User from './components/user/User.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    <RouterLink to="/">
+      <img alt="Vue logo" class="logo" src="@/assets/logo.svg" width="125" height="125" />
+    </RouterLink>
+
     <div class="wrapper">
       <!-- <Login></Login> -->
       <User></User>

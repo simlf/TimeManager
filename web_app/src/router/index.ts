@@ -6,8 +6,7 @@ const router = createRouter({
       path: '/chartManager',
       name: 'chartManager',
       component: () => import('../components/ChartManager.vue')
-    }
-    ,
+    },
     {
       path: '/clockManager/:username',
       name: 'clockManager',
@@ -22,7 +21,8 @@ const router = createRouter({
       path: '/register',
       name: 'register',
       component: () => import('../components/user/Register.vue')
-    },{
+    },
+    {
       path: '/workingTimes',
       name: 'workingTimes',
       component: () => import('../components/WorkingTimes.vue')
