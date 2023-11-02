@@ -1,5 +1,5 @@
 <template>
-    <div :class="['rounded-md p-4', backgroundColor]">
+    <div :class="['rounded-md p-4 w-full overflow-hidden', backgroundColor]">
         <div class="flex">
             <div class="flex-shrink-0">
                 <component :is="iconComponent" class="h-5 w-5" :class="iconColor" aria-hidden="true" />

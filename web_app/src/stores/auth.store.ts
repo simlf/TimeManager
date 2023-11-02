@@ -40,7 +40,7 @@ export const useAuthStore = defineStore({
             } catch (error: Error | any) {
                 this.isAuthenticated = false
                 this.user = null
-                this.handleError(error, 'Error checking authentication')
+                this.handleError(error, 'Make sure you are logged in')
                 return false
             }
         },
