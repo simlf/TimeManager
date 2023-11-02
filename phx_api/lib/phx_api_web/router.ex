@@ -25,6 +25,10 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:userId", ClockController, :showClocksByUserId
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
+
+    post "/groups", GroupController, :create
+    post "/groups/add_user/:id", GroupController, :add_user_to_group
+
   end
 
   scope "/api", TimeManagerWeb do
