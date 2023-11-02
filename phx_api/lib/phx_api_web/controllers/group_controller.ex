@@ -26,7 +26,7 @@ defmodule TimeManagerWeb.GroupController do
           case TimeManager.Accounts.get_group_manager(user) do
             nil ->
               user_id = user.id
-              group_params = %{group_params | "user_ids" => [user_id | group_params["user_ids"]]}
+              group_params = %{group_params | "users_id" => [user_id | group_params["users_id"]]}
 
               # Créez le groupe
               case Groups.create_group(group_params) do

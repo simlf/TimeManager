@@ -4,7 +4,7 @@ defmodule TimeManager.Groups.Group do
 
   schema "groups" do
     field :name, :string
-    field :user_ids, {:array, :integer}, default: []
+    field :users_id, {:array, :integer}, default: []
     field :manager_id, :id
 
     timestamps(type: :utc_datetime)
@@ -13,8 +13,8 @@ defmodule TimeManager.Groups.Group do
   @doc false
   def changeset(group, attrs) do
     group
-    |> cast(attrs, [:name, :manager_id, :user_ids])
-    |> validate_required([:name, :manager_id, :user_ids])
+    |> cast(attrs, [:name, :manager_id, :users_id])
+    |> validate_required([:name, :manager_id, :users_id])
     |> unique_constraint([:manager_id])
   end
 end

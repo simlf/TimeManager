@@ -20,7 +20,7 @@ defmodule TimeManagerWeb.GroupJSON do
       id: group.id,
       name: group.name,
       manager_id: group.manager_id,
-      user_ids: group.user_ids
+      users_id: group.users_id
     }
   end
 end
