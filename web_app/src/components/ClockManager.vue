@@ -39,8 +39,7 @@ const getClockSuccess = (data: { time: string; status: boolean }) => {
   console.log('Get - success')
   startDateTime.value = data.time
   clockIn.value = data.status
-  console.log(`New clock state: time = ${startDateTime.value} & status = ${clockIn.value}`);
-
+  console.log(`New clock state: time = ${startDateTime.value} & status = ${clockIn.value}`)
 }
 
 const requestFailed = (error: Error) => {
@@ -72,7 +71,7 @@ const updateClock = () => {
     user_id: 1
   }
   console.log(clock)
-  instance.put(API_URL_clock, {clock}, { headers }).then(updateSuccess).catch(requestFailed)
+  instance.put(API_URL_clock, { clock }, { headers }).then(updateSuccess).catch(requestFailed)
 }
 
 refresh()
