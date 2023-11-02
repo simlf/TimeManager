@@ -19,8 +19,11 @@ alias TimeManager.Workingtime.Workingtimes
 
 users = [
   %{username: "The patron", password: "PatronPassword", email: "patron@gotham.com", roles: ["SUPER MANAGER"] },
+  %{username: "The patron 2", password: "PatronPassword", email: "patron2@gotham.com", roles: ["SUPER MANAGER"] },
   %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", roles: ["MANAGER"]},
+  %{username: "The manager 2", password: "ManagerPassword", email: "manager2@gotham.com", roles: ["MANAGER"]},
   %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", roles: ["EMPLOYEE"]},
+  %{username: "The employee 2", password: "EmployeePassword", email: "employee2@gotham.com", roles: ["EMPLOYEE"]},
 ]
 
 Repo.transaction(fn ->
@@ -37,7 +40,7 @@ end)
 
 
 groups = [
-  %{name: "Joker lover", users_id: [], manager_id: 2},
+  %{name: "Joker lover", users_id: [], manager_id: 3},
 ]
 
 Repo.transaction(fn ->
