@@ -13,14 +13,14 @@
 
 alias TimeManager.Repo
 alias TimeManager.Accounts.User
+alias TimeManager.Groups.Group
 alias TimeManager.Clocks.Clock
 alias TimeManager.Workingtime.Workingtimes
 
-
-
 users = [
-  %{username: "John Doe", password: "azerty", email: "john@example.com", },
-  %{username: "Jane Smith", password: "JaneSmithPass", email: "jane@example.com"},
+  %{username: "The patron", password: "PatronPassword", email: "patron@gotham.com", roles: ["SUPER MANAGER"] },
+  %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", roles: ["MANAGER"]},
+  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", roles: ["EMPLOYEE"]},
 ]
 
 Repo.transaction(fn ->
@@ -34,6 +34,24 @@ Repo.transaction(fn ->
     end
   end)
 end)
+
+
+groups = [
+  %{name: "Joker lover", users_id: [], manager_id: 2},
+]
+
+Repo.transaction(fn ->
+  Enum.each(groups, fn user_params ->
+    group = %Group{}
+    |> Group.changeset(user_params)
+    |> Repo.insert()
+    case group do
+      {:ok, _} -> IO.puts("Group created successfully")
+      {:error, changeset} -> IO.inspect(changeset.errors)
+    end
+  end)
+end)
+
 
 clocks = [
   %{time: "2000-01-01 23:00:07", status: true, user_id: 1},
@@ -52,6 +70,7 @@ Repo.transaction(fn ->
 end)
 
 IO.puts("Seeds Clocks inserted successfully")
+
 
 workingTimes = [
   %{start: "2000-01-01T08:00:07Z", end_time: "2000-01-01T17:00:07Z", user_id: 1},
