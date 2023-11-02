@@ -94,7 +94,7 @@ const updateDisplayMessage = (text: string) => {
   textToDisplay.value = text
 }
 const clock = () => {
-  loading.value = true;
+  loading.value = true
   clockIn.value = !clockIn.value
   startDateTime.value = new Date().toISOString().split('.')[0]
   updateClock()
@@ -142,7 +142,7 @@ const updateClock = () => {
     time: currentDate,
     user_id: user_id
   }
-  instance.put(API_URL_clock, { clock }, { headers }).then(updateSuccess).catch((requestFailed))
+  instance.put(API_URL_clock, { clock }, { headers }).then(updateSuccess).catch(requestFailed)
 }
 
 refresh()
