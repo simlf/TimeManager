@@ -16,8 +16,9 @@ const router = createRouter({
       component: () => import('@/components/ChartManager.vue')
     },
     {
-      path: '/clockManager/:username',
+      path: '/clockManager/:id',
       name: 'clockManager',
+      meta: { requiresAuth: true },
       component: () => import('../components/ClockManager.vue')
     },
     {
@@ -54,12 +55,13 @@ router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const authStore = useAuthStore()
 
-  if (requiresAuth) {
-    const isAuthenticated = await authStore.checkAuth()
-    if (isAuthenticated) {
-      next()
-    } else {
+  const isAuthenticated = await authStore.checkAuth()
+
+  if (requiresAuth && !isAuthenticated) {
+    if (to.name !== 'Login') {
       next({ name: 'Login' })
+    } else {
+      next()
     }
   } else {
     next()

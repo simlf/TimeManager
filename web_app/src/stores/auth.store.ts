@@ -23,7 +23,7 @@ const createPayload = (user: {
 export const useAuthStore = defineStore({
   id: 'auth',
   state: () => ({
-    user: null as { username?: string; email: string } | null,
+    user: null as { id?: number; username?: string; email: string } | null,
     isAuthenticated: false,
     error: null as Error | null,
     success: null as string | null,
@@ -32,7 +32,7 @@ export const useAuthStore = defineStore({
   getters: {
     username: (state) => state.user?.username || '',
     email: (state) => state.user?.email || '',
-    id: (state) => state.user?.id || ''
+    id: (state) => state.user?.id || -1
   },
   actions: {
     async checkAuth(): Promise<boolean> {
@@ -77,6 +77,7 @@ export const useAuthStore = defineStore({
         await axios.post(`${API_BASE_URL}/log_in`, payload)
         this.user = credentials
         this.isAuthenticated = true
+        // this.saveToLocalStorage()
         this.redirectTo('/chartManager')
       } catch (error: Error | any) {
         this.handleError(error, 'Error logging in, make sure your credentials are good')
