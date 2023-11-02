@@ -17,4 +17,3 @@ app.use(router)
 app.use(VueTailwindDatepicker);
 
 app.mount('#app')
-

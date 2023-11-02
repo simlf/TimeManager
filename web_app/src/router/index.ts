@@ -1,5 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
-import {useAuthStore} from "@/stores/auth.store";
+import { useAuthStore } from '@/stores/auth.store'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: () => import('@/App.vue')
+      component: () => import('@/components/utils/Home.vue')
     },
     {
       path: '/chartManager',
@@ -45,25 +45,25 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'Not Found',
-      component: () => import('@/components/PageNotFound.vue')
-    },
+      component: () => import('@/components/utils/PageNotFound.vue')
+    }
   ]
 })
 
 router.beforeEach(async (to, from, next) => {
-  const requiresAuth = to.meta.requiresAuth;
-  const authStore = useAuthStore();
+  const requiresAuth = to.meta.requiresAuth
+  const authStore = useAuthStore()
 
   if (requiresAuth) {
-    const isAuthenticated = await authStore.checkAuth();
+    const isAuthenticated = await authStore.checkAuth()
     if (isAuthenticated) {
-      next();
+      next()
     } else {
-      next({ name: 'Login' });
+      next({ name: 'Login' })
     }
   } else {
-    next();
+    next()
   }
-});
+})
 
 export default router
