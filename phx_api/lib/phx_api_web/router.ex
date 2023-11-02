@@ -34,6 +34,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_user]
 
+    put "/users/me", UserController, :update_me
     resources "/users", UserController, except: [:edit, :create]
     put "/users/update_password/:id", UserController, :password_update
   end
