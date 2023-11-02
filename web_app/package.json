@@ -15,6 +15,7 @@
     "format": "prettier --write src/"
   },
   "dependencies": {
+    "@headlessui/vue": "^1.7.16",
     "@heroicons/vue": "^2.0.18",
     "@types/chart.js": "^2.9.39",
     "axios": "^1.6.0",
