@@ -46,12 +46,19 @@ defmodule TimeManager.Accounts.User do
     |> validate_roles(opts)
   end
 
+  def user_update_changeset_himself(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:email, :username])
+    |> validate_username(opts)
+    |> validate_email(opts)
+  end
+
   def user_update_changeset(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :username, :group_id, :roles])
     |> validate_username(opts)
     |> validate_email(opts)
-    |> validate_required(opts)
+    |> validate_roles(opts)
   end
 
   defp validate_email(changeset, opts) do

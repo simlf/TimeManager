@@ -32,12 +32,46 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "show.json", user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
+  def update_me(conn, %{"user" => user_params}) do
+    active_user_id = conn.assigns[:current_user].id
+    user = Accounts.get_user!(active_user_id)
 
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+    with {:ok, %User{} = user} <- Accounts.update_me_user(user, user_params) do
       render(conn, "show.json", user: user)
     end
+  end
+
+  # Function used by ["MANAGER", "SUPER MANAGER"] for update user
+  def update(conn, %{"id" => id, "user" => user_params}) do
+    error_message = ""
+    active_manager = conn.assigns[:current_user]
+    user = Accounts.get_user!(id)
+
+    case {Enum.member?(active_manager.roles, "SUPER MANAGER"), Enum.member?(active_manager.roles, "MANAGER")} do
+      {true, _} ->
+        if Enum.member?(user.roles, "SUPER MANAGER") do
+          IO.inspect("je passe bien la")
+          error_message = "Cet utilisateur ne fait pas partie de votre groupe"
+        end
+      {_, true} ->
+        if !(Enum.member?(user.roles, "EMPLOYEE")) || user.group_id != active_manager.group_id do
+          error_message = "Cet utilisateur ne fait pas partie de votre groupe"
+        else
+          user_params = Map.update!(user_params, :roles, ["EMPLOYEE"], fn _ -> ["EMPLOYEE"] end)
+          user_params = Map.update!(user_params, :group_id, active_manager.group_id, fn _ -> active_manager.group_id end)
+        end
+      end
+      IO.inspect(error_message)
+      if error_message == "" do
+        with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+          render(conn, "show.json", user: user)
+        end
+      else
+        conn
+        |> put_status(:forbidden)
+        |> json(%{error: error_message})
+        |> halt()
+      end
   end
 
   def password_update(conn, %{"id" => id, "user" => user_params}) do
