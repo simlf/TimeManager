@@ -1,14 +1,26 @@
 <template>
-  <div>
-    <h1>{{ startDateTime }}</h1>
-    <h1>{{ clockIn }}</h1>
+  <div v-if="loading">
+    <p>Loading...</p>
   </div>
-
-  <div>
-    <button @click="refresh">Refresh</button>
-    <br />
-    <button @click="clock">Clock</button>
+  <div v-else>
+    <div>
+      <h1>{{ textToDisplay }}</h1>
+    </div>
+    <div class="button-container">
+      <button
+        v-if="clockIn == true || wasInBreakTime == true"
+        @click="breakTime"
+        class="breakTime-button"
+      >
+        {{ wasInBreakTime ? 'Back to work' : 'Break Time' }}
+      </button>
+      <button v-if="!clockIn && !wasInBreakTime" @click="startClock" class="clock-button">
+        Start
+      </button>
+      <button v-else @click="stopClock" class="clock-button">Stop</button>
+    </div>
   </div>
+  <!-- <button @click="refresh" class="breakTime-button">Refresh</button> -->
 </template>
 
 <script setup lang="ts">
@@ -24,37 +36,97 @@ const user_id = 1
 const API_URL_clock = `http://localhost:4000/api/clocks/${user_id}`
 const startDateTime = ref('')
 const clockIn = ref(false)
+const wasInBreakTime = ref(false) //Recupérer le dernier working time et voir si il est considéré comme étant endOfDay == false
+const loading = ref(true)
+
+const textToDisplay = ref('Get information ...')
 const instance = axios.create()
 instance.interceptors.request.use((config) => {
   console.log('Corps de la requête :', config.data)
   return config
 })
 
-const clock = () => {
-  clockIn.value = !clockIn.value
-  updateClock()
+const welcomeMessage = 'Don’t forget to clock in at the start of your shift !'
+
+const startClock = () => {
+  clock()
 }
 
+const stopClock = () => {
+  if (wasInBreakTime.value) {
+    wasInBreakTime.value = false
+  } else {
+    clock()
+  }
+}
+// Fonction pour calculer le temps travaillé
+const calculateTimeWorked = () => {
+  const currentTime = new Date()
+  const startTime = new Date(startDateTime.value)
+
+  const differenceInMilliseconds = currentTime.getTime() - startTime.getTime()
+
+  const hours = Math.floor(differenceInMilliseconds / (1000 * 60 * 60))
+  const minutes = Math.floor((differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60))
+  const seconds = Math.floor((differenceInMilliseconds % (1000 * 60)) / 1000)
+
+  return {
+    hours,
+    minutes,
+    seconds
+  }
+}
+
+// Actualisation périodique de l'affichage du temps travaillé
+setInterval(() => {
+  if (clockIn.value && wasInBreakTime.value == false) {
+    const { hours, minutes, seconds } = calculateTimeWorked()
+    updateDisplayMessage(
+      `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
+        2,
+        '0'
+      )} m ${String(seconds).padStart(2, '0')} s`
+    )
+  }
+}, 1000)
+
+const updateDisplayMessage = (text: string) => {
+  textToDisplay.value = text
+}
+const clock = () => {
+  loading.value = true;
+  clockIn.value = !clockIn.value
+  startDateTime.value = new Date().toISOString().split('.')[0]
+  updateClock()
+}
+const breakTime = () => {
+  clock()
+  wasInBreakTime.value = !wasInBreakTime.value
+}
 const getClockSuccess = (data: { time: string; status: boolean }) => {
   console.log('Get - success')
   startDateTime.value = data.time
   clockIn.value = data.status
-  console.log(`New clock state: time = ${startDateTime.value} & status = ${clockIn.value}`);
-
+  console.log(`New clock state: time = ${startDateTime.value} & status = ${clockIn.value}`)
 }
 
 const requestFailed = (error: Error) => {
   console.log(error)
 }
 
-const refresh = () => {
+const refresh = async () => {
+  loading.value = true
   console.log('Try to get clock with usr_id : ' + user_id)
-  instance
+  await instance
     .get(API_URL_clock)
     .then((response: AxiosResponse) => {
       getClockSuccess(response.data.data)
     })
     .catch(requestFailed)
+  if (clockIn.value == false && wasInBreakTime.value == false) {
+    updateDisplayMessage(welcomeMessage)
+  }
+  loading.value = false
 }
 
 const updateSuccess = () => {
@@ -64,18 +136,50 @@ const updateSuccess = () => {
 
 const updateClock = () => {
   console.log('Try to update clock with usr_id : ' + user_id)
-  startDateTime.value = ''
   const currentDate = new Date().toISOString().split('.')[0]
   const clock = {
     status: clockIn.value,
     time: currentDate,
-    user_id: 1
+    user_id: user_id
   }
-  console.log(clock)
-  instance.put(API_URL_clock, {clock}, { headers }).then(updateSuccess).catch(requestFailed)
+  instance.put(API_URL_clock, { clock }, { headers }).then(updateSuccess).catch((requestFailed))
 }
 
 refresh()
 </script>
 
-<style scoped></style>
+<style scoped>
+.clock-button {
+  background-color: black;
+  border: 2px solid black;
+  color: white;
+  padding: 10px 20px;
+  margin: 1rem;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.clock-button:hover {
+  background-color: #505050;
+}
+
+.breakTime-button {
+  background-color: white;
+  border: 2px solid black;
+  color: black;
+  padding: 10px 20px;
+  margin: 1rem;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+.breakTime:hover {
+  background-color: #8c8a8a;
+}
+
+.button-container {
+  display: flex;
+  align-items: center; /* Centre verticalement les boutons */
+}
+</style>

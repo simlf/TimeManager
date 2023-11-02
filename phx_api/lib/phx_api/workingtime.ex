@@ -36,9 +36,6 @@ defmodule TimeManager.Workingtime do
   """
   def get_workingtimes!(id), do: Repo.get!(Workingtimes, id)
 
-
-
-
   @doc """
   Creates a workingtimes.
 
@@ -104,17 +101,51 @@ defmodule TimeManager.Workingtime do
     Workingtimes.changeset(workingtimes, attrs)
   end
 
-  def list_workingtimes_filtered(user_id, start, end_time) when is_binary(user_id) and is_binary(start) and is_binary(end_time) do
-    query = from(w in Workingtimes,
-                where: w.user_id == ^user_id and
-                       w.start >= ^start and
-                       w.end_time <= ^end_time,
-                order_by: [desc: w.start],
-                select: w,
-               )
+  def list_workingtimes_filtered(user_id, start_time, end_time)
+      when is_binary(user_id) and is_binary(start_time) and is_binary(end_time) do
+    query =
+      from(w in Workingtimes,
+        where:
+          w.user_id == ^user_id and
+            w.start_time >= ^start_time and
+            w.end_time <= ^end_time,
+        order_by: [desc: w.start_time],
+        select: w
+      )
+
     query_with_preload = Ecto.Query.preload(query, :user)
     workingtimes = Repo.all(query_with_preload)
     workingtimes
   end
 
+ def list_workingtimes_filtered_by_current_working_day(user_id, previous_day, current_date)
+      when is_binary(user_id) and is_binary(previous_day) and is_binary(current_date) do
+    startTimeOfTheCurrentDay =
+      from(w in Workingtimes,
+        where:
+          w.user_id == ^user_id and
+            w.start_time >= ^previous_day and
+            w.end_time <= ^current_date and
+            w.is_pause == false,
+        order_by: [desc: w.start_time],
+        select: w.start_time,
+        limit: 1
+      )
+    case Repo.one(startTimeOfTheCurrentDay) do
+      %DateTime{}  = start_time ->
+        query =
+          from(w in Workingtimes,
+            where:
+              w.user_id == ^user_id and
+                w.end_time <= ^current_date and
+                w.start_time >= ^start_time,
+            select: w
+          )
+        query_with_preload = Ecto.Query.preload(query, :user)
+        workingtimes = Repo.all(query_with_preload)
+        workingtimes
+      nil ->
+        []
+    end
+  end
 end
