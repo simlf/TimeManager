@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import {ref} from 'vue';
+import { ref } from 'vue';
 import UserForm from './AuthForm.vue';
 import { useAuthStore } from "@/stores/auth.store";
 import AlertBox from '@/components/utils/AlertBox.vue';
@@ -18,7 +18,7 @@ const loginUser = (data: { email: string; password: string }) => {
 
 <template>
     <div v-if="!authStore.isAuthenticated">
-        <button @click="showLoginForm = true">Login</button>
+        <!-- <button @click="showLoginForm = true">Login</button> -->
         <div v-show="showLoginForm">
             <UserForm formTitle="Login" submitLabel="Login" @form-submit="loginUser" />
             <AlertBox v-if="authStore.error" type="error" :message="errorMessage" @dismiss="clearError" />

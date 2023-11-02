@@ -7,7 +7,7 @@ const router = createRouter({
     {
       path: '/',
       name: 'Home',
-      component: () => import('@/App.vue')
+      component: () => import('@/components/user/User.vue'),
     },
     {
       path: '/chartManager',
