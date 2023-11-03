@@ -43,34 +43,27 @@ defmodule TimeManagerWeb.UserController do
 
   # Function used by ["MANAGER", "SUPER MANAGER"] for update user
   def update(conn, %{"id" => id, "user" => user_params}) do
-    error_message = ""
+    {:ok, agent} = Agent.start_link(fn -> {true} end)
     active_manager = conn.assigns[:current_user]
     user = Accounts.get_user!(id)
 
     case {Enum.member?(active_manager.roles, "SUPER MANAGER"), Enum.member?(active_manager.roles, "MANAGER")} do
       {true, _} ->
         if Enum.member?(user.roles, "SUPER MANAGER") do
-          IO.inspect("je passe bien la")
-          error_message = "Cet utilisateur ne fait pas partie de votre groupe"
+          Agent.update(agent, fn {value} -> {false} end)
         end
-      {_, true} ->
-        if !(Enum.member?(user.roles, "EMPLOYEE")) || user.group_id != active_manager.group_id do
-          error_message = "Cet utilisateur ne fait pas partie de votre groupe"
-        else
-          user_params = Map.update!(user_params, :roles, ["EMPLOYEE"], fn _ -> ["EMPLOYEE"] end)
-          user_params = Map.update!(user_params, :group_id, active_manager.group_id, fn _ -> active_manager.group_id end)
+        {_, true} ->
+          if !(Enum.member?(user.roles, "EMPLOYEE")) || user.group_id != active_manager.group_id do
+          Agent.update(agent, fn {value} -> {false} end)
         end
       end
-      IO.inspect(error_message)
-      if error_message == "" do
+
+      if Agent.get(agent, fn {value} -> value end) do
         with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
           render(conn, "show.json", user: user)
         end
       else
-        conn
-        |> put_status(:forbidden)
-        |> json(%{error: error_message})
-        |> halt()
+        send_resp(conn, :forbidden, "Vous ne pouvez pas update cet utilisateur")
       end
   end
 
