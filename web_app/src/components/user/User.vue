@@ -1,30 +1,19 @@
-<script lang="ts">
-import { defineComponent } from 'vue';
-import Login from './Login.vue';
+<script setup lang="ts">
+import { RouterView } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.store'
 
-export default defineComponent({
-  components: {
-    Login,
-  },
-  data() {
-    return {
-      isLoggedIn: false,
-    };
-  },
-});
+const authStore = useAuthStore()
 </script>
 
 <template>
   <div>
-    <div v-if="!isLoggedIn">
-        <Login></Login>
-        <p>Not logged in</p>
+    <div v-if="!authStore.isAuthenticated">
+      <RouterView></RouterView>
     </div>
     <div v-else>
-        <p>Logged in</p>
+      <p>Welcome back {{ authStore.email }}</p>
     </div>
-</div>
+  </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

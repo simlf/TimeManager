@@ -1,29 +1,71 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.store'
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
+      path: '/',
+      name: 'Home',
+      component: () => import('@/components/utils/Home.vue')
+    },
+    {
       path: '/chartManager',
       name: 'chartManager',
-      component: () => import('../components/ChartManager.vue')
-    }
-    ,
+      meta: { requiresAuth: true },
+      component: () => import('@/components/ChartManager.vue')
+    },
     {
-      path: '/clockManager/:username',
+      path: '/clockManager/:id',
       name: 'clockManager',
+      meta: { requiresAuth: true },
       component: () => import('../components/ClockManager.vue')
     },
     {
       path: '/login',
-      name: 'login',
-      component: () => import('../components/user/Login.vue')
+      name: 'Login',
+      component: () => import('@/components/user/Login.vue')
     },
     {
       path: '/register',
-      name: 'register',
-      component: () => import('../components/user/Register.vue')
+      name: 'Register',
+      component: () => import('@/components/user/Register.vue')
     },
+    {
+      path: '/workingTimes',
+      meta: { requiresAuth: true },
+      name: 'workingTimes',
+      component: () => import('../components/WorkingTimes.vue')
+    },
+    {
+      path: '/updateUser',
+      meta: { requiresAuth: true },
+      name: 'UpdateUser',
+      component: () => import('@/components/user/UpdateUser.vue')
+    },
+    {
+      path: '/:pathMatch(.*)*',
+      name: 'Not Found',
+      component: () => import('@/components/utils/PageNotFound.vue')
+    }
   ]
+})
+
+router.beforeEach(async (to, from, next) => {
+  const requiresAuth = to.meta.requiresAuth
+  const authStore = useAuthStore()
+
+  const isAuthenticated = await authStore.checkAuth()
+
+  if (requiresAuth && !isAuthenticated) {
+    if (to.name !== 'Login') {
+      next({ name: 'Login' })
+    } else {
+      next()
+    }
+  } else {
+    next()
+  }
 })
 
 export default router

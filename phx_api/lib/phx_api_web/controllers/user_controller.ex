@@ -95,4 +95,15 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :new, error_message: "Invalid email or password")
     end
   end
+
+  def check_auth(conn, _params) do
+    if user = conn.assigns[:current_user] do
+      render(conn, "show.json", user: user)
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Not authenticated"})
+    end
+  end
+
 end

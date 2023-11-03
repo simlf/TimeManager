@@ -1,29 +1,28 @@
+<script setup lang="ts">
+import AuthForm from './AuthForm.vue'
+import { useAuthStore } from '@/stores/auth.store'
+import AlertBox from '@/components/utils/AlertBox.vue'
+import useMessageHandling from '@/composables/useMessageHandling'
+
+const authStore = useAuthStore()
+
+const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHandling()
+const createUser = (data: { username: string; email: string; password: string }) => {
+  authStore.register(data)
+}
+</script>
+
 <template>
-  <div>
+  <div v-if="!authStore.isAuthenticated">
     <div>
-      <UserForm formTitle="Register Form" submitLabel="Register" @form-submit="createUser" />
+      <AlertBox v-if="authStore.error" type="error" :message="errorMessage" @dismiss="clearError" />
+      <AlertBox
+        v-if="authStore.success"
+        type="success"
+        :message="successMessage"
+        @dismiss="clearSuccess"
+      />
+      <AuthForm formTitle="Register" submitLabel="Register" @form-submit="createUser" />
     </div>
   </div>
 </template>
-
-<script lang="ts">
-import { defineComponent } from 'vue';
-import UserForm from './UserForm.vue';
-
-export default defineComponent({
-  components: {
-    UserForm
-  },
-  methods: {
-    createUser(data: { email: string; password: string }) {
-      // TODO: Perform register logic with API
-      console.log('Register:', data);
-      // Redirect to root page
-      this.$router.push('/');
-    },
-  },
-});
-</script>
-
-<style scoped>
-</style>
