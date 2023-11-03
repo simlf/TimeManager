@@ -7,7 +7,7 @@ defmodule TimeManager.Accounts do
   alias TimeManager.Repo
 
   alias TimeManager.Accounts.{User, UserToken}
-
+  alias TimeManager.Groups.Group
   ## Database getters
 
   defp base_query() do
@@ -102,6 +102,27 @@ defmodule TimeManager.Accounts do
   end
 
   @doc """
+  User update himself.
+
+  ## Examples
+
+      iex> update_me_user(user, %{field: new_value})
+      {:ok, %Clock{}}
+
+      iex> update_me_user(user, %{field: bad_value})
+      {:error, %Ecto.Changeset{}}
+
+  """
+  def update_me_user(%User{} = user, attrs) do
+    email = Map.get(attrs, "email", user.email)
+    username = Map.get(attrs, "username", user.username)
+
+    user
+    |> User.user_update_changeset_himself(%{email: email, username: username})
+    |> Repo.update()
+  end
+
+  @doc """
   Updates a user.
 
   ## Examples
@@ -116,10 +137,20 @@ defmodule TimeManager.Accounts do
   def update_user(%User{} = user, attrs) do
     email = Map.get(attrs, "email", user.email)
     username = Map.get(attrs, "username", user.username)
+    roles = Map.get(attrs, "roles", user.roles)
+    group_id = Map.get(attrs, "group_id", user.group_id)
+
     user
-    |> User.user_update_changeset(%{email: email, username: username})
+    |> User.user_update_changeset(%{email: email, username: username, roles: roles, group_id: group_id})
     |> Repo.update()
   end
+
+
+  # def update_user_group_id(%User{} = user, user_params) do
+  #   user
+  #   |> User.changeset(user_params)
+  #   |> Repo.update()
+  # end
 
   @doc """
   Updates a user.
@@ -182,4 +213,19 @@ defmodule TimeManager.Accounts do
     Repo.delete_all(UserToken.token_and_context_query(token, "session"))
     :ok
   end
+
+  def get_group_manager(user) do
+    group =
+      from(g in Group,
+        where: g.manager_id == ^user.id,
+        select: g
+      )
+    |> TimeManager.Repo.one()
+
+    case group do
+      %Group{} = group -> group.manager_id
+      _ -> nil
+    end
+  end
+
 end

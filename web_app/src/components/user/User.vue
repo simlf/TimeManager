@@ -1,24 +1,19 @@
 <script setup lang="ts">
-import {RouterView} from "vue-router";
-import {useAuthStore} from "@/stores/auth.store";
-import Login from "@/components/user/Login.vue";
-import WorkingTimes from "../WorkingTimes.vue";
+import { RouterView } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.store'
 
-const authStore = useAuthStore();
+const authStore = useAuthStore()
 </script>
 
 <template>
-    <div>
-        <div v-if="!authStore.isAuthenticated">
-            <!-- <RouterView></RouterView> -->
-            <Login></Login>
-        </div>
-        <div v-else>
-            <p>Welcome back {{ authStore.email }}</p>
-            <WorkingTimes></WorkingTimes>
-        </div>
+  <div>
+    <div v-if="!authStore.isAuthenticated">
+      <RouterView></RouterView>
     </div>
+    <div v-else>
+      <p>Welcome back {{ authStore.email }}</p>
+    </div>
+  </div>
 </template>
 
-<style scoped>
-</style>
+<style scoped></style>

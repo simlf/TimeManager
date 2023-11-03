@@ -21,7 +21,8 @@ services:
     ports:
       - "5173:5173"
     volumes:
-      - .:/web_app
+      - ./web_app:/web_app
+      - /web_app/node_modules
     depends_on:
       - api
     env_file: ./.env
