@@ -13,22 +13,22 @@
 
 alias TimeManager.Repo
 alias TimeManager.Accounts.User
+alias TimeManager.Groups.Group
 alias TimeManager.Clocks.Clock
 alias TimeManager.Workingtime.Workingtimes
 
 users = [
-  %{username: "User1", password: "password1", email: "user1@example.com"},
-  %{username: "User2", password: "password2", email: "user2@example.com"},
-  %{username: "User3", password: "password3", email: "user3@example.com"},
-  %{username: "User4", password: "password4", email: "user4@example.com"},
-  %{username: "User5", password: "password5", email: "user5@example.com"},
-  %{username: "User6", password: "password6", email: "user6@example.com"},
-  %{username: "User7", password: "password7", email: "user7@example.com"},
-  %{username: "User8", password: "password8", email: "user8@example.com"},
-  %{username: "User9", password: "password9", email: "user9@example.com"},
-  %{username: "User10", password: "password10", email: "user10@example.com"}
-]
-
+  %{username: "The patron", password: "PatronPassword", email: "patron@gotham.com", roles: ["SUPER MANAGER"] },
+  %{username: "The patron 2", password: "PatronPassword", email: "patron2@gotham.com", roles: ["SUPER MANAGER"] },
+  %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", roles: ["MANAGER"]},
+  %{username: "The manager 2", password: "ManagerPassword", email: "manager2@gotham.com", roles: ["MANAGER"]},
+  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", roles: ["EMPLOYEE"]},
+  %{username: "The employee 2", password: "EmployeePassword", email: "employee2@gotham.com", roles: ["EMPLOYEE"]},
+  %{username: "User2", password: "password2", email: "user2@example.com", roles: ["EMPLOYEE"]},
+  %{username: "User3", password: "password3", email: "user3@example.com", roles: ["EMPLOYEE"]},
+  %{username: "User4", password: "password4", email: "user4@example.com", roles: ["EMPLOYEE"]},
+  ]
+  
 # Insert users
 Repo.transaction(fn ->
   Enum.each(users, fn user_params ->
@@ -41,6 +41,24 @@ Repo.transaction(fn ->
     end
   end)
 end)
+
+
+groups = [
+  %{name: "Joker lover", users_id: [], manager_id: 3},
+]
+
+Repo.transaction(fn ->
+  Enum.each(groups, fn user_params ->
+    group = %Group{}
+    |> Group.changeset(user_params)
+    |> Repo.insert()
+    case group do
+      {:ok, _} -> IO.puts("Group created successfully")
+      {:error, changeset} -> IO.inspect(changeset.errors)
+    end
+  end)
+end)
+
 
 clocks = [
   %{time: "2023-11-02 08:30:00", status: true, user_id: 1},
@@ -69,6 +87,7 @@ Repo.transaction(fn ->
 end)
 
 IO.puts("Clocks seeds inserted successfully")
+
 
 workingTimes = [
   %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 1, is_pause: false},

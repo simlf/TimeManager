@@ -28,11 +28,16 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:userId", ClockController, :showClocksByUsserId
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
+
+    post "/groups", GroupController, :create
+    post "/groups/add_user/:id", GroupController, :add_user_to_group
+
   end
 
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_user]
 
+    put "/users/me", UserController, :update_me
     resources "/users", UserController, except: [:edit, :create]
     put "/users/update_password/:id", UserController, :password_update
   end
