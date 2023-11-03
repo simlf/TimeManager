@@ -2,7 +2,7 @@ FROM node:18
 ENV HOST=0.0.0.0
 
 # Définissez le répertoire de travail dans le conteneur
-WORKDIR /app
+WORKDIR /web_app
 
 # Copiez le package.json et le package-lock.json dans le conteneur
 COPY package*.json ./

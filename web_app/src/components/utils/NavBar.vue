@@ -15,11 +15,7 @@
         </div>
         <div class="flex flex-1 items-center justify-center sm:items-stretch sm:justify-start">
           <div class="flex flex-shrink-0 items-center">
-            <img
-              class="h-8 w-auto"
-              src="https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600"
-              alt="Your Company"
-            />
+            <img class="h-10 w-auto" src="/appLogo.png" alt="Time Manager Logo" />
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
             <router-link
@@ -38,19 +34,18 @@
             >
               Chart Manager
             </router-link>
-            <!--              TODO: Get userId dinamyccaly          -->
             <router-link
-              :to="{ name: 'clockManager', params: { username: '1' } }"
+              :to="{ name: 'clockManager', params: { id: authStore.id } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="
-                getLinkClass($route.name === 'clockManager' && $route.params.username === '1')
-              "
+              :class="getLinkClass($route.name === 'clockManager')"
             >
               Clock Manager
             </router-link>
           </div>
         </div>
+        <!-- If user is auth, display the avatar and the dropdown to view profile and signout -->
         <div
+          v-if="authStore.isAuthenticated"
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
         >
           <button
@@ -105,16 +100,29 @@
                   >
                 </MenuItem>
                 <!-- TODO: Handle Signout -->
-                <MenuItem v-slot="{ active }">
-                  <a
-                    href="#"
+                <MenuItem as="router-link" v-slot="{ active }">
+                  <router-link
+                    to="/login"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >Sign out</a
+                    >Sign out</router-link
                   >
                 </MenuItem>
               </MenuItems>
             </transition>
           </Menu>
+        </div>
+        <!-- If user is not auth, display a login button -->
+        <div
+          v-else
+          class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
+        >
+          <button
+            as="router-link"
+            type="button"
+            class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          >
+            <router-link to="/login">Login</router-link>
+          </button>
         </div>
       </div>
     </div>
@@ -138,12 +146,11 @@
             Chart Manager
           </DisclosureButton>
         </router-link>
-        <!--              TODO: Get userId dinamyccaly          -->
-        <router-link :to="{ name: 'clockManager', params: { username: '1' } }">
+        <router-link :to="{ name: 'clockManager', params: { id: authStore.id } }">
           <DisclosureButton
             as="a"
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'clockManager' && $route.params.username === '1')"
+            :class="getLinkClass($route.name === 'clockManager')"
           >
             Clock Manager
           </DisclosureButton>
@@ -164,6 +171,14 @@ import {
   MenuItems
 } from '@headlessui/vue'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { useAuthStore } from '@/stores/auth.store'
+import { onMounted } from 'vue'
+
+const authStore = useAuthStore()
+
+onMounted(async () => {
+  await authStore.checkAuth()
+})
 
 const getLinkClass = (isActive) => {
   if (isActive) {

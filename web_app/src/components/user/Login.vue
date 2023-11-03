@@ -24,18 +24,16 @@ const loginUser = (data: { email: string; password: string }) => {
       :message="successMessage"
       @dismiss="clearSuccess"
     />
-    <div v-show="showLoginForm">
-      <AuthForm formTitle="Login" submitLabel="Login" @form-submit="loginUser" />
-      <p class="text-center text-sm text-gray-500">
-        Don't have an account ?
-        {{ ' ' }}
-        <RouterLink
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          to="/register"
-        >
-          Register
-        </RouterLink>
-      </p>
-    </div>
+    <AuthForm formTitle="Login" submitLabel="Login" @form-submit="loginUser" />
+    <p class="text-center text-sm text-gray-500">
+      Don't have an account ?
+      {{ ' ' }}
+      <RouterLink
+        class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+        to="/register"
+      >
+        Register
+      </RouterLink>
+    </p>
   </div>
 </template>

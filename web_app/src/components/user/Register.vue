@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import UserForm from './AuthForm.vue'
+import AuthForm from './AuthForm.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
@@ -15,7 +15,6 @@ const createUser = (data: { username: string; email: string; password: string })
 <template>
   <div v-if="!authStore.isAuthenticated">
     <div>
-      <UserForm formTitle="Register" submitLabel="Register" @form-submit="createUser" />
       <AlertBox v-if="authStore.error" type="error" :message="errorMessage" @dismiss="clearError" />
       <AlertBox
         v-if="authStore.success"
@@ -23,6 +22,7 @@ const createUser = (data: { username: string; email: string; password: string })
         :message="successMessage"
         @dismiss="clearSuccess"
       />
+      <AuthForm formTitle="Register" submitLabel="Register" @form-submit="createUser" />
     </div>
   </div>
 </template>
