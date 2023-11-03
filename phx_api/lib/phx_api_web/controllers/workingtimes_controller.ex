@@ -76,6 +76,11 @@ end
     end
   end
 
+  def get_last_workingtime_by_user_id(conn, %{"user_id" => user_id}) do
+        workingtime = Workingtime.get_last_or_create_workingtime(user_id)
+        render(conn, "show.json", workingtime: workingtime)
+  end
+
   def get_time_from_workingtimes_by_user_id(conn, %{"user_id" => user_id})do
     start_time = conn.query_params["start_time"]
     end_time = conn.query_params["end_time"]
@@ -93,6 +98,7 @@ end
 
     workingtimes = Workingtime.list_workingtimes_filtered_by_current_working_day(user_id, previous_day_formatted, current_date_formatted)
     total_seconds = calculate_total_times(workingtimes)
+    IO.inspect(total_seconds, label: "total seconds")
     render(conn, "showTimes.json", seconds_to_hms(total_seconds))
   end
 
@@ -110,7 +116,7 @@ end
 
     start_time = Timex.parse!(Timex.format!(workingtime.start_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
     end_time = Timex.parse!(Timex.format!(workingtime.end_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
-    time_worked = Timex.diff(end_time, start_time, :second) # Utilisez :second (au singulier)
+    time_worked = Timex.diff(end_time, start_time, :second)
 
     time_worked
   end

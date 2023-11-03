@@ -118,6 +118,33 @@ defmodule TimeManager.Workingtime do
     workingtimes
   end
 
+def get_last_or_create_workingtime(user_id) when is_binary(user_id) do
+  # Chercher le dernier working time existant pour l'utilisateur
+  last_workingtime =
+    from(w in Workingtimes,
+      where: w.user_id == ^user_id,
+      order_by: [desc: w.start_time],
+      select: w,
+      limit: 1
+    )
+    |> Ecto.Query.preload(:user)
+    |> Repo.one()
+
+  case last_workingtime do
+    nil ->  # Aucun working time trouvé, création d'un nouveau
+      new_workingtime = %Workingtimes{
+        user_id: user_id,
+        start_time: DateTime.now(),
+        is_pause: false
+      }
+      {:ok, created_workingtime} = Repo.insert(new_workingtime)
+      created_workingtime
+
+    _ ->
+      last_workingtime  # Utilisez le dernier working time existant
+  end
+end
+
  def list_workingtimes_filtered_by_current_working_day(user_id, previous_day, current_date)
       when is_binary(user_id) and is_binary(previous_day) and is_binary(current_date) do
     startTimeOfTheCurrentDay =
@@ -125,10 +152,9 @@ defmodule TimeManager.Workingtime do
         where:
           w.user_id == ^user_id and
             w.start_time >= ^previous_day and
-            w.end_time <= ^current_date and
             w.is_pause == false,
         order_by: [desc: w.start_time],
-        select: w.start_time,
+        select: w.end_time,
         limit: 1
       )
     case Repo.one(startTimeOfTheCurrentDay) do
@@ -137,7 +163,6 @@ defmodule TimeManager.Workingtime do
           from(w in Workingtimes,
             where:
               w.user_id == ^user_id and
-                w.end_time <= ^current_date and
                 w.start_time >= ^start_time,
             select: w
           )
