@@ -106,4 +106,17 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  def log_out(conn, _params) do
+    if user = conn.assigns[:current_user] do
+      conn = TimeManager.UserAuth.log_out_user(conn)
+      conn
+      |> put_status(:ok)
+      |> json(%{message: "Logged out successfully"})
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Not authenticated"})
+    end
+  end
+
 end
