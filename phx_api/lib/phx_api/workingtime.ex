@@ -118,59 +118,83 @@ defmodule TimeManager.Workingtime do
     workingtimes
   end
 
-def get_last_or_create_workingtime(user_id) when is_binary(user_id) do
-  # Chercher le dernier working time existant pour l'utilisateur
-  last_workingtime =
-    from(w in Workingtimes,
-      where: w.user_id == ^user_id,
-      order_by: [desc: w.start_time],
-      select: w,
-      limit: 1
-    )
-    |> Ecto.Query.preload(:user)
-    |> Repo.one()
-
-  case last_workingtime do
-    nil ->  # Aucun working time trouvé, création d'un nouveau
-      new_workingtime = %Workingtimes{
-        user_id: user_id,
-        start_time: DateTime.now(),
-        is_pause: false
-      }
-      {:ok, created_workingtime} = Repo.insert(new_workingtime)
-      created_workingtime
-
-    _ ->
-      last_workingtime  # Utilisez le dernier working time existant
-  end
-end
-
- def list_workingtimes_filtered_by_current_working_day(user_id, previous_day, current_date)
-      when is_binary(user_id) and is_binary(previous_day) and is_binary(current_date) do
-    startTimeOfTheCurrentDay =
+  def list_workingtimes_filtered_focus_on_pause(user_id, start_time, end_time, is_pause)
+      when is_binary(user_id) and is_binary(start_time) and is_binary(end_time) do
+    query =
       from(w in Workingtimes,
         where:
           w.user_id == ^user_id and
-            w.start_time >= ^previous_day and
-            w.is_pause == false,
+            w.start_time >= ^start_time and
+            w.end_time <= ^end_time and
+            w.is_pause == ^is_pause,
         order_by: [desc: w.start_time],
-        select: w.end_time,
+        select: w
+      )
+
+    query_with_preload = Ecto.Query.preload(query, :user)
+    workingtimes = Repo.all(query_with_preload)
+    workingtimes
+  end
+
+  def get_last_workingtime(user_id) when is_binary(user_id) do
+    # Chercher le dernier working time existant pour l'utilisateur
+    last_workingtime =
+      from(w in Workingtimes,
+        where: w.user_id == ^user_id,
+        order_by: [desc: w.start_time],
+        select: w,
         limit: 1
       )
-    case Repo.one(startTimeOfTheCurrentDay) do
-      %DateTime{}  = start_time ->
-        query =
-          from(w in Workingtimes,
-            where:
-              w.user_id == ^user_id and
-                w.start_time >= ^start_time,
-            select: w
-          )
-        query_with_preload = Ecto.Query.preload(query, :user)
-        workingtimes = Repo.all(query_with_preload)
-        workingtimes
+      |> Ecto.Query.preload(:user)
+      |> Repo.one()
+
+    case last_workingtime do
+      # Aucun working time trouvé
       nil ->
         []
+      _ ->
+        last_workingtime
     end
   end
+
+
+def list_workingtimes_filtered_by_current_working_day(user_id)
+      when is_binary(user_id) do
+    last_start =
+      from(w in TimeManager.Workingtime.Workingtimes,
+        where: w.type == ^:start_work and w.user_id == ^user_id,
+        order_by: [desc: w.start_time],
+        limit: 1
+      )
+      |> Ecto.Query.preload(:user)
+      |> TimeManager.Repo.one()
+
+    last_end =
+      from(w in TimeManager.Workingtime.Workingtimes,
+        where: w.type == ^:end_work and w.user_id == ^user_id,
+        order_by: [desc: w.start_time],
+        limit: 1
+      )
+      |> Ecto.Query.preload(:user)
+      |> TimeManager.Repo.one()
+
+    filtered_workingtimes =
+      cond do
+      !is_nil(last_start) && (is_nil(last_end) || last_start.start_time > last_end.start_time) ->
+        IO.puts("Le dernier 'end' est vide ou le dernier 'start' est plus récent que le dernier 'end'.")
+        IO.puts("On peut donc se fier au start_time du dernier start.")
+        IO.puts("On retourne tous les enregistrements à partir de start_time à maintenant.")
+        end_time = DateTime.truncate(DateTime.utc_now(), :second)
+        formatted_end_time = DateTime.to_string(end_time) |> String.slice(0..-2)
+        formatted_start_time = DateTime.to_string(last_start.start_time) |> String.slice(0..-2)
+
+        list_workingtimes_filtered_focus_on_pause(user_id, formatted_start_time, formatted_end_time, false)
+
+      true ->
+        IO.puts("Par defaut on retourne aucun enregistrement.")
+        []
+    end
+    filtered_workingtimes
+  end
+
 end

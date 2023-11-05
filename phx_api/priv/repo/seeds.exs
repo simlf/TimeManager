@@ -27,8 +27,9 @@ users = [
   %{username: "User2", password: "password2", email: "user2@example.com", roles: ["EMPLOYEE"]},
   %{username: "User3", password: "password3", email: "user3@example.com", roles: ["EMPLOYEE"]},
   %{username: "User4", password: "password4", email: "user4@example.com", roles: ["EMPLOYEE"]},
+  %{username: "User5", password: "password5", email: "user5@example.com", roles: ["EMPLOYEE"]},
   ]
-  
+
 # Insert users
 Repo.transaction(fn ->
   Enum.each(users, fn user_params ->
@@ -61,16 +62,16 @@ end)
 
 
 clocks = [
-  %{time: "2023-11-02 08:30:00", status: true, user_id: 1},
-  %{time: "2023-11-02 09:00:00", status: true, user_id: 2},
-  %{time: "2023-11-02 09:30:00", status: true, user_id: 3},
-  %{time: "2023-11-02 09:00:00", status: true, user_id: 4},
-  %{time: "2023-11-02 10:30:00", status: true, user_id: 5},
-  %{time: "2023-11-02 09:00:00", status: true, user_id: 6},
-  %{time: "2023-11-02 08:30:00", status: true, user_id: 7},
-  %{time: "2023-11-02 12:00:00", status: true, user_id: 8},
-  %{time: "2023-11-02 09:30:00", status: true, user_id: 9},
-  %{time: "2023-11-02 08:00:00", status: true, user_id: 10}
+  %{time: "2023-11-02 08:30:00", status: false, user_id: 1},
+  %{time: "2023-11-02 09:00:00", status: false, user_id: 2},
+  %{time: "2023-11-02 09:30:00", status: false, user_id: 3},
+  %{time: "2023-11-02 09:00:00", status: false, user_id: 4},
+  %{time: "2023-11-02 10:30:00", status: false, user_id: 5},
+  %{time: "2023-11-02 09:00:00", status: false, user_id: 6},
+  %{time: "2023-11-02 08:30:00", status: false, user_id: 7},
+  %{time: "2023-11-02 12:00:00", status: false, user_id: 8},
+  %{time: "2023-11-02 09:30:00", status: false, user_id: 9},
+  %{time: "2023-11-02 08:00:00", status: false, user_id: 10}
 ]
 
 # Insert clocks
@@ -90,96 +91,15 @@ IO.puts("Clocks seeds inserted successfully")
 
 
 workingTimes = [
-  %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 1, is_pause: false},
-  %{start_time: "2023-11-03T09:00:00Z", end_time: "2023-11-03T12:00:00Z", user_id: 1, is_pause: true},
-  %{start_time: "2023-11-03T13:00:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 1, is_pause: true},
+  %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 1, is_pause: false, type: "start_work"},
+  %{start_time: "2023-11-03T09:00:00Z", end_time: "2023-11-03T12:00:00Z", user_id: 1, is_pause: false, type: "basic_work"},
+  %{start_time: "2023-11-03T13:00:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 1, is_pause: false, type: "end_work"},
 
-  %{start_time: "2023-11-03T06:45:00Z", end_time: "2023-11-03T07:45:00Z", user_id: 2, is_pause: false},
-  %{start_time: "2023-11-03T08:45:00Z", end_time: "2023-11-03T12:15:00Z", user_id: 2, is_pause: true},
-  %{start_time: "2023-11-03T13:15:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 2, is_pause: true},
-
-  %{start_time: "2023-11-03T08:15:00Z", end_time: "2023-11-03T09:15:00Z", user_id: 3, is_pause: false},
-  %{start_time: "2023-11-03T10:15:00Z", end_time: "2023-11-03T14:15:00Z", user_id: 3, is_pause: true},
-  %{start_time: "2023-11-03T15:15:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 3, is_pause: true},
-
-  %{start_time: "2023-11-03T07:30:00Z", end_time: "2023-11-03T08:30:00Z", user_id: 4, is_pause: false},
-  %{start_time: "2023-11-03T09:30:00Z", end_time: "2023-11-03T13:00:00Z", user_id: 4, is_pause: true},
-  %{start_time: "2023-11-03T14:00:00Z", end_time: "2023-11-03T17:15:00Z", user_id: 4, is_pause: true},
-
-  %{start_time: "2023-11-03T06:15:00Z", end_time: "2023-11-03T07:15:00Z", user_id: 5, is_pause: false},
-  %{start_time: "2023-11-03T08:15:00Z", end_time: "2023-11-03T12:45:00Z", user_id: 5, is_pause: true},
-  %{start_time: "2023-11-03T13:45:00Z", end_time: "2023-11-03T17:30:00Z", user_id: 5, is_pause: true},
-
-  %{start_time: "2023-11-03T08:45:00Z", end_time: "2023-11-03T09:45:00Z", user_id: 6, is_pause: false},
-  %{start_time: "2023-11-03T10:45:00Z", end_time: "2023-11-03T14:45:00Z", user_id: 6, is_pause: true},
-  %{start_time: "2023-11-03T15:45:00Z", end_time: "2023-11-03T17:30:00Z", user_id: 6, is_pause: true},
-
-  %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 7, is_pause: false},
-  %{start_time: "2023-11-03T09:00:00Z", end_time: "2023-11-03T13:30:00Z", user_id: 7, is_pause: true},
-  %{start_time: "2023-11-03T14:30:00Z", end_time: "2023-11-03T17:30:00Z", user_id: 7, is_pause: true},
-
-  %{start_time: "2023-11-03T07:15:00Z", end_time: "2023-11-03T08:15:00Z", user_id: 8, is_pause: false},
-  %{start_time: "2023-11-03T09:15:00Z", end_time: "2023-11-03T13:15:00Z", user_id: 8, is_pause: true},
-  %{start_time: "2023-11-03T14:15:00Z", end_time: "2023-11-03T17:15:00Z", user_id: 8, is_pause: true},
-
-  %{start_time: "2023-11-03T06:30:00Z", end_time: "2023-11-03T07:30:00Z", user_id: 9, is_pause: false},
-  %{start_time: "2023-11-03T08:30:00Z", end_time: "2023-11-03T12:00:00Z", user_id: 9, is_pause: true},
-  %{start_time: "2023-11-03T13:00:00Z", end_time: "2023-11-03T17:45:00Z", user_id: 9, is_pause: true},
-
-  %{start_time: "2023-11-03T07:30:00Z", end_time: "2023-11-03T08:30:00Z", user_id: 10, is_pause: false},
-  %{start_time: "2023-11-03T09:30:00Z", end_time: "2023-11-03T13:30:00Z", user_id: 10, is_pause: true},
-  %{start_time: "2023-11-03T14:30:00Z", end_time: "2023-11-03T17:45:00Z", user_id: 10, is_pause: true},
-
-  %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 1, is_pause: false},
-  %{start_time: "2023-11-03T09:00:00Z", end_time: "2023-11-03T10:30:00Z", user_id: 1, is_pause: true},
-  %{start_time: "2023-11-03T12:00:00Z", end_time: "2023-11-03T13:00:00Z", user_id: 1, is_pause: true},
-  %{start_time: "2023-11-03T14:30:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 1, is_pause: true},
-
-  %{start_time: "2023-11-03T06:45:00Z", end_time: "2023-11-03T07:45:00Z", user_id: 2, is_pause: false},
-  %{start_time: "2023-11-03T08:45:00Z", end_time: "2023-11-03T10:15:00Z", user_id: 2, is_pause: true},
-  %{start_time: "2023-11-03T12:15:00Z", end_time: "2023-11-03T13:15:00Z", user_id: 2, is_pause: true},
-  %{start_time: "2023-11-03T14:15:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 2, is_pause: true},
-
-  %{start_time: "2023-11-03T08:15:00Z", end_time: "2023-11-03T09:15:00Z", user_id: 3, is_pause: false},
-  %{start_time: "2023-11-03T10:15:00Z", end_time: "2023-11-03T11:45:00Z", user_id: 3, is_pause: true},
-  %{start_time: "2023-11-03T13:15:00Z", end_time: "2023-11-03T13:45:00Z", user_id: 3, is_pause: true},
-  %{start_time: "2023-11-03T15:15:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 3, is_pause: true},
-
-  %{start_time: "2023-11-03T07:30:00Z", end_time: "2023-11-03T08:30:00Z", user_id: 4, is_pause: false},
-  %{start_time: "2023-11-03T09:30:00Z", end_time: "2023-11-03T11:00:00Z", user_id: 4, is_pause: true},
-  %{start_time: "2023-11-03T13:00:00Z", end_time: "2023-11-03T13:30:00Z", user_id: 4, is_pause: true},
-  %{start_time: "2023-11-03T14:00:00Z", end_time: "2023-11-03T17:15:00Z", user_id: 4, is_pause: true},
-
-  %{start_time: "2023-11-03T06:15:00Z", end_time: "2023-11-03T07:15:00Z", user_id: 5, is_pause: false},
-  %{start_time: "2023-11-03T08:15:00Z", end_time: "2023-11-03T09:45:00Z", user_id: 5, is_pause: true},
-  %{start_time: "2023-11-03T13:45:00Z", end_time: "2023-11-03T14:30:00Z", user_id: 5, is_pause: true},
-  %{start_time: "2023-11-03T15:30:00Z", end_time: "2023-11-03T17:00:00Z", user_id: 5, is_pause: true},
-
-  %{start_time: "2023-11-03T08:45:00Z", end_time: "2023-11-03T09:45:00Z", user_id: 6, is_pause: false},
-  %{start_time: "2023-11-03T10:45:00Z", end_time: "2023-11-03T11:45:00Z", user_id: 6, is_pause: true},
-  %{start_time: "2023-11-03T15:45:00Z", end_time: "2023-11-03T17:30:00Z", user_id: 6, is_pause: true},
-
-  %{start_time: "2023-11-03T07:00:00Z", end_time: "2023-11-03T08:00:00Z", user_id: 7, is_pause: false},
-  %{start_time: "2023-11-03T09:00:00Z", end_time: "2023-11-03T10:30:00Z", user_id: 7, is_pause: true},
-  %{start_time: "2023-11-03T12:30:00Z", end_time: "2023-11-03T13:30:00Z", user_id: 7, is_pause: true},
-  %{start_time: "2023-11-03T15:30:00Z", end_time: "2023-11-03T17:30:00Z", user_id: 7, is_pause: true},
-
-  %{start_time: "2023-11-03T07:15:00Z", end_time: "2023-11-03T08:15:00Z", user_id: 8, is_pause: false},
-  %{start_time: "2023-11-03T09:15:00Z", end_time: "2023-11-03T10:45:00Z", user_id: 8, is_pause: true},
-  %{start_time: "2023-11-03T14:15:00Z", end_time: "2023-11-03T15:15:00Z", user_id: 8, is_pause: true},
-  %{start_time: "2023-11-03T16:15:00Z", end_time: "2023-11-03T17:15:00Z", user_id: 8, is_pause: true},
-
-  %{start_time: "2023-11-03T06:30:00Z", end_time: "2023-11-03T07:30:00Z", user_id: 9, is_pause: false},
-  %{start_time: "2023-11-03T08:30:00Z", end_time: "2023-11-03T09:00:00Z", user_id: 9, is_pause: true},
-  %{start_time: "2023-11-03T13:15:00Z", end_time: "2023-11-03T13:45:00Z", user_id: 9, is_pause: true},
-  %{start_time: "2023-11-03T17:15:00Z", end_time: "2023-11-03T17:45:00Z", user_id: 9, is_pause: true},
-
-  %{start_time: "2023-11-03T07:30:00Z", end_time: "2023-11-03T08:30:00Z", user_id: 10, is_pause: false},
-  %{start_time: "2023-11-03T09:30:00Z", end_time: "2023-11-03T11:00:00Z", user_id: 10, is_pause: true},
-  %{start_time: "2023-11-03T14:00:00Z", end_time: "2023-11-03T14:30:00Z", user_id: 10, is_pause: true},
-  %{start_time: "2023-11-03T16:45:00Z", end_time: "2023-11-03T17:45:00Z", user_id: 10, is_pause: true}
-
+  %{start_time: "2023-11-03T06:45:00Z", end_time: "2023-11-03T07:45:00Z", user_id: 2, is_pause: false, type: "start_work"},
+  %{start_time: "2023-11-03T08:45:00Z", end_time: "2023-11-03T10:15:00Z", user_id: 2, is_pause: false, type: "basic_work"},
+  %{start_time: "2023-11-03T12:15:00Z", end_time: "2023-11-03T13:15:00Z", user_id: 2, is_pause: false, type: "end_work"},
 ]
+
 
 
 # Insert working times

@@ -36,7 +36,7 @@
         </div>
     </div>
 
-    <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+    <!-- <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div v-if="submitLabel === 'Register'">
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900"
@@ -97,8 +97,7 @@
           </button>
         </div>
       </form>
-    </div>
-  </div>
+    </div> -->
 </template>
 
 <script setup lang="ts">
