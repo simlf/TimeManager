@@ -14,10 +14,10 @@
       >
         {{ wasInBreakTime ? 'Back to work' : 'Break Time' }}
       </button>
-      <button v-if="!clockIn && !wasInBreakTime" @click="startClock" class="clock-button">
+      <button v-if="!clockIn && !wasInBreakTime" @click="startWork" class="clock-button">
         Start
       </button>
-      <button v-else @click="stopClock" class="clock-button">Stop</button>
+      <button v-else @click="stopWork" class="clock-button">Stop</button>
     </div>
   </div>
   <!-- <button @click="refresh" class="breakTime-button">Refresh</button> -->
@@ -25,50 +25,247 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
 import axios from 'axios'
+import type { AxiosInstance, AxiosResponse } from 'axios'
 
-import type { AxiosResponse } from 'axios'
-const headers = { 'Content-Type': 'application/json' }
-const route = useRoute()
-const router = useRouter()
 const user_id = 1
 const API_URL_clock = `http://localhost:4000/api/clocks/${user_id}`
-const startDateTime = ref('')
-const clockIn = ref(false)
-const wasInBreakTime = ref(false) //Recupérer le dernier working time et voir si il est considéré comme étant endOfDay == false
-const loading = ref(true)
+const API_URL_workTime = `http://localhost:4000/api/times/thisDay/${user_id}`
+const API_URL_workingtimes_by_user = `http://localhost:4000/api/workingtimes/${user_id}`
+const API_URL_update_workingtime = `http://localhost:4000/api/workingtimes/`
+const API_URL_last_workingtimes = `http://localhost:4000/api/workingtimes/last/${user_id}`
 
+const headers = { 'Content-Type': 'application/json' }
+
+const clockIn = ref(false)
+const wasInBreakTime = ref(false)
+const loading = ref(true)
+const clockTime = ref('')
 const textToDisplay = ref('Get information ...')
-const instance = axios.create()
+const welcomeMessage = 'Don’t forget to clock in at the start of your shift !'
+
+const timeWorkedInDay = ref({
+  hours: 0,
+  minutes: 0,
+  seconds: 0
+})
+
+const lastWorkingtime = ref({
+  id: 0,
+  start_time: '',
+  end_time: '',
+  is_pause: false,
+  type: ''
+})
+const instance: AxiosInstance = axios.create()
+
 instance.interceptors.request.use((config) => {
-  console.log('Corps de la requête :', config.data)
+  console.log('Request body:', config.data)
   return config
 })
 
-const welcomeMessage = 'Don’t forget to clock in at the start of your shift !'
-
-const startClock = () => {
-  clock()
+const getCurrentDateWithoutTimeZone = () => {
+  return new Date().toISOString().slice(0, -1)
 }
 
-const stopClock = () => {
+const getClockSuccess = (data: { time: string; status: boolean }) => {
+  console.log('Get Clock - success')
+  console.log(`New clock state: time = ${data.time} & status = ${data.status}`)
+  clockIn.value = data.status
+  clockTime.value = data.time
+}
+
+const getWorkingtimeSuccess = (data: {
+  start_time: string
+  end_time: string
+  is_pause: boolean
+  id: number
+  type: string
+}) => {
+  console.log('Get last Workingtime - success')
+  console.log(
+    `New last workingtime : start_time = ${data.start_time} & end_time = ${data.end_time} & is_pause = ${data.is_pause} & type = ${data.type}`
+  )
+  lastWorkingtime.value.id = data.id
+  lastWorkingtime.value.end_time = data.end_time
+  lastWorkingtime.value.start_time = data.start_time
+  lastWorkingtime.value.is_pause = data.is_pause
+  lastWorkingtime.value.type = data.type
+}
+const startWork = async () => {
+  loading.value = true
+  await toggleClock()
+  newWorkingtime('start_work', false)
+  loading.value = false
+}
+
+const stopWork = async () => {
+  loading.value = true
+  closeWorkingtime(true)
   if (wasInBreakTime.value) {
     wasInBreakTime.value = false
+    clockTime.value = getCurrentDateWithoutTimeZone()
   } else {
-    clock()
+    await toggleClock()
+  }
+  await initData()
+  loading.value = false
+}
+
+const toggleClock = async () => {
+  clockIn.value = !clockIn.value
+  clockTime.value = getCurrentDateWithoutTimeZone()
+  await updateClock()
+}
+
+const breakTime = async () => {
+  loading.value = true
+  toggleClock()
+  if (wasInBreakTime.value) {
+    await closeWorkingtime(false) //Fermeture de la periode de pause
+    await newWorkingtime('basic_work', false) //Nouvelle periode de travail
+  } else {
+    await closeWorkingtime(false) //Fermeture de la periode de travail
+    await newWorkingtime('pause', true) //Nouvelle periode de pause
+  }
+
+  wasInBreakTime.value = !wasInBreakTime.value
+  await getWorkTime()
+  loading.value = false
+}
+
+const getWorkTime = async () => {
+  try {
+    const workTimeResponse = await instance.get(API_URL_workTime)
+    getWorkTimeSuccess(workTimeResponse.data.data)
+  } catch (error: any) {
+    console.log('Update clock - failed')
+    requestFailed(error)
   }
 }
-// Fonction pour calculer le temps travaillé
-const calculateTimeWorked = () => {
-  const currentTime = new Date()
-  const startTime = new Date(startDateTime.value)
+const updateClock = async () => {
+  console.log('Trying to update clock with user_id: ' + user_id)
+  const clock = {
+    status: clockIn.value,
+    time: clockTime.value,
+    user_id: user_id
+  }
+  try {
+    await instance.put(API_URL_clock, { clock }, { headers })
+    console.log('Update clock - success')
+  } catch (error: any) {
+    console.log('Update clock - failed')
+    requestFailed(error)
+  }
+}
 
+const newWorkingtime = async (type: string, is_pause: boolean) => {
+  console.log('Trying to create workingtime with user_id: ' + user_id)
+
+  const workingtimes = {
+    start_time: clockTime.value,
+    type: type,
+    is_pause: is_pause
+  }
+
+  try {
+    await instance.post(API_URL_workingtimes_by_user, { workingtimes }, { headers })
+    console.log('Create workingtime - success')
+  } catch (error: any) {
+    console.log('Create workingtime - failed')
+    requestFailed(error)
+  }
+}
+
+const newWorkingtimeToEndWorkday = async () => {
+  const workingtimes = {
+    start_time: clockTime.value,
+    end_time: clockTime.value,
+    type: 'end_work',
+    is_pause: false
+  }
+
+  try {
+    await instance.post(API_URL_workingtimes_by_user, { workingtimes }, { headers })
+    console.log('Create workingtime - success')
+  } catch (error: any) {
+    console.log('Create workingtime - failed')
+    requestFailed(error)
+  }
+}
+
+const checkIfLastWorkingtimeExist = async () => {
+  let thereAreWorkingtime
+  try {
+    const workingtimeResponse = await instance.get(API_URL_last_workingtimes)
+    getWorkingtimeSuccess(workingtimeResponse.data.data)
+    console.log('Update workingtime - succed')
+    thereAreWorkingtime = true
+  } catch (error: any) {
+    console.log('Update workingtime - failed')
+    requestFailed(error)
+    thereAreWorkingtime = false
+  } finally {
+    console.log('checkIfLastWorkingtimeExist : ' + thereAreWorkingtime)
+    return thereAreWorkingtime
+  }
+}
+const closeWorkingtime = async (stop_work: boolean) => {
+  console.log('Trying to close workingtime with user_id: ' + user_id)
+  try {
+    if (!(await checkIfLastWorkingtimeExist())) {
+      console.log('There are no workingtime actually')
+      return
+    }
+    const workingtimes = {
+      end_time: clockTime.value,
+      type: lastWorkingtime.value.type != 'start_work' && stop_work ? 'end_work' : undefined
+    }
+
+    if (stop_work && lastWorkingtime.value.type === 'start_work') {
+      newWorkingtimeToEndWorkday()
+    }
+
+    console.log('Trying to update workingtime with id: ' + lastWorkingtime.value.id)
+    try {
+      await instance.put(
+        API_URL_update_workingtime + lastWorkingtime.value.id,
+        { workingtimes },
+        { headers }
+      )
+      console.log('Update workingtime - success')
+    } catch (error: any) {
+      console.log('Update workingtime - failed')
+      requestFailed(error)
+    }
+  } catch (error: any) {
+    requestFailed(error)
+    console.log('Close workingtime - failed')
+  }
+}
+
+const calculateTimeWorked = () => {
+  const currentTime = new Date(getCurrentDateWithoutTimeZone())
+  const startTime = new Date(clockTime.value)
   const differenceInMilliseconds = currentTime.getTime() - startTime.getTime()
 
-  const hours = Math.floor(differenceInMilliseconds / (1000 * 60 * 60))
-  const minutes = Math.floor((differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60))
-  const seconds = Math.floor((differenceInMilliseconds % (1000 * 60)) / 1000)
+  let hours = Math.floor(differenceInMilliseconds / (1000 * 60 * 60))
+  let minutes = Math.floor((differenceInMilliseconds % (1000 * 60 * 60)) / (1000 * 60))
+  let seconds = Math.floor((differenceInMilliseconds % (1000 * 60)) / 1000)
+
+  hours += timeWorkedInDay.value.hours
+  minutes += timeWorkedInDay.value.minutes
+  seconds += timeWorkedInDay.value.seconds
+
+  if (seconds >= 60) {
+    minutes += Math.floor(seconds / 60)
+    seconds = seconds % 60
+  }
+
+  if (minutes >= 60) {
+    hours += Math.floor(minutes / 60)
+    minutes = minutes % 60
+  }
 
   return {
     hours,
@@ -77,9 +274,25 @@ const calculateTimeWorked = () => {
   }
 }
 
+const updateDisplayMessage = (text: string) => {
+  textToDisplay.value = text
+}
+
+const getWorkTimeSuccess = (data: { hours: number; minutes: number; seconds: number }) => {
+  console.log('Get Work Time - success')
+  timeWorkedInDay.value.hours = data.hours
+  timeWorkedInDay.value.minutes = data.minutes
+  timeWorkedInDay.value.seconds = data.seconds
+  console.log(`Time worked today : ${data.hours}H ${data.minutes}min ${data.seconds}sec`)
+}
+
+const requestFailed = (error: Error) => {
+  console.log(error)
+}
+
 // Actualisation périodique de l'affichage du temps travaillé
 setInterval(() => {
-  if (clockIn.value && wasInBreakTime.value == false) {
+  if (!wasInBreakTime.value && clockIn.value) {
     const { hours, minutes, seconds } = calculateTimeWorked()
     updateDisplayMessage(
       `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
@@ -90,62 +303,61 @@ setInterval(() => {
   }
 }, 1000)
 
-const updateDisplayMessage = (text: string) => {
-  textToDisplay.value = text
-}
-const clock = () => {
+const initData = async () => {
   loading.value = true
-  clockIn.value = !clockIn.value
-  startDateTime.value = new Date().toISOString().split('.')[0]
-  updateClock()
-}
-const breakTime = () => {
-  clock()
-  wasInBreakTime.value = !wasInBreakTime.value
-}
-const getClockSuccess = (data: { time: string; status: boolean }) => {
-  console.log('Get - success')
-  startDateTime.value = data.time
-  clockIn.value = data.status
-  console.log(`New clock state: time = ${startDateTime.value} & status = ${clockIn.value}`)
-}
+  try {
+    const [clockResponse, workingtimeResponse] = await Promise.all([
+      instance.get(API_URL_clock),
+      instance.get(API_URL_last_workingtimes)
+    ])
+    getClockSuccess(clockResponse.data.data)
+    if (workingtimeResponse.data.data != undefined) {
+      //Il y a un workingtime
+      getWorkingtimeSuccess(workingtimeResponse.data.data)
+    }
+    if (workingtimeResponse.data.data === undefined) {
+      // Première période de travail
+      updateDisplayMessage(welcomeMessage)
+      console.log('Première période de travail')
+    } else if (lastWorkingtime.value.end_time === '') {
+      // En train de travailler
+      console.log('En train de travailler')
+      getWorkTime()
+    } else if (lastWorkingtime.value.type === 'end_work') {
+      // Début de journée car le workingtime précédent était celui de fin
+      console.log('Début de journée')
+      updateDisplayMessage(welcomeMessage)
+    } else if (lastWorkingtime.value.is_pause) {
+      if (lastWorkingtime.value.end_time !== '') {
+        // Reprise du travail car le workingtime précédent est marqué comme étant une pause
+        console.log('Reviens de pause')
+      } else {
+        // Encore en pause
+        console.log('Encore en pause')
+      }
 
-const requestFailed = (error: Error) => {
-  console.log(error)
-}
+      await getWorkTime()
 
-const refresh = async () => {
-  loading.value = true
-  console.log('Try to get clock with usr_id : ' + user_id)
-  await instance
-    .get(API_URL_clock)
-    .then((response: AxiosResponse) => {
-      getClockSuccess(response.data.data)
-    })
-    .catch(requestFailed)
-  if (clockIn.value == false && wasInBreakTime.value == false) {
-    updateDisplayMessage(welcomeMessage)
+      updateDisplayMessage(
+        `Time worked: ${String(timeWorkedInDay.value.hours).padStart(2, '0')} h ${String(
+          timeWorkedInDay.value.minutes
+        ).padStart(2, '0')} m ${String(timeWorkedInDay.value.seconds).padStart(2, '0')} s`
+      )
+    } else {
+      console.log('Avertissement : état manquant')
+    }
+
+    wasInBreakTime.value =
+      lastWorkingtime.value.is_pause && lastWorkingtime.value.type != 'end_work'
+  } catch (error: any) {
+    console.log('Error : Failed on Init')
+    requestFailed(error)
+  } finally {
+    loading.value = false
   }
-  loading.value = false
 }
 
-const updateSuccess = () => {
-  console.log('update - success')
-  refresh()
-}
-
-const updateClock = () => {
-  console.log('Try to update clock with usr_id : ' + user_id)
-  const currentDate = new Date().toISOString().split('.')[0]
-  const clock = {
-    status: clockIn.value,
-    time: currentDate,
-    user_id: user_id
-  }
-  instance.put(API_URL_clock, { clock }, { headers }).then(updateSuccess).catch(requestFailed)
-}
-
-refresh()
+initData()
 </script>
 
 <style scoped>
