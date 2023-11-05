@@ -78,7 +78,7 @@ export const useAuthStore = defineStore({
         this.user = credentials
         this.isAuthenticated = true
         // this.saveToLocalStorage()
-        this.redirectTo('/chartManager')
+        this.redirectTo('/')
       } catch (error: Error | any) {
         this.handleError(error, 'Error logging in, make sure your credentials are good')
       }
@@ -116,9 +116,13 @@ export const useAuthStore = defineStore({
         this.handleError(error, 'Error updating user password')
       }
     },
-    logout() {
+    async logout() {
       this.user = null
       this.error = null
+      this.isAuthenticated = false
+      await axios.get(`${API_BASE_URL}/log_out`)
+      this.redirectTo('/')
+
     },
     redirectTo(route: string) {
       const redirectUrl = this.returnUrl || route

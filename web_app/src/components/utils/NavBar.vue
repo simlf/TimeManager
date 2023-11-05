@@ -41,6 +41,13 @@
             >
               Clock Manager
             </router-link>
+            <router-link
+              :to="{ name: 'workingTimes' }"
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
+              :class="getLinkClass($route.name === 'workingTimes')"
+            >
+              WorkingTimes
+            </router-link>
           </div>
         </div>
         <!-- If user is auth, display the avatar and the dropdown to view profile and signout -->
@@ -99,14 +106,10 @@
                     >Your Profile</router-link
                   >
                 </MenuItem>
-                <!-- TODO: Handle Signout -->
-                <MenuItem as="router-link" v-slot="{ active }">
-                  <router-link
-                    to="/login"
-                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >Sign out</router-link
-                  >
+                <MenuItem as="router-link" @click="logout" v-slot="{ active }"> 
+                  <button :class="[active ? 'bg-gray-100' : '', 'w-full px-4 py-2 text-sm text-gray-700 text-left']">Sign out</button>
                 </MenuItem>
+
               </MenuItems>
             </transition>
           </Menu>
@@ -155,6 +158,16 @@
             Clock Manager
           </DisclosureButton>
         </router-link>
+        <router-link :to="{ name: 'workingTimes' }">
+          <DisclosureButton
+            as="a"
+            class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
+            :class="getLinkClass($route.name === 'workingTimes')"
+          >
+            WorkingTimes
+          </DisclosureButton>
+        </router-link>
+
       </div>
     </DisclosurePanel>
   </Disclosure>
@@ -180,11 +193,17 @@ onMounted(async () => {
   await authStore.checkAuth()
 })
 
-const getLinkClass = (isActive) => {
+const getLinkClass = (isActive: boolean) => {
   if (isActive) {
     return 'border-indigo-500 text-gray-900'
   } else {
     return 'text-gray-500 border-transparent hover:border-gray-300 hover:text-gray-700'
   }
+
+}
+
+const logout = async () => {
+  await authStore.logout() 
+
 }
 </script>
