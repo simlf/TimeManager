@@ -58,13 +58,13 @@ onMounted(async () => {
         </div>
         <form @submit.prevent="updateProfile" class="mt-5 sm:flex sm:items-center">
           <div class="w-full sm:max-w-xs">
-            <label for="password" class="sr-only">Password</label>
+            <label for="username" class="sr-only"></label>
             <input
               type="text"
               name="username"
               v-model="username"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder="Password"
+              placeholder="Username"
             />
           </div>
           <div class="w-full sm:max-w-xs">
@@ -74,7 +74,7 @@ onMounted(async () => {
               name="email"
               v-model="email"
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-              placeholder="Password"
+              placeholder="Email"
             />
           </div>
           <button
