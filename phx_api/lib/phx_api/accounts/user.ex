@@ -7,12 +7,10 @@ defmodule TimeManager.Accounts.User do
     field :username, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
-    field :group_id, :integer
-    field :roles, {:array, :string}
+    belongs_to :group, TimeManager.Groups.Group
+    field :role, Ecto.Enum, values: [:SUPER_MANAGER, :MANAGER, :EMPLOYEE]
     timestamps(type: :utc_datetime)
   end
-
-  @allowed_roles ["SUPER MANAGER", "MANAGER", "EMPLOYEE"]
 
   @doc """
   A user changeset for registration.
@@ -39,11 +37,10 @@ defmodule TimeManager.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :username, :roles])
+    |> cast(attrs, [:email, :password, :username, :role])
     |> validate_email(opts)
     |> validate_username(opts)
     |> validate_password(opts)
-    |> validate_roles(opts)
   end
 
   def user_update_changeset_himself(user, attrs, opts \\ []) do
@@ -55,10 +52,9 @@ defmodule TimeManager.Accounts.User do
 
   def user_update_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :username, :group_id, :roles])
+    |> cast(attrs, [:email, :username, :group_id, :role])
     |> validate_username(opts)
     |> validate_email(opts)
-    |> validate_roles(opts)
   end
 
   defp validate_email(changeset, opts) do
@@ -85,21 +81,6 @@ defmodule TimeManager.Accounts.User do
     # |> validate_format(:password, ~r/[A-Z]/, message: "at least one upper case character")
     # |> validate_format(:password, ~r/[!?@#$%^&*_0-9]/, message: "at least one digit or punctuation character")
     |> maybe_hash_password(opts)
-  end
-
-  defp validate_roles(changeset, opts) do
-    changeset
-    |> validate_required([:roles])
-    case changeset do
-      %Ecto.Changeset{valid?: true, changes: %{roles: roles}} when is_list(roles) ->
-        if Enum.all?(roles, &(&1 in @allowed_roles)) do
-          changeset
-        else
-          add_error(changeset, :roles, "Le rôle doit être l'un des suivants : #{@allowed_roles}")
-        end
-      _ ->
-        changeset
-    end
   end
 
   defp maybe_hash_password(changeset, opts) do

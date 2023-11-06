@@ -8,7 +8,9 @@ defmodule TimeManager.Repo.Migrations.CreateUsersAuthTables do
       add :email, :citext, null: false
       add :username, :string, null: false
       add :hashed_password, :string, null: false
-      add :roles, {:array, :string}, default: ["EMPLOYEE"]
+      add :role, :string, default: "EMPLOYEE", null: false
+      add :group_id, references(:groups, on_delete: :nothing)
+
       timestamps(type: :utc_datetime)
     end
 
