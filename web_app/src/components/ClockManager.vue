@@ -2,22 +2,26 @@
   <div v-if="loading">
     <p>Loading...</p>
   </div>
-  <div v-else>
+  <div v-else class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
     <div>
-      <h1>{{ textToDisplay }}</h1>
+      <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">{{ textToDisplay }}</h2>
     </div>
-    <div class="button-container">
+<!--    <div class="button-container">-->
+    <div class="mt-10 flex items-center gap-x-6">
       <button
         v-if="clockIn == true || wasInBreakTime == true"
         @click="breakTime"
-        class="breakTime-button"
+        class="rounded-md bg-white border-amber-950 border-2 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-black shadow-sm hover:bg-indigo-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
       >
+<!--        class="breakTime-button"-->
         {{ wasInBreakTime ? 'Back to work' : 'Break Time' }}
       </button>
-      <button v-if="!clockIn && !wasInBreakTime" @click="startClock" class="clock-button">
+      <button v-if="!clockIn && !wasInBreakTime" @click="startClock" class="rounded-md bg-indigo-600 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
         Start
       </button>
-      <button v-else @click="stopClock" class="clock-button">Stop</button>
+<!--              class="clock-button">-->
+      <button v-else @click="stopClock" class="rounded-md bg-indigo-600 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Stop</button>
+<!--              class="clock-button"-->
     </div>
   </div>
   <!-- <button @click="refresh" class="breakTime-button">Refresh</button> -->
@@ -82,7 +86,8 @@ setInterval(() => {
   if (clockIn.value && wasInBreakTime.value == false) {
     const { hours, minutes, seconds } = calculateTimeWorked()
     updateDisplayMessage(
-      `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
+      // `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
+      `${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
         2,
         '0'
       )} m ${String(seconds).padStart(2, '0')} s`
