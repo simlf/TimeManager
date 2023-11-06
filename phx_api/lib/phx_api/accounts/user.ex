@@ -57,6 +57,11 @@ defmodule TimeManager.Accounts.User do
     |> validate_email(opts)
   end
 
+  def user_remove_group_id(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:group_id])
+  end
+
   defp validate_email(changeset, opts) do
     changeset
     |> validate_required([:email])

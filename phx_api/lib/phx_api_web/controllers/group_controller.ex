@@ -67,8 +67,11 @@ defmodule TimeManagerWeb.GroupController do
   def delete(conn, %{"id" => id}) do
     group = Groups.get_group!(id)
 
-    with {:ok, %Group{}} <- Groups.delete_group(group) do
-      send_resp(conn, :no_content, "")
+    case Groups.delete_group(group) do
+      {:ok, %Group{} = group} ->
+        Accounts.remove_group_id(id)
+
+        send_resp(conn, :no_content, "")
     end
   end
 

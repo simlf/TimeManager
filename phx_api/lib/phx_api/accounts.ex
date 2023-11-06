@@ -170,6 +170,23 @@ defmodule TimeManager.Accounts do
   end
 
   @doc """
+  Remove the group_id if group is delete
+  """
+  def remove_group_id(group_id) do
+    query =
+      from(u in User,
+        where: u.group_id == ^group_id
+      )
+    users = Repo.all(query)
+
+    Enum.each(users, fn user ->
+      user
+      |> User.user_remove_group_id(%{group_id: nil})
+      |> Repo.update()
+    end)
+  end
+
+  @doc """
   Deletes a user.
 
   ## Examples
