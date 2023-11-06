@@ -27,14 +27,6 @@
               Home
             </router-link>
             <router-link
-              :to="{ name: 'chartManager' }"
-              exact
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'chartManager')"
-            >
-              Chart Manager
-            </router-link>
-            <router-link
               :to="{ name: 'clockManager', params: { id: authStore.id } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
               :class="getLinkClass($route.name === 'clockManager')"
@@ -46,7 +38,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
               :class="getLinkClass($route.name === 'workingTimes')"
             >
-              WorkingTimes
+              Working Times
             </router-link>
           </div>
         </div>
@@ -146,15 +138,6 @@
             Home
           </DisclosureButton>
         </router-link>
-        <router-link :to="{ name: 'chartManager' }">
-          <DisclosureButton
-            as="a"
-            class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'chartManager')"
-          >
-            Chart Manager
-          </DisclosureButton>
-        </router-link>
         <router-link :to="{ name: 'clockManager', params: { id: authStore.id } }">
           <DisclosureButton
             as="a"
@@ -170,7 +153,7 @@
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
             :class="getLinkClass($route.name === 'workingTimes')"
           >
-            WorkingTimes
+            Working Times
           </DisclosureButton>
         </router-link>
       </div>
