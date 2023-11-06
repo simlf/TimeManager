@@ -66,34 +66,48 @@
               {{ person.username }}
               <dl class="font-normal lg:hidden">
                 <dt class="sr-only">Title</dt>
-                <!--                            <dd class="mt-1 truncate text-gray-700">{{ // person.roles[0] }}</dd>-->
                 <dt class="sr-only sm:hidden">Email</dt>
                 <dd class="mt-1 truncate text-gray-500 sm:hidden">{{ person.email }}</dd>
               </dl>
             </td>
-            <!--                    <td class="hidden px-3 py-4 text-sm text-gray-500 lg:table-cell">{{ person.roles[0] }}</td>-->
             <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ person.email }}</td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ person.roles[0] }}</td>
             <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <a href="#" class="text-indigo-600 hover:text-indigo-900">
-                  Edit
-                  <span class="sr-only">, {{ person.username }}</span>
-              </a>
+              <button @click="openModal(person)" class="text-indigo-600 hover:text-indigo-900">
+                Edit
+              </button>
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+    <UpdateUserGroup
+      :isModalOpen="isModalOpen"
+      :initialUsername="currentUser.username"
+      :initialEmail="currentUser.email"
+      @update:isModalOpen="isModalOpen = $event"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
-import { strict } from 'assert'
+import { ref } from 'vue'
+import UpdateUserGroup from '@/components/UpdateUserGroup.vue'
+import User from '@/components/user/User.vue'
+
+const isModalOpen = ref(false)
 
 interface User {
   username: string
   email: string
   roles: string[]
+}
+
+const currentUser = ref(User)
+
+function openModal(user: User) {
+  currentUser.value = user
+  isModalOpen.value = true
 }
 
 function getInitials(username: string): string {
