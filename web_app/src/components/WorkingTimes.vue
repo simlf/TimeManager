@@ -18,12 +18,14 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale)
 
 const route = useRoute()
 const params = route.params
-// let userId = params.userId;
 </script>
 
 <script lang="ts">
-// debug
-var userId = 1
+import {useAuthStore} from "@/stores/auth.store";
+import {ref} from "vue";
+import {Bar} from "vue-chartjs";
+
+const authStore = useAuthStore()
 
 let workingTimesRef = ref()
 
@@ -74,7 +76,7 @@ export default {
     ) {
       start += '2000:00:00'
       end += '2000:00:00'
-      const requestUrl = `http://localhost:4000/api/workingtimes/${userId}?start_time=${start}&end_time=${end}`
+      const requestUrl = `http://localhost:4000/api/workingtimes/${authStore.id}?start_time=${start}&end_time=${end}`
 
       console.log(requestUrl)
 
