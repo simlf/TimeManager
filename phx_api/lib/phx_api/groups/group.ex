@@ -11,8 +11,34 @@ defmodule TimeManager.Groups.Group do
   end
 
   @doc false
-  def changeset(group, attrs) do
+  def register_group(group, attrs, opts \\ []) do
     group
     |> cast(attrs, [:name])
+    |> validate_name(opts)
   end
+
+  @doc false
+  def update_group(group, attrs, opts \\ []) do
+    group
+    |> cast(attrs, [:name])
+    |> validate_name(opts)
+  end
+
+  defp validate_name(changeset, opts) do
+    changeset
+    |> validate_required([:name])
+    |> validate_length(:name, min: 4, max: 20)
+    |> maybe_validate_unique_name(opts)
+  end
+
+  defp maybe_validate_unique_name(changeset, opts) do
+    if Keyword.get(opts, :validate_name, true) do
+      changeset
+      |> unsafe_validate_unique(:name, TimeManager.Repo)
+      |> unique_constraint(:name)
+    else
+      changeset
+    end
+  end
+
 end

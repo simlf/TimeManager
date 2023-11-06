@@ -8,6 +8,8 @@ defmodule TimeManager.Repo.Migrations.CreateGroups do
       timestamps(type: :utc_datetime)
     end
 
+    create unique_index(:groups, [:name])
+
     flush()
   end
 end

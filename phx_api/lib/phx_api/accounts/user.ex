@@ -7,7 +7,7 @@ defmodule TimeManager.Accounts.User do
     field :username, :string
     field :password, :string, virtual: true, redact: true
     field :hashed_password, :string, redact: true
-    belongs_to :group, TimeManager.Groups.Group
+    field :group_id, :integer
     field :role, Ecto.Enum, values: [:SUPER_MANAGER, :MANAGER, :EMPLOYEE]
     timestamps(type: :utc_datetime)
   end
@@ -37,7 +37,7 @@ defmodule TimeManager.Accounts.User do
   """
   def registration_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :password, :username, :role])
+    |> cast(attrs, [:email, :password, :username, :role, :group_id])
     |> validate_email(opts)
     |> validate_username(opts)
     |> validate_password(opts)

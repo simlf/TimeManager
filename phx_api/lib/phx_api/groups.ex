@@ -51,7 +51,7 @@ defmodule TimeManager.Groups do
   """
   def create_group(attrs \\ %{}) do
     %Group{}
-    |> Group.changeset(attrs)
+    |> Group.register_group(attrs)
     |> Repo.insert()
   end
 
@@ -69,7 +69,7 @@ defmodule TimeManager.Groups do
   """
   def update_group(%Group{} = group, attrs) do
     group
-    |> Group.changeset(attrs)
+    |> Group.update_group(attrs)
     |> Repo.update()
   end
 
@@ -87,18 +87,5 @@ defmodule TimeManager.Groups do
   """
   def delete_group(%Group{} = group) do
     Repo.delete(group)
-  end
-
-  @doc """
-  Returns an `%Ecto.Changeset{}` for tracking group changes.
-
-  ## Examples
-
-      iex> change_group(group)
-      %Ecto.Changeset{data: %Group{}}
-
-  """
-  def change_group(%Group{} = group, attrs \\ %{}) do
-    Group.changeset(group, attrs)
   end
 end

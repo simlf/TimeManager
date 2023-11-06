@@ -13,7 +13,7 @@ defmodule TimeManager.Groups.Group_managers do
   def changeset(group, attrs, opts \\ []) do
     group
     |> cast(attrs, [:group_id, :user_id])
-    |>validate_user_is_manager(opts)
+    |> validate_user_is_manager(opts)
   end
 
   defp validate_user_is_manager(changeset, _opts) do
