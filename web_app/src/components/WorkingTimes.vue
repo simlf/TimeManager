@@ -21,9 +21,9 @@ const params = route.params
 </script>
 
 <script lang="ts">
-import {useAuthStore} from "@/stores/auth.store";
-import {ref} from "vue";
-import {Bar} from "vue-chartjs";
+import { useAuthStore } from '@/stores/auth.store'
+import { ref } from 'vue'
+import { Bar } from 'vue-chartjs'
 
 const authStore = useAuthStore()
 
