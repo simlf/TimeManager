@@ -50,14 +50,9 @@ defmodule TimeManager.Groups do
 
   """
   def create_group(attrs \\ %{}) do
-    manager_id = attrs["manager_id"]
-
-    case Repo.get(Group, manager_id) do
-      nil ->
-        %Group{}
-        |> Group.changeset(attrs)
-        |> Repo.insert()
-    end
+    %Group{}
+    |> Group.changeset(attrs)
+    |> Repo.insert()
   end
 
   @doc """

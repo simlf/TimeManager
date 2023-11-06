@@ -14,19 +14,22 @@
 alias TimeManager.Repo
 alias TimeManager.Accounts.User
 alias TimeManager.Groups.Group
+alias TimeManager.Groups.Group_managers
+alias TimeManager.Groups.Group_users
 alias TimeManager.Clocks.Clock
 alias TimeManager.Workingtime.Workingtimes
 
 users = [
-  %{username: "The patron", password: "PatronPassword", email: "patron@gotham.com", roles: ["SUPER MANAGER"] },
-  %{username: "The patron 2", password: "PatronPassword", email: "patron2@gotham.com", roles: ["SUPER MANAGER"] },
-  %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", roles: ["MANAGER"]},
-  %{username: "The manager 2", password: "ManagerPassword", email: "manager2@gotham.com", roles: ["MANAGER"]},
-  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", roles: ["EMPLOYEE"]},
-  %{username: "The employee 2", password: "EmployeePassword", email: "employee2@gotham.com", roles: ["EMPLOYEE"]},
-  %{username: "User2", password: "password2", email: "user2@example.com", roles: ["EMPLOYEE"]},
-  %{username: "User3", password: "password3", email: "user3@example.com", roles: ["EMPLOYEE"]},
-  %{username: "User4", password: "password4", email: "user4@example.com", roles: ["EMPLOYEE"]},
+  %{username: "The patron", password: "PatronPassword", email: "patron@gotham.com", role: "SUPER_MANAGER" },
+  %{username: "The patron 2", password: "PatronPassword", email: "patron2@gotham.com", role: "SUPER_MANAGER" },
+  %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", role: "MANAGER"},
+  %{username: "The manager 2", password: "ManagerPassword", email: "manager2@gotham.com", role: "MANAGER"},
+  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", role: "EMPLOYEE"},
+  %{username: "The employee 2", password: "EmployeePassword", email: "employee2@gotham.com", role: "EMPLOYEE"},
+  %{username: "User2", password: "password2", email: "user2@example.com", role: "EMPLOYEE"},
+  %{username: "User3", password: "password3", email: "user3@example.com", role: "EMPLOYEE"},
+  %{username: "User4", password: "password4", email: "user4@example.com", role: "EMPLOYEE"},
+  %{username: "User5", password: "password5", email: "user5@example.com", role: "EMPLOYEE"},
   ]
   
 # Insert users
@@ -44,13 +47,14 @@ end)
 
 
 groups = [
-  %{name: "Joker lover", users_id: [], manager_id: 3},
+  %{name: "Joker lover"},
+  %{name: "Batman lover"},
 ]
 
 Repo.transaction(fn ->
-  Enum.each(groups, fn user_params ->
+  Enum.each(groups, fn groups_params ->
     group = %Group{}
-    |> Group.changeset(user_params)
+    |> Group.changeset(groups_params)
     |> Repo.insert()
     case group do
       {:ok, _} -> IO.puts("Group created successfully")
@@ -58,6 +62,46 @@ Repo.transaction(fn ->
     end
   end)
 end)
+
+group_users = [
+  %{group_id: 1, user_id: 9},
+  %{group_id: 1, user_id: 8},
+]
+
+# Insert group_users
+Repo.transaction(fn ->
+  Enum.each(group_users, fn group_users_params ->
+    clock = %Group_users{}
+            |> Group_users.changeset(group_users_params)
+            |> Repo.insert()
+    case clock do
+      {:ok, _} -> IO.puts("Users add in group successfully")
+      {:error, changeset} -> IO.inspect(changeset.errors)
+    end
+  end)
+end)
+
+IO.puts("Employee add in group successfully")
+
+group_managers = [
+  %{group_id: 1, user_id: 3},
+  %{group_id: 1, user_id: 4},
+]
+
+# Insert group_managers
+Repo.transaction(fn ->
+  Enum.each(group_managers, fn group_managers_params ->
+    clock = %Group_managers{}
+            |> Group_managers.changeset(group_managers_params)
+            |> Repo.insert()
+    case clock do
+      {:ok, _} -> IO.puts("Users add in group successfully")
+      {:error, changeset} -> IO.inspect(changeset.errors)
+    end
+  end)
+end)
+
+IO.puts("Manager add in group successfully")
 
 
 clocks = [

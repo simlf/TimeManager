@@ -26,5 +26,21 @@ defmodule TimeManager.Repo.Migrations.CreateUsersAuthTables do
 
     create index(:users_tokens, [:user_id])
     create unique_index(:users_tokens, [:context, :token])
+
+    create table(:group_users) do
+      add :group_id, references(:groups, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :nothing)
+    end
+
+    create index(:group_users, [:group_id])
+    create index(:group_users, [:user_id])
+
+    create table(:group_managers) do
+      add :group_id, references(:groups, on_delete: :nothing)
+      add :user_id, references(:users, on_delete: :nothing)
+    end
+
+    create index(:group_managers, [:group_id])
+    create index(:group_managers, [:user_id])
   end
 end
