@@ -10,7 +10,7 @@ const router = createRouter({
       component: () => import('@/components/utils/Home.vue')
     },
     {
-      path: '/clockManager/:id',
+      path: '/clockManager/:username',
       name: 'clockManager',
       meta: { requiresAuth: true },
       component: () => import('../components/ClockManager.vue')
@@ -26,7 +26,7 @@ const router = createRouter({
       component: () => import('@/components/user/Register.vue')
     },
     {
-      path: '/workingTimes',
+      path: '/workingTimes/:userId',
       name: 'workingTimes',
       meta: { requiresAuth: true },
       component: () => import('../components/WorkingTimes.vue')

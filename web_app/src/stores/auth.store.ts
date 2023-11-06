@@ -27,11 +27,10 @@ export const useAuthStore = defineStore({
     isAuthenticated: false,
     error: null as Error | null,
     success: null as string | null,
-    returnUrl: null,
-
+    returnUrl: null
   }),
   getters: {
-    username: (state) => state.user?.username || '',
+    username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
     id: (state) => state.user?.id || -1
   },
@@ -59,7 +58,7 @@ export const useAuthStore = defineStore({
 
       try {
         await axios.post(`${API_BASE_URL}/`, payload)
-        this.showSuccessMessage("User registered successfully")
+        this.showSuccessMessage('User registered successfully')
         this.redirectTo('/login')
       } catch (error: Error | any) {
         this.handleError(
@@ -93,7 +92,7 @@ export const useAuthStore = defineStore({
         email: credentials.email
       })
       try {
-        const response = await axios.put(`${API_BASE_URL}/${this.id}`, payload)
+        const response = await axios.put(`${API_BASE_URL}/me`, payload)
 
         this.user = response.data.data
         this.isAuthenticated = true
@@ -144,15 +143,14 @@ export const useAuthStore = defineStore({
       // }, 10000); // Efface le message après 10 secondes
     },
     showSuccessMessage(message: string) {
-      this.success = message;
+      this.success = message
       // setTimeout(() => {
       //   this.clearSuccessMessage();
-      // }, 10000); // Efface le message après 10 secondes 
+      // }, 10000); // Efface le message après 10 secondes
     },
     clearSuccessMessage() {
-      this.success = null;
-      this.error = null;
-    },
-
+      this.success = null
+      this.error = null
+    }
   }
 })
