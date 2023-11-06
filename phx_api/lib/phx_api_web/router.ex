@@ -29,7 +29,6 @@ defmodule TimeManagerWeb.Router do
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
 
-    post "/groups", GroupController, :create
     post "/groups/add_user/:id", GroupController, :add_user_to_group
 
   end
@@ -40,6 +39,12 @@ defmodule TimeManagerWeb.Router do
     put "/users/me", UserController, :update_me
     resources "/users", UserController, except: [:edit, :create]
     put "/users/update_password/:id", UserController, :password_update
+  end
+
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_super_manager_user]
+
+    post "/groups", GroupController, :create
   end
 
   # Enable LiveDashboard in development
