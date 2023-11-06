@@ -33,8 +33,8 @@ const router = createRouter({
     },
     {
       path: '/workingTimes',
-      meta: { requiresAuth: true },
       name: 'workingTimes',
+      meta: { requiresAuth: true },
       component: () => import('../components/WorkingTimes.vue')
     },
     {
