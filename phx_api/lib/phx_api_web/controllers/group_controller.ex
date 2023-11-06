@@ -42,10 +42,25 @@ defmodule TimeManagerWeb.GroupController do
   end
 
   def update(conn, %{"id" => id, "group" => group_params}) do
+    active_manager = conn.assigns[:current_user]
     group = Groups.get_group!(id)
 
-    with {:ok, %Group{} = group} <- Groups.update_group(group, group_params) do
-      render(conn, :show, group: group)
+    employees = Map.get(group_params, "employees", [])
+    managers = Map.get(group_params, "managers", [])
+    name = Map.get(group_params, "name")
+
+    case Groups.update_group(group, %{name: name}) do
+      {:ok, %Group{} = group} ->
+        if managers != [] && active_manager.role == :SUPER_MANAGER do
+          insert_managers(managers, group.id)
+        end
+        if employees != [] do
+          insert_employees(employees, active_manager.group_id)
+        end
+
+        conn
+        |> put_status(:ok)
+        |> render(:show, group: group)
     end
   end
 

@@ -28,9 +28,6 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:userId", ClockController, :showClocksByUsserId
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
-
-    post "/groups/add_user/:id", GroupController, :add_user_to_group
-
   end
 
   scope "/api", TimeManagerWeb do
@@ -45,6 +42,12 @@ defmodule TimeManagerWeb.Router do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
     post "/groups", GroupController, :create
+  end
+
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_managers_user]
+
+    put "/groups/:id", GroupController, :update
   end
 
   # Enable LiveDashboard in development
