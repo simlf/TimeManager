@@ -89,6 +89,13 @@
                     >Your Profile</router-link
                   >
                 </MenuItem>
+                <MenuItem v-if="authStore.isManager" as="router-link" v-slot="{ active }">
+                  <router-link
+                    to="/updateGroup"
+                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
+                    >Your Group</router-link
+                  >
+                </MenuItem>
                 <MenuItem as="router-link" @click="logout" v-slot="{ active }">
                   <button
                     :class="[
