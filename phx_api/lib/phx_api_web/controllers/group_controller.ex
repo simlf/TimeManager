@@ -37,8 +37,8 @@ defmodule TimeManagerWeb.GroupController do
   end
 
   def show(conn, %{"id" => id}) do
-    group = Groups.get_group!(id)
-    render(conn, :show, group: group)
+    group_and_user = Groups.get_group!(id)
+    render(conn, :show_group_and_user, group_and_user: group_and_user)
   end
 
   def update(conn, %{"id" => id, "group" => group_params}) do

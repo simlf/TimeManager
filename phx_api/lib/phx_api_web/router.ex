@@ -49,6 +49,7 @@ defmodule TimeManagerWeb.Router do
     pipe_through [:api, :require_authenticated_managers_user]
 
     put "/groups/:id", GroupController, :update
+    get "/groups/:id", GroupController, :show
   end
 
   # Enable LiveDashboard in development
