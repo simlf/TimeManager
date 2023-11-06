@@ -12,7 +12,7 @@ import { onMounted } from 'vue'
 
 // to complete
 export default {
-  name: 'Home',
+  name: 'Home'
   // setup() {
   //   const router = useRouter()
   //   const authStore = useAuthStore()

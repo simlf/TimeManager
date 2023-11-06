@@ -27,14 +27,6 @@
               Home
             </router-link>
             <router-link
-              :to="{ name: 'chartManager' }"
-              exact
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'chartManager')"
-            >
-              Chart Manager
-            </router-link>
-            <router-link
               :to="{ name: 'clockManager', params: { id: authStore.id } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
               :class="getLinkClass($route.name === 'clockManager')"
@@ -46,7 +38,7 @@
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
               :class="getLinkClass($route.name === 'workingTimes')"
             >
-              WorkingTimes
+              Working Times
             </router-link>
           </div>
         </div>
@@ -106,10 +98,16 @@
                     >Your Profile</router-link
                   >
                 </MenuItem>
-                <MenuItem as="router-link" @click="logout" v-slot="{ active }"> 
-                  <button :class="[active ? 'bg-gray-100' : '', 'w-full px-4 py-2 text-sm text-gray-700 text-left']">Sign out</button>
+                <MenuItem as="router-link" @click="logout" v-slot="{ active }">
+                  <button
+                    :class="[
+                      active ? 'bg-gray-100' : '',
+                      'w-full px-4 py-2 text-sm text-gray-700 text-left'
+                    ]"
+                  >
+                    Sign out
+                  </button>
                 </MenuItem>
-
               </MenuItems>
             </transition>
           </Menu>
@@ -141,15 +139,6 @@
             Home
           </DisclosureButton>
         </router-link>
-        <router-link :to="{ name: 'chartManager' }">
-          <DisclosureButton
-            as="a"
-            class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'chartManager')"
-          >
-            Chart Manager
-          </DisclosureButton>
-        </router-link>
         <router-link :to="{ name: 'clockManager', params: { id: authStore.id } }">
           <DisclosureButton
             as="a"
@@ -165,10 +154,9 @@
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
             :class="getLinkClass($route.name === 'workingTimes')"
           >
-            WorkingTimes
+            Working Times
           </DisclosureButton>
         </router-link>
-
       </div>
     </DisclosurePanel>
   </Disclosure>
@@ -200,11 +188,9 @@ const getLinkClass = (isActive: boolean) => {
   } else {
     return 'text-gray-500 border-transparent hover:border-gray-300 hover:text-gray-700'
   }
-
 }
 
 const logout = async () => {
-  await authStore.logout() 
-
+  await authStore.logout()
 }
 </script>

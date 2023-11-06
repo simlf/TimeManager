@@ -126,7 +126,6 @@ export const useAuthStore = defineStore({
       this.isAuthenticated = false
       await axios.get(`${API_BASE_URL}/log_out`)
       this.redirectTo('/')
-
     },
     redirectTo(route: string) {
       const redirectUrl = this.returnUrl || route
