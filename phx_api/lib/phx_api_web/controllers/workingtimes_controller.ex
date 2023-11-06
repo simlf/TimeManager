@@ -1,6 +1,6 @@
 defmodule TimeManagerWeb.WorkingtimesController do
   use TimeManagerWeb, :controller
-
+  use Timex
   alias TimeManager.Workingtime
   alias TimeManager.Workingtime.Workingtimes
 
@@ -15,18 +15,18 @@ defmodule TimeManagerWeb.WorkingtimesController do
     with {:ok, %Workingtimes{} = workingtime} <- Workingtime.create_workingtimes(workingtimes_params) do
       conn
       |> put_status(:created)
-      |> render("show.json", workingtimes: workingtime)
+      |> render("show.json", workingtime: workingtime)
     end
   end
+def create(conn, %{"workingtimes" => workingtimes_params}) do
+  with {:ok, %Workingtimes{} = workingtime} <- Workingtime.create_workingtimes(workingtimes_params) do
+    conn
+    |> put_status(:created)
+    |> render("show.json", workingtime: workingtime)
+  end
+end
 
-  def create(conn, %{"workingtimes" => workingtimes_params}) do
-    IO.inspect(workingtimes_params)
-    with {:ok, %Workingtimes{} = workingtime} <- Workingtime.create_workingtimes(workingtimes_params) do
-      conn
-      |> put_status(:created)
-      |> render("show.json", workingtimes: workingtime)
-    end
-  end
+
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking workingtimes changes.
@@ -39,42 +39,97 @@ defmodule TimeManagerWeb.WorkingtimesController do
   """
 
   def get_by_id(conn, %{"id" => id, "user_id" => _user_id}) do
-    IO.inspect(id)
-    workingtimes = Workingtime.get_workingtimes!(id)
-    IO.inspect(workingtimes)
-    render(conn, "show.json", workingtimes: workingtimes)
+    workingtime = Workingtime.get_workingtimes!(id)
+    render(conn, "show.json", workingtime: workingtime)
   end
 
   def get_all_by_id(conn, %{"user_id" => user_id}) do
-    start = conn.query_params["start"]
+    start_time = conn.query_params["start_time"]
     end_time = conn.query_params["end_time"]
 
-    workingtimes = Workingtime.list_workingtimes_filtered(user_id, start, end_time)
+    workingtimes = Workingtime.list_workingtimes_filtered(user_id, start_time, end_time)
 
     render(conn, "index.json", workingtimes: workingtimes)
   end
 
   def show(conn, %{"id" => id}) do
-    workingtimes = Workingtime.get_workingtimes!(id)
-    render(conn, "show.json", workingtimes: workingtimes)
+    workingtime = Workingtime.get_workingtimes!(id)
+    render(conn, "show.json", workingtime: workingtime)
   end
 
   def update(conn, %{"id" => id, "workingtimes" => workingtimes_params}) do
-    workingtimes = Workingtime.get_workingtimes!(id)
+    workingtime = Workingtime.get_workingtimes!(id)
 
-    with {:ok, %Workingtimes{} = workingtimes} <- Workingtime.update_workingtimes(workingtimes, workingtimes_params) do
-      render(conn, :show, workingtimes: workingtimes)
+    with {:ok, %Workingtimes{} = workingtime} <- Workingtime.update_workingtimes(workingtime, workingtimes_params) do
+      render(conn, "show.json", workingtime: workingtime)
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    workingtimes = Workingtime.get_workingtimes!(id)
+    workingtime = Workingtime.get_workingtimes!(id)
 
-    with {:ok, %Workingtimes{}} <- Workingtime.delete_workingtimes(workingtimes) do
+    with {:ok, %Workingtimes{}} <- Workingtime.delete_workingtimes(workingtime) do
       conn
       |> put_status(:ok)
       |> put_resp_header("content-type", "application/json")
-      |> text("User ID:#{id} Deleted")
+      |> text("WorkingTime with ID:#{id} Deleted")
     end
   end
+
+  def get_last_workingtime_by_user_id(conn, %{"user_id" => user_id}) do
+        workingtime = Workingtime.get_last_workingtime(user_id)
+        if workingtime != [] do
+          render(conn, "show.json", workingtime: workingtime)
+        else
+          render(conn, "show.json", workingtime: workingtime)
+        end
+  end
+
+  def get_time_from_workingtimes_by_user_id(conn, %{"user_id" => user_id})do
+    start_time = conn.query_params["start_time"]
+    end_time = conn.query_params["end_time"]
+    workingtimes = Workingtime.list_workingtimes_filtered(user_id, start_time, end_time)
+    total_seconds = calculate_total_times(workingtimes)
+    render(conn, "showTimes.json", seconds_to_hms(total_seconds))
+  end
+
+  def get_time_from_workingtimes_current_day_by_user_id(conn, %{"user_id" => user_id})do
+    current_date = Timex.now()
+    previous_day = Timex.shift(current_date, days: -1)
+    _current_date_formatted = Timex.format!(current_date, "%Y-%m-%d %H:%M:%S", :strftime)
+    _previous_day_formatted = Timex.format!(previous_day, "%Y-%m-%d %H:%M:%S", :strftime)
+
+    workingtimes = Workingtime.list_workingtimes_filtered_by_current_working_day(user_id)
+    total_seconds = calculate_total_times(workingtimes)
+    render(conn, "showTimes.json", seconds_to_hms(total_seconds))
+  end
+
+  defp calculate_total_times(workingtimes, total_hours \\ 0) do
+  case workingtimes do
+    [] -> total_hours
+    [workingtime | rest] ->
+      time_worked = calculate_workingtime(workingtime)
+      updated_total_hours = total_hours + time_worked
+      calculate_total_times(rest, updated_total_hours)
+  end
+end
+
+  defp calculate_workingtime(workingtime) do
+
+    start_time = Timex.parse!(Timex.format!(workingtime.start_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
+    end_time = Timex.parse!(Timex.format!(workingtime.end_time, "{ISO:Extended:Z}"), "{ISO:Extended:Z}")
+    time_worked = Timex.diff(end_time, start_time, :second)
+
+    time_worked
+  end
+
+  defp seconds_to_hms(total_seconds) do
+    hours = div(total_seconds, 3600)
+    remaining_seconds = rem(total_seconds, 3600)
+    minutes = div(remaining_seconds, 60)
+    seconds = rem(remaining_seconds, 60)
+
+    %{hours: hours, minutes: minutes, seconds: seconds}
+  end
+
 end

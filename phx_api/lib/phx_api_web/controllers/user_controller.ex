@@ -32,12 +32,39 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "show.json", user: user)
   end
 
-  def update(conn, %{"id" => id, "user" => user_params}) do
-    user = Accounts.get_user!(id)
+  def update_me(conn, %{"user" => user_params}) do
+    active_user_id = conn.assigns[:current_user].id
+    user = Accounts.get_user!(active_user_id)
 
-    with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+    with {:ok, %User{} = user} <- Accounts.update_me_user(user, user_params) do
       render(conn, "show.json", user: user)
     end
+  end
+
+  # Function used by ["MANAGER", "SUPER MANAGER"] for update user
+  def update(conn, %{"id" => id, "user" => user_params}) do
+    {:ok, agent} = Agent.start_link(fn -> {true} end)
+    active_manager = conn.assigns[:current_user]
+    user = Accounts.get_user!(id)
+
+    case {Enum.member?(active_manager.roles, "SUPER MANAGER"), Enum.member?(active_manager.roles, "MANAGER")} do
+      {true, _} ->
+        if Enum.member?(user.roles, "SUPER MANAGER") do
+          Agent.update(agent, fn {value} -> {false} end)
+        end
+        {_, true} ->
+          if !(Enum.member?(user.roles, "EMPLOYEE")) || user.group_id != active_manager.group_id do
+          Agent.update(agent, fn {value} -> {false} end)
+        end
+      end
+
+      if Agent.get(agent, fn {value} -> value end) do
+        with {:ok, %User{} = user} <- Accounts.update_user(user, user_params) do
+          render(conn, "show.json", user: user)
+        end
+      else
+        send_resp(conn, :forbidden, "Vous ne pouvez pas update cet utilisateur")
+      end
   end
 
   def password_update(conn, %{"id" => id, "user" => user_params}) do
@@ -68,4 +95,28 @@ defmodule TimeManagerWeb.UserController do
       render(conn, :new, error_message: "Invalid email or password")
     end
   end
+
+  def check_auth(conn, _params) do
+    if user = conn.assigns[:current_user] do
+      render(conn, "show.json", user: user)
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Not authenticated"})
+    end
+  end
+
+  def log_out(conn, _params) do
+    if user = conn.assigns[:current_user] do
+      conn = TimeManager.UserAuth.log_out_user(conn)
+      conn
+      |> put_status(:ok)
+      |> json(%{message: "Logged out successfully"})
+    else
+      conn
+      |> put_status(:unauthorized)
+      |> json(%{error: "Not authenticated"})
+    end
+  end
+
 end
