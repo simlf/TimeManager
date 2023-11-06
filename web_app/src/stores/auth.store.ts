@@ -12,6 +12,13 @@ interface LoginPayload {
   }
 }
 
+interface User {
+  id: number
+  username: string
+  email: string
+  roles: string[]
+}
+
 const createPayload = (user: {
   username?: string
   email?: string
@@ -23,7 +30,7 @@ const createPayload = (user: {
 export const useAuthStore = defineStore({
   id: 'auth',
   state: () => ({
-    user: null as { id?: number; username?: string; email: string } | null,
+    user: null as User | null,
     isAuthenticated: false,
     error: null as Error | null,
     success: null as string | null,
@@ -32,7 +39,10 @@ export const useAuthStore = defineStore({
   getters: {
     username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
-    id: (state) => state.user?.id || -1
+    id: (state) => state.user?.id || -1,
+    isSuperManager: (state) => state.user?.roles.includes('SUPER MANAGER'),
+    isManager: (state) => state.user?.roles.includes('MANAGER'),
+    isEmployee: (state) => state.user?.roles.includes('EMPLOYEE')
   },
   actions: {
     async checkAuth(): Promise<boolean> {
