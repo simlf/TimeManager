@@ -1,12 +1,10 @@
 <script setup lang="ts">
-import { ref } from 'vue'
 import AuthForm from './AuthForm.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
 
 const authStore = useAuthStore()
-const showLoginForm = ref(true)
 
 const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHandling()
 
