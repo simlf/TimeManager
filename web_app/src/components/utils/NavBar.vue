@@ -119,13 +119,14 @@
           v-else
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
         >
+        <router-link to="/login">
           <button
             as="router-link"
             type="button"
             class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <router-link to="/login">Login</router-link>
+          >Login
           </button>
+        </router-link>   
         </div>
       </div>
     </div>
