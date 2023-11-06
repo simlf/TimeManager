@@ -124,7 +124,6 @@ export default {
 
 <template>
   <div class="flex flex-col items-center mt-2">
-    
     <div class="grid grid-rows-2">
       <vue-tailwind-datepicker
         as-single
@@ -156,7 +155,9 @@ export default {
               v-for="(time, index) in workingTimesRef"
               :key="index"
             >
-              <td class="px-6 py-4">{{ moment(time.start_time).utc(false).format('YYYY-MM-DD') }}</td>
+              <td class="px-6 py-4">
+                {{ moment(time.start_time).utc(false).format('YYYY-MM-DD') }}
+              </td>
               <td class="px-6 py-4">{{ moment(time.start_time).utc(false).format('HH:mm') }}</td>
               <td class="px-6 py-4">{{ moment(time.end_time).utc(false).format('HH:mm') }}</td>
             </tr>

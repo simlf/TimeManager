@@ -1,34 +1,54 @@
 <template>
-  <div v-if="loading">
-    <p>Loading...</p>
-  </div>
-  <div v-else>
-    <div>
-      <h1>{{ textToDisplay }}</h1>
+  <div class="mx-auto max-w-7xl px-6 py-24 sm:py-32 lg:px-8">
+    <div v-if="loading">
+      <orbit-spinner :animation-duration="1200" :size="55" color="#3F51B5" />
     </div>
-    <div class="button-container">
-      <button
-        v-if="clockIn == true || wasInBreakTime == true"
-        @click="breakTime"
-        class="breakTime-button"
-      >
-        {{ wasInBreakTime ? 'Back to work' : 'Break Time' }}
-      </button>
-      <button v-if="!clockIn && !wasInBreakTime" @click="startWork" class="clock-button">
-        Start
-      </button>
-      <button v-else @click="stopWork" class="clock-button">Stop</button>
+    <div v-else>
+      <div>
+        <h2 class="text-3xl font-bold tracking-tight text-gray-900 sm:text-4xl">
+          {{ textToDisplay }}
+        </h2>
+      </div>
+      <div class="mt-10 flex items-center gap-x-6">
+        <button
+          :disabled="loading"
+          v-if="clockIn == true || wasInBreakTime == true"
+          @click="breakTime"
+          class="rounded-md bg-white border-amber-950 border-2 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-black shadow-sm hover:bg-indigo-50 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-black"
+        >
+          {{ wasInBreakTime ? 'Back to work' : 'Break Time' }}
+        </button>
+        <button
+          :disabled="loading"
+          v-if="!clockIn && !wasInBreakTime"
+          @click="startWork"
+          class="rounded-md bg-indigo-600 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Start
+        </button>
+        <button
+          :disabled="loading"
+          v-else
+          @click="stopWork"
+          class="rounded-md bg-indigo-600 min-w-[200px] w-full max-w-[250px] py-4 text-base font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          Stop
+        </button>
+      </div>
     </div>
   </div>
-  <!-- <button @click="refresh" class="breakTime-button">Refresh</button> -->
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
 import axios from 'axios'
+import { OrbitSpinner } from 'epic-spinners'
 import type { AxiosInstance, AxiosResponse } from 'axios'
+import { useAuthStore } from '@/stores/auth.store'
 
-const user_id = 1
+const authStore = useAuthStore()
+
+const user_id = authStore.id
 const API_URL_clock = `http://localhost:4000/api/clocks/${user_id}`
 const API_URL_workTime = `http://localhost:4000/api/times/thisDay/${user_id}`
 const API_URL_workingtimes_by_user = `http://localhost:4000/api/workingtimes/${user_id}`
@@ -295,10 +315,10 @@ setInterval(() => {
   if (!wasInBreakTime.value && clockIn.value) {
     const { hours, minutes, seconds } = calculateTimeWorked()
     updateDisplayMessage(
-      `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
-        2,
-        '0'
-      )} m ${String(seconds).padStart(2, '0')} s`
+      // `Time worked: ${String(hours).padStart(2, '0')} h ${String(minutes).padStart(
+      `${String(hours).padStart(2, '0')} h ${String(minutes).padStart(2, '0')} m ${String(
+        seconds
+      ).padStart(2, '0')} s`
     )
   }
 }, 1000)
