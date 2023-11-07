@@ -2,7 +2,6 @@ describe('NavBar Tests', () => {
 
   it('should have a "Your Profile" link in the NavBar for authenticated users', () => {
     cy.fixture('users/employee.json').then((userData) => {
-      // Assuming that you have a command to login
       cy.login(userData.email, userData.password)
       cy.get('#headlessui-menu-button-3 > .absolute').should('be.visible').click()
       cy.contains('Your Profile').should('be.visible')
