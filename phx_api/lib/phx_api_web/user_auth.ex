@@ -195,7 +195,7 @@ defmodule TimeManager.UserAuth do
     if conn.assigns[:current_user] do
       conn
     else
-      send_resp(conn, :unauthorized, "Vous n'êtes pas connecté")
+      send_error(conn, :unauthorized, "Vous n'êtes pas connecté")
     end
   end
 
@@ -206,10 +206,11 @@ defmodule TimeManager.UserAuth do
     if conn.assigns[:current_user] do
       if conn.assigns[:current_user].role == :MANAGER do
         conn
+      else
+        send_error(conn, :forbidden, "Vous n'avez pas les droits")
       end
-      send_resp(conn, :forbidden, "Vous n'avez pas les droits")
     else
-      send_resp(conn, :unauthorized, "Vous n'êtes pas connecté")
+      send_error(conn, :unauthorized, "Vous n'êtes pas connecté")
     end
   end
 
@@ -220,10 +221,11 @@ defmodule TimeManager.UserAuth do
     if conn.assigns[:current_user] do
       if conn.assigns[:current_user].role == :SUPER_MANAGER do
         conn
+      else
+        send_error(conn, :forbidden, "Vous n'avez pas les droits")
       end
-      send_resp(conn, :forbidden, "Vous n'avez pas les droits")
     else
-      send_resp(conn, :unauthorized, "Vous n'êtes pas connecté")
+      send_error(conn, :unauthorized, "Vous n'êtes pas connecté")
     end
   end
 
@@ -234,11 +236,19 @@ defmodule TimeManager.UserAuth do
     if conn.assigns[:current_user] do
       if conn.assigns[:current_user].role == :SUPER_MANAGER || conn.assigns[:current_user].role == :MANAGER do
         conn
+      else
+        send_error(conn, :forbidden, "Vous n'avez pas les droits")
       end
-      send_resp(conn, :forbidden, "Vous n'avez pas les droits")
     else
-      send_resp(conn, :unauthorized, "Vous n'êtes pas connecté")
+      send_error(conn, :unauthorized, "Vous n'êtes pas connecté")
     end
+  end
+
+  defp send_error(conn, status, message) do
+    conn
+    |> put_status(status)
+    |> json(%{message: message})
+    |> halt()
   end
 
   defp put_token_in_session(conn, token) do
