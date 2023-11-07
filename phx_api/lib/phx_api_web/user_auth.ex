@@ -247,7 +247,7 @@ defmodule TimeManager.UserAuth do
   defp send_error(conn, status, message) do
     conn
     |> put_status(status)
-    |> json(%{message: message})
+    |> json(%{error: message})
     |> halt()
   end
 
