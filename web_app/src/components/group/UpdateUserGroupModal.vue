@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot as="template" :show="isModalOpen">
+  <TransitionRoot as="template" :show="isUpdateUserGroupModalOpen">
     <Dialog as="div" class="relative z-10" @click.stop="closeModal">
       <TransitionChild
         as="template"
@@ -98,18 +98,18 @@ import { UsersIcon } from '@heroicons/vue/24/outline'
 
 // Define props for initial values
 const props = defineProps({
-  isModalOpen: Boolean,
+  isUpdateUserGroupModalOpen: Boolean,
   initialUsername: String,
   initialEmail: String
 })
 
-const emit = defineEmits(['update:isModalOpen'])
+const emit = defineEmits(['update:isUpdateUserGroupModalOpen'])
 
 const username = ref('')
 const email = ref('')
 
 watch(
-  () => props.isModalOpen,
+  () => props.isUpdateUserGroupModalOpen,
   (newValue) => {
     if (newValue) {
       username.value = props.initialUsername
@@ -120,6 +120,6 @@ watch(
 )
 
 function closeModal() {
-  emit('update:isModalOpen', false)
+  emit('update:isUpdateUserGroupModalOpen', false)
 }
 </script>
