@@ -32,6 +32,9 @@ defmodule TimeManagerWeb.Router do
     put "/clocks/:userId", ClockController, :update
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and :EMPLOYEE
+  """
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_user]
 
@@ -40,6 +43,17 @@ defmodule TimeManagerWeb.Router do
     put "/users/update_password/:id", UserController, :password_update
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and :MANAGER
+  """
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_manager_user]
+
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER
+  """
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
@@ -48,6 +62,9 @@ defmodule TimeManagerWeb.Router do
     delete "/groups/:id", GroupController, :delete
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER OR :MANAGER
+  """
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_managers_user]
 
