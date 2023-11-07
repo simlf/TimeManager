@@ -5,7 +5,7 @@
         <component :is="iconComponent" class="h-5 w-5" :class="iconColor" aria-hidden="true" />
       </div>
       <div class="ml-3">
-        <p class="text-sm font-medium" :class="textColor">{{ message }}</p>
+        <p class="text-sm font-medium message" :class="textColor">{{ message }}</p>
       </div>
       <div class="ml-auto pl-3">
         <div class="-mx-1.5 -my-1.5">
