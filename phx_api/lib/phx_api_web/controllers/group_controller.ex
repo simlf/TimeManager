@@ -37,7 +37,7 @@ defmodule TimeManagerWeb.GroupController do
   end
 
   def show(conn, %{"id" => id}) do
-    group_and_user = Groups.get_group!(id)
+    group_and_user = Groups.get_group_and_user(id)
     render(conn, :show_group_and_user, group_and_user: group_and_user)
   end
 
@@ -55,7 +55,7 @@ defmodule TimeManagerWeb.GroupController do
           insert_managers(managers, group.id)
         end
         if employees != [] do
-          insert_employees(employees, active_manager.group_id)
+          insert_employees(employees, group.id)
         end
 
         conn

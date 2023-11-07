@@ -20,7 +20,35 @@ defmodule TimeManager.Groups do
 
   """
   def list_groups do
-    Repo.all(Group)
+    groups =
+      from(g in Group,
+        select: %{id: g.id, name: g.name},
+      )
+      |> Repo.all()
+
+    groups_with_user_count =
+      Enum.map(groups, fn group ->
+        employee_count = count_users(group.id)
+        manager_count = count_managers(group.id)
+
+        users = employee_count + manager_count
+
+        %{group: group, users: users}
+      end)
+  end
+
+  defp count_managers(group_id) do
+    Group_managers
+    |> where([gm], gm.group_id == ^group_id)
+    |> select([gm], count(gm.id))
+    |> Repo.one()
+  end
+
+  defp count_users(group_id) do
+    Group_users
+    |> where([gu], gu.group_id == ^group_id)
+    |> select([gu], count(gu.id))
+    |> Repo.one()
   end
 
   @doc """
@@ -37,7 +65,7 @@ defmodule TimeManager.Groups do
       ** (Ecto.NoResultsError)
 
   """
-  def get_group!(id) do
+  def get_group_and_user(id) do
     group = Repo.get!(Group, id)
 
     query_managers =
@@ -57,6 +85,9 @@ defmodule TimeManager.Groups do
 
     %{users: managers ++ employees, group: group}
   end
+
+  def get_group!(id), do: Repo.get!(Group, id)
+
 
   @doc """
   Creates a group.
@@ -90,7 +121,7 @@ defmodule TimeManager.Groups do
   """
   def update_group(%Group{} = group, attrs) do
     group
-    |> Group.update_group(attrs)
+    |> Group.changeset_update(attrs)
     |> Repo.update()
   end
 

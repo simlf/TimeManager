@@ -7,7 +7,7 @@ defmodule TimeManagerWeb.GroupJSON do
   Renders a list of groups.
   """
   def index(%{groups: groups}) do
-    %{data: for(group <- groups, do: data(group))}
+    %{data: for(group <- groups, do: data_with_count_user(group))}
   end
 
   @doc """
@@ -22,8 +22,10 @@ defmodule TimeManagerWeb.GroupJSON do
   """
   def show_group_and_user(%{group_and_user: group_and_user}) do
     %{data:
-        %{group: data(group_and_user.group),
-        users: for(user <- group_and_user.users, do: user_data(user.user))}
+        %{
+          group: data(group_and_user.group),
+          users: for(user <- group_and_user.users, do: user_data(user.user))
+        }
     }
   end
 
@@ -41,6 +43,14 @@ defmodule TimeManagerWeb.GroupJSON do
       email: user.email,
       role: user.role,
       group_id: user.group_id,
+    }
+  end
+
+  defp data_with_count_user(data) do
+    %{
+      id: data.group.id,
+      name: data.group.name,
+      count_users: data.users
     }
   end
 end

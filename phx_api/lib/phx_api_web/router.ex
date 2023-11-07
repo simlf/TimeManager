@@ -41,6 +41,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
+    get "/groups", GroupController, :index
     post "/groups", GroupController, :create
     delete "/groups/:id", GroupController, :delete
   end
