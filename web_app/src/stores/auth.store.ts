@@ -40,9 +40,9 @@ export const useAuthStore = defineStore({
     username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
     id: (state) => state.user?.id || -1,
-    isSuperManager: (state) => state.user?.roles.includes("SUPER MANAGER"),
-    isManager: (state) => state.user?.roles.includes("MANAGER"),
-    isEmployee: (state) => state.user?.roles.includes("EMPLOYEE"),
+    isSuperManager: (state) => state.user?.roles.includes('SUPER MANAGER'),
+    isManager: (state) => state.user?.roles.includes('MANAGER'),
+    isEmployee: (state) => state.user?.roles.includes('EMPLOYEE')
   },
   actions: {
     async checkAuth(): Promise<boolean> {
