@@ -16,6 +16,7 @@
           <div class="mt-2">
             <input
               v-model="formInfo.username"
+              name="username"
               type="text"
               autocomplete="text"
               placeholder="Jean007"
@@ -31,6 +32,7 @@
           <div class="mt-2">
             <input
               v-model="formInfo.email"
+              name="email"
               type="email"
               autocomplete="email"
               placeholder="jean007@gmail.com"
