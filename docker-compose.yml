@@ -16,14 +16,14 @@ services:
       - db
     env_file: ./.env
 
-  front:
-    build: ./web_app
-    ports:
-      - "5173:5173"
-    volumes:
-      - ./web_app:/web_app
-      - /web_app/node_modules
-    depends_on:
-      - api
-    env_file: ./.env
-    tty: true
+#  front:
+#    build: ./web_app
+#    ports:
+#      - "5173:5173"
+#    volumes:
+#      - ./web_app:/web_app
+#      - /web_app/node_modules
+#    depends_on:
+#      - api
+#    env_file: ./.env
+#    tty: true

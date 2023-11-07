@@ -13,7 +13,11 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
   Renders a single workingtimes.
   """
   def show(%{workingtime: workingtime}) do
-    %{data: data(workingtime)}
+    if workingtime == [] do
+    %{}
+    else
+     %{data: data(workingtime)}
+    end
   end
 
   def showTimes(%{hours: hours, minutes: minutes, seconds: seconds}) do
@@ -26,7 +30,8 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
       start_time: workingtime.start_time,
       end_time: workingtime.end_time,
       user_id: workingtime.user_id,
-      is_pause: workingtime.is_pause
+      is_pause: workingtime.is_pause,
+      type: workingtime.type
     }
   end
 end

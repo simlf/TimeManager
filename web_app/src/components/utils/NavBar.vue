@@ -27,19 +27,18 @@
               Home
             </router-link>
             <router-link
-              :to="{ name: 'chartManager' }"
-              exact
-              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'chartManager')"
-            >
-              Chart Manager
-            </router-link>
-            <router-link
-              :to="{ name: 'clockManager', params: { id: authStore.id } }"
+              :to="{ name: 'clockManager', params: { username: authStore.username } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
               :class="getLinkClass($route.name === 'clockManager')"
             >
               Clock Manager
+            </router-link>
+            <router-link
+              :to="{ name: 'workingTimes', params: { userId: authStore.id } }"
+              class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
+              :class="getLinkClass($route.name === 'workingTimes')"
+            >
+              Working Times
             </router-link>
           </div>
         </div>
@@ -48,15 +47,6 @@
           v-if="authStore.isAuthenticated"
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
         >
-          <button
-            type="button"
-            class="relative rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-          >
-            <span class="absolute -inset-1.5" />
-            <span class="sr-only">View notifications</span>
-            <BellIcon class="h-6 w-6" aria-hidden="true" />
-          </button>
-
           <!-- Profile dropdown -->
           <Menu as="div" class="relative ml-3">
             <div>
@@ -71,7 +61,7 @@
                   viewBox="0 0 24 24"
                   stroke-width="1.5"
                   stroke="currentColor"
-                  class="h-8 w-8 rounded-full"
+                  class="h-8 w-8 rounded-full text-gray-400"
                 >
                   <path
                     stroke-linecap="round"
@@ -99,13 +89,22 @@
                     >Your Profile</router-link
                   >
                 </MenuItem>
-                <!-- TODO: Handle Signout -->
-                <MenuItem as="router-link" v-slot="{ active }">
+                <MenuItem v-if="authStore.isManager" as="router-link" v-slot="{ active }">
                   <router-link
-                    to="/login"
+                    to="/updateGroup"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
-                    >Sign out</router-link
+                    >Your Group</router-link
                   >
+                </MenuItem>
+                <MenuItem as="router-link" @click="logout" v-slot="{ active }">
+                  <button
+                    :class="[
+                      active ? 'bg-gray-100' : '',
+                      'w-full px-4 py-2 text-sm text-gray-700 text-left'
+                    ]"
+                  >
+                    Sign out
+                  </button>
                 </MenuItem>
               </MenuItems>
             </transition>
@@ -116,13 +115,15 @@
           v-else
           class="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0"
         >
-          <button
-            as="router-link"
-            type="button"
-            class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          >
-            <router-link to="/login">Login</router-link>
-          </button>
+          <router-link to="/login">
+            <button
+              as="router-link"
+              type="button"
+              class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+            >
+              Login
+            </button>
+          </router-link>
         </div>
       </div>
     </div>
@@ -137,22 +138,22 @@
             Home
           </DisclosureButton>
         </router-link>
-        <router-link :to="{ name: 'chartManager' }">
-          <DisclosureButton
-            as="a"
-            class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'chartManager')"
-          >
-            Chart Manager
-          </DisclosureButton>
-        </router-link>
-        <router-link :to="{ name: 'clockManager', params: { id: authStore.id } }">
+        <router-link :to="{ name: 'clockManager', params: { username: authStore.username } }">
           <DisclosureButton
             as="a"
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
             :class="getLinkClass($route.name === 'clockManager')"
           >
             Clock Manager
+          </DisclosureButton>
+        </router-link>
+        <router-link :to="{ name: 'workingTimes', params: { userId: authStore.id } }">
+          <DisclosureButton
+            as="a"
+            class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
+            :class="getLinkClass($route.name === 'workingTimes')"
+          >
+            Working Times
           </DisclosureButton>
         </router-link>
       </div>
@@ -180,11 +181,15 @@ onMounted(async () => {
   await authStore.checkAuth()
 })
 
-const getLinkClass = (isActive) => {
+const getLinkClass = (isActive: boolean) => {
   if (isActive) {
     return 'border-indigo-500 text-gray-900'
   } else {
     return 'text-gray-500 border-transparent hover:border-gray-300 hover:text-gray-700'
   }
+}
+
+const logout = async () => {
+  await authStore.logout()
 }
 </script>

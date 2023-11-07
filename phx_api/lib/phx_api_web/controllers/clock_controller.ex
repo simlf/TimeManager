@@ -20,7 +20,7 @@ defmodule TimeManagerWeb.ClockController do
   end
 
   #@spec showClocksByUserId(Plug.Conn.t(), map()) :: Plug.Conn.t()
-  def showClocksByUserId(conn, %{"userId" => userId}) do
+  def show_clocks_by_user_id(conn, %{"userId" => userId}) do
     clock = Clocks.get_clocks_by_userId!(userId)
     render(conn, "show.json", clock: clock)
   end
