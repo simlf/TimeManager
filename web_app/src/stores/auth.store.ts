@@ -16,7 +16,7 @@ interface User {
   id: number
   username: string
   email: string
-  roles: string[]
+  role: string
 }
 
 const createPayload = (user: {
@@ -40,9 +40,9 @@ export const useAuthStore = defineStore({
     username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
     id: (state) => state.user?.id || -1,
-    isSuperManager: (state) => state.user?.roles.includes('SUPER MANAGER'),
-    isManager: (state) => state.user?.roles.includes('MANAGER'),
-    isEmployee: (state) => state.user?.roles.includes('EMPLOYEE')
+    isSuperManager: (state) => state.user?.role === 'SUPER_MANAGER',
+    isManager: (state) => state.user?.role === 'MANAGER',
+    isEmployee: (state) => state.user?.role === 'EMPLOYEE'
   },
   actions: {
     async checkAuth(): Promise<boolean> {
