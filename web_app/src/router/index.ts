@@ -41,7 +41,7 @@ const router = createRouter({
       path: '/updateGroup',
       meta: { requiresAuth: true, requiresManager: true },
       name: 'UpdateGroup',
-      component: () => import('@/components/UpdateGroup.vue')
+      component: () => import('@/components/group/UpdateGroup.vue')
     },
     {
       path: '/:pathMatch(.*)*',
@@ -61,7 +61,7 @@ router.beforeEach(async (to, from, next) => {
   if (requiresAuth && !isAuthenticated) {
     // Redirect unauthenticated users to the Login page
     next({ name: 'Login' })
-  } else if (requiresManager && (!authStore.isManager || !isAuthenticated)) {
+  } else if (requiresManager && !authStore.isSuperManager && !authStore.isManager) {
     // Redirect non-managers or unauthenticated users to a 'NotAuthorized' or similar page
     next({ name: 'Home' }) // Make sure you have defined a route with the name 'NotAuthorized'
   } else {
