@@ -25,14 +25,14 @@ users = [
   %{username: "The patron 2", password: "PatronPassword", email: "patron2@gotham.com", role: "SUPER_MANAGER"},
   %{username: "The manager", password: "ManagerPassword", email: "manager@gotham.com", role: "MANAGER", group_id: 1},
   %{username: "The manager 2", password: "ManagerPassword", email: "manager2@gotham.com", role: "MANAGER", group_id: 1},
-  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", role: "MANAGER"},
+  %{username: "The employee", password: "EmployeePassword", email: "employee@gotham.com", role: "EMPLOYEE"},
   %{username: "The employee 2", password: "EmployeePassword", email: "employee2@gotham.com", role: "EMPLOYEE"},
   %{username: "User2", password: "password2", email: "user2@example.com", role: "EMPLOYEE"},
   %{username: "User3", password: "password3", email: "user3@example.com", role: "EMPLOYEE", group_id: 1},
   %{username: "User4", password: "password4", email: "user4@example.com", role: "EMPLOYEE", group_id: 1},
   %{username: "User5", password: "password5", email: "user5@example.com", role: "EMPLOYEE"},
 ]
-  
+
 # Insert users
 Repo.transaction(fn ->
   Enum.each(users, fn user_params ->
