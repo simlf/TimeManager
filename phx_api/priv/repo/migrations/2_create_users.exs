@@ -8,7 +8,9 @@ defmodule TimeManager.Repo.Migrations.CreateUsersAuthTables do
       add :email, :citext, null: false
       add :username, :string, null: false
       add :hashed_password, :string, null: false
-      add :roles, {:array, :string}, default: ["EMPLOYEE"]
+      add :role, :string, default: "EMPLOYEE", null: false
+      add :group_id, :integer
+
       timestamps(type: :utc_datetime)
     end
 
@@ -24,5 +26,21 @@ defmodule TimeManager.Repo.Migrations.CreateUsersAuthTables do
 
     create index(:users_tokens, [:user_id])
     create unique_index(:users_tokens, [:context, :token])
+
+    create table(:group_users) do
+      add :group_id, references(:groups, on_delete: :delete_all)
+      add :user_id, references(:users, on_delete: :delete_all)
+    end
+
+    create index(:group_users, [:group_id])
+    create index(:group_users, [:user_id])
+
+    create table(:group_managers) do
+      add :group_id, references(:groups, on_delete: :delete_all)
+      add :user_id, references(:users, on_delete: :delete_all)
+    end
+
+    create index(:group_managers, [:group_id])
+    create index(:group_managers, [:user_id])
   end
 end

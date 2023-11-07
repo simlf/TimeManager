@@ -41,19 +41,19 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
-  # Function used by ["MANAGER", "SUPER MANAGER"] for update user
+  # Function used by ["MANAGER", "SUPER_MANAGER"] for update user
   def update(conn, %{"id" => id, "user" => user_params}) do
     {:ok, agent} = Agent.start_link(fn -> {true} end)
     active_manager = conn.assigns[:current_user]
     user = Accounts.get_user!(id)
 
-    case {Enum.member?(active_manager.roles, "SUPER MANAGER"), Enum.member?(active_manager.roles, "MANAGER")} do
+    case {Enum.member?(active_manager.role, :SUPER_MANAGER), Enum.member?(active_manager.role, :MANAGER)} do
       {true, _} ->
-        if Enum.member?(user.roles, "SUPER MANAGER") do
+        if Enum.member?(user.role, :SUPER_MANAGER) do
           Agent.update(agent, fn {value} -> {false} end)
         end
         {_, true} ->
-          if !(Enum.member?(user.roles, "EMPLOYEE")) || user.group_id != active_manager.group_id do
+          if !(Enum.member?(user.role, :EMPLOYEE)) || user.group_id != active_manager.group_id do
           Agent.update(agent, fn {value} -> {false} end)
         end
       end

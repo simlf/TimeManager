@@ -3,8 +3,10 @@ defmodule TimeManagerWeb.GroupController do
 
   alias TimeManager.Groups
   alias TimeManager.Groups.Group
-  alias TimeManager.Accounts.User
   alias TimeManager.Accounts
+  alias TimeManager.Groups.Group_managers
+  alias TimeManager.Groups.Group_users
+  alias TimeManager.Repo
 
   action_fallback TimeManagerWeb.FallbackController
 
@@ -14,70 +16,149 @@ defmodule TimeManagerWeb.GroupController do
   end
 
   def create(conn, %{"group" => group_params}) do
-    # Récupérez le manager_id à partir des paramètres du groupe
-    manager_id = Map.get(group_params, "manager_id")
-    IO.inspect(manager_id)
+    employees = Map.get(group_params, "employees", [])
+    managers = Map.get(group_params, "managers", [])
+    name = Map.get(group_params, "name")
 
-    # Assurez-vous que le manager_id est un entier valide
-    with user = TimeManager.Accounts.get_user!(manager_id) do
-      case user do
-        %TimeManager.Accounts.User{roles: ["MANAGER"]} ->
-          # L'utilisateur est un "MANAGER"
-          case TimeManager.Accounts.get_group_manager(user) do
-            nil ->
-              user_id = user.id
-              group_params = %{group_params | "users_id" => [user_id | group_params["users_id"]]}
+    # Create group
+    case Groups.create_group(%{name: name}) do
+      {:ok, %Group{} = group} ->
+        if managers != [] do
+          insert_managers(managers, group.id)
+        end
+        if employees != [] do
+          insert_employees(employees, group.id)
+        end
 
-              # Créez le groupe
-              case Groups.create_group(group_params) do
-                {:ok, %Group{} = group} ->
-                  # Mettez à jour le champ group_id de l'utilisateur
-                  user_params = %{"group_id" => group.id}
-
-                  # Mettez à jour l'utilisateur dans la base de données
-                  {:ok, updated_user} = TimeManager.Accounts.update_user(user, user_params)
-
-                  conn
-                  |> put_status(:created)
-                  |> render(:show, group: group)
-              end
-            _ ->
-              conn
-              |> put_status(:forbidden)
-              |> json(%{message: "L'utilisateur est déjà le manager d'une équipe."})
-          end
-        _ ->
-          conn
-          |> put_status(:forbidden)
-          |> json(%{message: "Le manager_id doit appartenir à un utilisateur avec le rôle 'MANAGER'."})
-      end
-    else
-      _ ->
         conn
-        |> put_status(:forbidden)
-        |> json(%{message: "Accès refusé pour les utilisateurs sans le rôle 'SUPER MANAGER'."})
+        |> put_status(:created)
+        |> render(:show, group: group)
     end
   end
 
-
   def show(conn, %{"id" => id}) do
-    group = Groups.get_group!(id)
-    render(conn, :show, group: group)
+    group_and_user = Groups.get_group_and_user(id)
+    render(conn, :show_group_and_user, group_and_user: group_and_user)
   end
 
   def update(conn, %{"id" => id, "group" => group_params}) do
+    active_manager = conn.assigns[:current_user]
     group = Groups.get_group!(id)
 
-    with {:ok, %Group{} = group} <- Groups.update_group(group, group_params) do
-      render(conn, :show, group: group)
+    employees = Map.get(group_params, "employees", [])
+    managers = Map.get(group_params, "managers", [])
+    name = Map.get(group_params, "name")
+
+    case Groups.update_group(group, %{name: name}) do
+      {:ok, %Group{} = group} ->
+        if managers != [] && active_manager.role == :SUPER_MANAGER do
+          insert_managers(managers, group.id)
+        end
+        if employees != [] do
+          insert_employees(employees, group.id)
+        end
+
+        conn
+        |> put_status(:ok)
+        |> render(:show, group: group)
     end
   end
 
   def delete(conn, %{"id" => id}) do
     group = Groups.get_group!(id)
 
-    with {:ok, %Group{}} <- Groups.delete_group(group) do
-      send_resp(conn, :no_content, "")
+    case Groups.delete_group(group) do
+      {:ok, %Group{} = group} ->
+        Accounts.remove_group_id(id)
+
+        send_resp(conn, :no_content, "")
     end
   end
+
+  def insert_managers(manager_ids, group_id) do
+    user_params = %{"group_id" => group_id}
+
+    Enum.each(manager_ids, fn manager_id ->
+      user = Accounts.get_user!(manager_id)
+      case user do
+        %TimeManager.Accounts.User{} = user ->
+          case user.group_id do
+            nil ->
+              group_manager_params = %{group_id: group_id, user_id: user.id}
+              changeset = %Group_managers{}
+                          |> Group_managers.changeset(group_manager_params)
+
+              case Repo.insert(changeset) do
+                {:ok, _} ->
+                  {:ok, updated_user} = TimeManager.Accounts.update_user(user, user_params)
+
+                {:error, changeset} ->
+                  IO.puts("Failed to create Group_manager.")
+              end
+
+            _ ->
+              group_manager_params = %{group_id: group_id, user_id: user.id}
+              line = Repo.get_by(Group_managers, user_id: user.id)
+
+              changeset = line
+                          |> Group_managers.changeset(group_manager_params)
+
+              case Repo.update(changeset) do
+                {:ok, _} ->
+                  {:ok, updated_user} = TimeManager.Accounts.update_user(user, user_params)
+
+                {:error, changeset} ->
+                  IO.puts("Failed to update Group_manager.")
+              end
+          end
+
+        nil ->
+          IO.puts("User not found for ID: #{user.id}")
+      end
+    end)
+  end
+
+  def insert_employees(employee_ids, group_id) do
+    user_params = %{"group_id" => group_id}
+
+    Enum.each(employee_ids, fn employee_id ->
+      user = Accounts.get_user!(employee_id)
+      case user do
+        %TimeManager.Accounts.User{} = user ->
+          case user.group_id do
+            nil ->
+              group_user_params = %{group_id: group_id, user_id: user.id}
+              changeset = %Group_users{}
+                          |> Group_users.changeset(group_user_params)
+
+              case Repo.insert(changeset) do
+                {:ok, _} ->
+                  {:ok, updated_user} = TimeManager.Accounts.update_user(user, user_params)
+
+                {:error, changeset} ->
+                  IO.puts("Failed to create Group_users.")
+              end
+
+            _ ->
+              group_user_params = %{group_id: group_id, user_id: user.id}
+              line = Repo.get_by(Group_users, user_id: user.id)
+
+              changeset = line
+                          |> Group_users.changeset(group_user_params)
+
+              case Repo.update(changeset) do
+                {:ok, _} ->
+                  {:ok, updated_user} = TimeManager.Accounts.update_user(user, user_params)
+
+                {:error, changeset} ->
+                  IO.puts("Failed to update Group_users.")
+              end
+          end
+
+        nil ->
+          IO.puts("User not found for ID: #{user.id}")
+      end
+    end)
+  end
+
 end

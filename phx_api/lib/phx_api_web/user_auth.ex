@@ -207,6 +207,52 @@ defmodule TimeManager.UserAuth do
     end
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER
+  """
+  def require_authenticated_super_manager_user(conn, _opts) do
+    IO.inspect("JE PASSE PAR LA ROUTE PROTECTED SUPER_MANAGER")
+    if conn.assigns[:current_user] && conn.assigns[:current_user].role == :SUPER_MANAGER do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in to access this page.")
+      |> maybe_store_return_to()
+      |> halt()
+    end
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :MANAGER
+  """
+  def require_authenticated_manager_user(conn, _opts) do
+    IO.inspect("JE PASSE PAR LA ROUTE PROTECTED SUPER_MANAGER")
+    if conn.assigns[:current_user] && conn.assigns[:current_user].role == :MANAGER do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in to access this page.")
+      |> maybe_store_return_to()
+      |> halt()
+    end
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER OR :MANAGER
+  """
+  def require_authenticated_managers_user(conn, _opts) do
+    IO.inspect("JE PASSE PAR LA ROUTE PROTECTED SUPER_MANAGER OR MANAGER")
+    if conn.assigns[:current_user] &&
+         (conn.assigns[:current_user].role == :SUPER_MANAGER || conn.assigns[:current_user].role == :MANAGER) do
+      conn
+    else
+      conn
+      |> put_flash(:error, "You must log in as a SUPER_MANAGER or MANAGER to access this page.")
+      |> maybe_store_return_to()
+      |> halt()
+    end
+  end
+
   defp put_token_in_session(conn, token) do
     conn
     |> put_session(:user_token, token)
