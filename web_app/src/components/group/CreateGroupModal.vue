@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot as="template" :show="isModalOpen">
+  <TransitionRoot as="template" :show="isCreateGroupModalOpen">
     <Dialog as="div" class="relative z-10" @click.stop="closeModal">
       <TransitionChild
         as="template"
@@ -33,9 +33,12 @@
                 <div
                   class="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100"
                 >
-                  <UsersIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
+                  <UserGroupIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                 </div>
                 <div class="mt-3 text-center sm:mt-5">
+                  <DialogTitle as="h3" class="text-base font-semibold leading-6 text-gray-900"
+                    >Create group</DialogTitle
+                  >
                   <form @submit.prevent="updateProfile" class="mt-5 sm:flex sm:items-center">
                     <div class="w-full sm:max-w-xs">
                       <label
@@ -94,22 +97,22 @@
 <script setup>
 import { ref, watch } from 'vue'
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
-import { UsersIcon } from '@heroicons/vue/24/outline'
+import { UserGroupIcon } from '@heroicons/vue/24/outline'
 
 // Define props for initial values
 const props = defineProps({
-  isModalOpen: Boolean,
+  isCreateGroupModalOpen: Boolean,
   initialUsername: String,
   initialEmail: String
 })
 
-const emit = defineEmits(['update:isModalOpen'])
+const emit = defineEmits(['update:isCreateGroupModalOpen'])
 
 const username = ref('')
 const email = ref('')
 
 watch(
-  () => props.isModalOpen,
+  () => props.isCreateGroupModalOpen,
   (newValue) => {
     if (newValue) {
       username.value = props.initialUsername
@@ -120,6 +123,6 @@ watch(
 )
 
 function closeModal() {
-  emit('update:isModalOpen', false)
+  emit('update:isCreateGroupModalOpen', false)
 }
 </script>

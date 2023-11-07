@@ -9,7 +9,16 @@
           A list of all the users in your group including their username, email and role.
         </p>
       </div>
-      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
+      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex space-x-4">
+        <button
+          @click="openCreateGroupModal(authStore.user)"
+          v-if="authStore.isSuperManager"
+          type="button"
+          class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        >
+          <!--                    @click="openCreateGroupModal(person)"-->
+          Create group
+        </button>
         <button
           type="button"
           class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -73,7 +82,10 @@
             <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ person.email }}</td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ person.roles[0] }}</td>
             <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <button @click="openModal(person)" class="text-indigo-600 hover:text-indigo-900">
+              <button
+                @click="openEditUserModal(person)"
+                class="text-indigo-600 hover:text-indigo-900"
+              >
                 Edit
               </button>
             </td>
@@ -81,21 +93,31 @@
         </tbody>
       </table>
     </div>
-    <UpdateUserGroup
-      :isModalOpen="isModalOpen"
+    <CreateGroupModal
+      :isCreateGroupModalOpen="isCreateGroupModalOpen"
       :initialUsername="currentUser.username"
       :initialEmail="currentUser.email"
-      @update:isModalOpen="isModalOpen = $event"
+      @update:isCreateGroupModalOpen="isCreateGroupModalOpen = $event"
+    />
+    <UpdateUserGroupModal
+      :isUpdateUserGroupModalOpen="isUpdateUserGroupModalOpen"
+      :initialUsername="currentUser.username"
+      :initialEmail="currentUser.email"
+      @update:isUpdateUserGroupModalOpen="isUpdateUserGroupModalOpen = $event"
     />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import UpdateUserGroup from '@/components/UpdateUserGroup.vue'
+import CreateGroupModal from '@/components/group/CreateGroupModal.vue'
+import UpdateUserGroupModal from '@/components/group/UpdateUserGroupModal.vue'
 import User from '@/components/user/User.vue'
+import { useAuthStore } from '@/stores/auth.store'
 
-const isModalOpen = ref(false)
+const authStore = useAuthStore()
+const isCreateGroupModalOpen = ref(false)
+const isUpdateUserGroupModalOpen = ref(false)
 
 interface User {
   username: string
@@ -105,9 +127,14 @@ interface User {
 
 const currentUser = ref(User)
 
-function openModal(user: User) {
+function openEditUserModal(user: User) {
   currentUser.value = user
-  isModalOpen.value = true
+  isUpdateUserGroupModalOpen.value = true
+}
+
+function openCreateGroupModal(user: User) {
+  currentUser.value = user
+  isCreateGroupModalOpen.value = true
 }
 
 function getInitials(username: string): string {
