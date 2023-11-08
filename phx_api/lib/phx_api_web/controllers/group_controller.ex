@@ -20,58 +20,77 @@ defmodule TimeManagerWeb.GroupController do
     managers = Map.get(group_params, "managers", [])
     name = Map.get(group_params, "name")
 
-    # Create group
-    case Groups.create_group(%{name: name}) do
-      {:ok, %Group{} = group} ->
-        if managers != [] do
-          insert_managers(managers, group.id)
-        end
-        if employees != [] do
-          insert_employees(employees, group.id)
-        end
+    with {:ok, %Group{} = group} <- Groups.create_group(%{name: name}) do
+      if managers != [] do
+        insert_managers(managers, group.id)
+      end
 
-        conn
-        |> put_status(:created)
-        |> render(:show, group: group)
+      if employees != [] do
+        insert_employees(employees, group.id)
+      end
+
+      conn
+      |> put_status(:created)
+      |> render(:show, group: group)
     end
   end
 
   def show(conn, %{"id" => id}) do
     group_and_user = Groups.get_group_and_user(id)
-    render(conn, :show_group_and_user, group_and_user: group_and_user)
+
+    case group_and_user do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Group not found"})
+        |> halt()
+      _ ->
+        render(conn, :show_group_and_user, group_and_user: group_and_user)
+    end
   end
 
   def update(conn, %{"id" => id, "group" => group_params}) do
     active_manager = conn.assigns[:current_user]
-    group = Groups.get_group!(id)
+    group = Groups.get_group(id)
 
-    employees = Map.get(group_params, "employees", [])
-    managers = Map.get(group_params, "managers", [])
-    name = Map.get(group_params, "name")
-
-    case Groups.update_group(group, %{name: name}) do
-      {:ok, %Group{} = group} ->
-        if managers != [] && active_manager.role == :SUPER_MANAGER do
-          insert_managers(managers, group.id)
-        end
-        if employees != [] do
-          insert_employees(employees, group.id)
-        end
-
+    case group do
+      nil ->
         conn
-        |> put_status(:ok)
-        |> render(:show, group: group)
+        |> put_status(:not_found)
+        |> json(%{error: "Group not found"})
+        |> halt()
+      _ ->
+        employees = Map.get(group_params, "employees", [])
+        managers = Map.get(group_params, "managers", [])
+        name = Map.get(group_params, "name")
+
+        with {:ok, %Group{} = group} <- Groups.update_group(group, %{name: name}) do
+          if managers != [] && active_manager.role == :SUPER_MANAGER do
+            insert_managers(managers, group.id)
+          end
+          if employees != [] do
+            insert_employees(employees, group.id)
+          end
+
+          render(conn, "show.json", group: group)
+        end
     end
   end
 
   def delete(conn, %{"id" => id}) do
-    group = Groups.get_group!(id)
+    group = Groups.get_group(id)
 
-    case Groups.delete_group(group) do
-      {:ok, %Group{} = group} ->
-        Accounts.remove_group_id(id)
-
-        send_resp(conn, :no_content, "")
+    case group do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Group not found"})
+        |> halt()
+      _ ->
+        with {:ok, %Group{}} <- Groups.delete_group(group) do
+          Accounts.remove_group_id(id)
+          send_resp(conn, :no_content, "")
+        end
     end
   end
 
