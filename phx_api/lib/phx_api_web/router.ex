@@ -13,10 +13,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through :api
 
-    post "/users", UserController, :create
     post "/users/log_in", UserController, :connection
-    get "/users/check_auth", UserController, :check_auth
-    get "/users/log_out", UserController, :log_out
 
     post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
     get "/workingtimes/last/:user_id", WorkingtimesController, :get_last_workingtime_by_user_id
@@ -38,9 +35,12 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_user]
 
+    get "/users/check_auth", UserController, :check_auth
     put "/users/me", UserController, :update_me
-    resources "/users", UserController, except: [:edit, :create]
     put "/users/update_password/:id", UserController, :password_update
+    get "/users/log_out", UserController, :log_out
+
+    resources "/users", UserController, except: [:edit, :create]
   end
 
   @doc """
@@ -57,9 +57,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
-    get "/groups", GroupController, :index
-    post "/groups", GroupController, :create
-    delete "/groups/:id", GroupController, :delete
+    resources "/groups", GroupController, only: [:index, :create, :delete]
   end
 
   @doc """
@@ -68,8 +66,8 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_managers_user]
 
-    put "/groups/:id", GroupController, :update
-    get "/groups/:id", GroupController, :show
+    resources "/users", UserController, only: [:create]
+    resources "/groups", GroupController, only: [:update, :show]
   end
 
   # Enable LiveDashboard in development
