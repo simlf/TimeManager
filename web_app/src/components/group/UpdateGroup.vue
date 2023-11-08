@@ -16,15 +16,14 @@
           type="button"
           class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
         >
-          <!--                    @click="openCreateGroupModal(person)"-->
           Create group
         </button>
-        <button
-          type="button"
+        <router-link
           class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+          to="/register"
         >
-          Add user
-        </button>
+          Register a user
+        </router-link>
       </div>
     </div>
     <div class="-mx-4 mt-8 sm:-mx-0">

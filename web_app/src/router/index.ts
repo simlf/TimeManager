@@ -23,6 +23,7 @@ const router = createRouter({
     {
       path: '/register',
       name: 'Register',
+      meta: { requiresAuth: true, requiresManager: true },
       component: () => import('@/components/user/Register.vue')
     },
     {

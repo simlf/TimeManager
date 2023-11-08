@@ -18,13 +18,6 @@
                 Effortlessly track, manage, and analyze your work hours with Gotham Time Tracker.
                 Take control of your time today!
               </p>
-              <div class="mt-10 flex items-center justify-center gap-x-6">
-                <router-link
-                  to="/register"
-                  class="rounded-md bg-indigo-500 px-3.5 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-indigo-400"
-                  >Get started</router-link
-                >
-              </div>
             </div>
           </div>
         </div>
