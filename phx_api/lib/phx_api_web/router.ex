@@ -13,10 +13,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through :api
 
-    post "/users", UserController, :create
     post "/users/log_in", UserController, :connection
-    get "/users/check_auth", UserController, :check_auth
-    get "/users/log_out", UserController, :log_out
 
     post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
     get "/workingtimes/last/:user_id", WorkingtimesController, :get_last_workingtime_by_user_id
@@ -30,18 +27,47 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:userId", ClockController, :show_clocks_by_user_id
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
-
-    post "/groups", GroupController, :create
-    post "/groups/add_user/:id", GroupController, :add_user_to_group
-
   end
 
+  @doc """
+  Used for routes that require the user to be authenticated and :EMPLOYEE
+  """
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_user]
 
+    get "/users/check_auth", UserController, :check_auth
     put "/users/me", UserController, :update_me
-    resources "/users", UserController, except: [:edit, :create]
     put "/users/update_password/:id", UserController, :password_update
+    get "/users/log_out", UserController, :log_out
+
+    resources "/users", UserController, except: [:edit, :create]
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :MANAGER
+  """
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_manager_user]
+
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER
+  """
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_super_manager_user]
+
+    resources "/groups", GroupController, only: [:index, :create, :delete]
+  end
+
+  @doc """
+  Used for routes that require the user to be authenticated and :SUPER_MANAGER OR :MANAGER
+  """
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_managers_user]
+
+    resources "/users", UserController, only: [:create]
+    resources "/groups", GroupController, only: [:update, :show]
   end
 
   # Enable LiveDashboard in development

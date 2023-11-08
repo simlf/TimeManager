@@ -7,7 +7,6 @@ defmodule TimeManager.Accounts do
   alias TimeManager.Repo
 
   alias TimeManager.Accounts.{User, UserToken}
-  alias TimeManager.Groups.Group
   ## Database getters
 
   defp base_query() do
@@ -137,11 +136,11 @@ defmodule TimeManager.Accounts do
   def update_user(%User{} = user, attrs) do
     email = Map.get(attrs, "email", user.email)
     username = Map.get(attrs, "username", user.username)
-    roles = Map.get(attrs, "roles", user.roles)
+    role = Map.get(attrs, "role", user.role)
     group_id = Map.get(attrs, "group_id", user.group_id)
 
     user
-    |> User.user_update_changeset(%{email: email, username: username, roles: roles, group_id: group_id})
+    |> User.user_update_changeset(%{email: email, username: username, role: role, group_id: group_id})
     |> Repo.update()
   end
 
@@ -168,6 +167,23 @@ defmodule TimeManager.Accounts do
     user
     |> User.password_changeset(attrs)
     |> Repo.update()
+  end
+
+  @doc """
+  Remove the group_id if group is delete
+  """
+  def remove_group_id(group_id) do
+    query =
+      from(u in User,
+        where: u.group_id == ^group_id
+      )
+    users = Repo.all(query)
+
+    Enum.each(users, fn user ->
+      user
+      |> User.user_remove_group_id(%{group_id: nil})
+      |> Repo.update()
+    end)
   end
 
   @doc """
@@ -214,18 +230,18 @@ defmodule TimeManager.Accounts do
     :ok
   end
 
-  def get_group_manager(user) do
-    group =
-      from(g in Group,
-        where: g.manager_id == ^user.id,
-        select: g
-      )
-    |> TimeManager.Repo.one()
-
-    case group do
-      %Group{} = group -> group.manager_id
-      _ -> nil
-    end
-  end
+#  def get_group_manager(user) do
+#    group =
+#      from(g in Group,
+#        where: g.manager_ids == ^user.id,
+#        select: g
+#      )
+#    |> TimeManager.Repo.one()
+#
+#    case group do
+#      %Group{} = group -> group.manager_ids
+#      _ -> nil
+#    end
+#  end
 
 end

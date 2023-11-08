@@ -12,6 +12,13 @@ interface LoginPayload {
   }
 }
 
+interface User {
+  id: number
+  username: string
+  email: string
+  role: string
+}
+
 const createPayload = (user: {
   username?: string
   email?: string
@@ -23,17 +30,19 @@ const createPayload = (user: {
 export const useAuthStore = defineStore({
   id: 'auth',
   state: () => ({
-    user: null as { id?: number; username?: string; email: string } | null,
+    user: null as User | null,
     isAuthenticated: false,
     error: null as Error | null,
     success: null as string | null,
-    returnUrl: null,
-
+    returnUrl: null
   }),
   getters: {
-    username: (state) => state.user?.username || '',
+    username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
-    id: (state) => state.user?.id || -1
+    id: (state) => state.user?.id || -1,
+    isSuperManager: (state) => state.user?.role === 'SUPER_MANAGER',
+    isManager: (state) => state.user?.role === 'MANAGER',
+    isEmployee: (state) => state.user?.role === 'EMPLOYEE'
   },
   actions: {
     async checkAuth(): Promise<boolean> {
@@ -59,7 +68,7 @@ export const useAuthStore = defineStore({
 
       try {
         await axios.post(`${API_BASE_URL}/`, payload)
-        this.showSuccessMessage("User registered successfully")
+        this.success = 'User registered successfully'
         this.redirectTo('/login')
       } catch (error: Error | any) {
         this.handleError(
@@ -79,7 +88,7 @@ export const useAuthStore = defineStore({
         await axios.post(`${API_BASE_URL}/log_in`, payload)
         this.user = credentials
         this.isAuthenticated = true
-        // this.saveToLocalStorage()
+        this.success = 'User logged in  successfully'
         this.redirectTo('/')
       } catch (error: Error | any) {
         this.handleError(error, 'Error logging in, make sure your credentials are good')
@@ -93,12 +102,11 @@ export const useAuthStore = defineStore({
         email: credentials.email
       })
       try {
-        const response = await axios.put(`${API_BASE_URL}/${this.id}`, payload)
+        const response = await axios.put(`${API_BASE_URL}/me`, payload)
 
         this.user = response.data.data
         this.isAuthenticated = true
-        this.showSuccessMessage('Password updated successfully')
-        // this.success = 'User updated successfully'
+        this.success = 'User updated successfully'
       } catch (error: Error | any) {
         this.handleError(error, 'Make sure the email is valid')
       }
@@ -114,8 +122,7 @@ export const useAuthStore = defineStore({
 
         this.user = response.data.data
         this.isAuthenticated = true
-        this.showSuccessMessage('Password updated successfully')
-        // this.success = 'Password updated successfully'
+        this.success = 'Password updated successfully'
       } catch (error: Error | any) {
         this.handleError(error, 'Error updating user password')
       }
@@ -139,20 +146,6 @@ export const useAuthStore = defineStore({
         errorMessage += ` (HTTP ${error.response.status})`
       }
       this.error = new Error(errorMessage)
-      // setTimeout(() => {
-      //   this.clearSuccessMessage();
-      // }, 10000); // Efface le message après 10 secondes
-    },
-    showSuccessMessage(message: string) {
-      this.success = message;
-      // setTimeout(() => {
-      //   this.clearSuccessMessage();
-      // }, 10000); // Efface le message après 10 secondes 
-    },
-    clearSuccessMessage() {
-      this.success = null;
-      this.error = null;
-    },
-
+    }
   }
 })
