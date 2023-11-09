@@ -9,7 +9,7 @@
 
     <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
       <form @submit.prevent="handleSubmit" class="space-y-6">
-        <div v-if="submitLabel === 'Register'">
+        <div v-if="submitLabel === 'Create User'">
           <label for="username" class="block text-sm font-medium leading-6 text-gray-900"
             >Username</label
           >
@@ -24,6 +24,11 @@
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
+          <SelectDropdown
+            v-if="authStore.isSuperManager"
+            :options="roles"
+            v-model="formInfo.roles"
+          />
         </div>
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
@@ -75,9 +80,12 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import SelectDropdown from '@/components/utils/SelectDropdown.vue'
+import { useAuthStore } from '@/stores/auth.store'
 
-// Define props
-const props = defineProps({
+const authStore = useAuthStore()
+
+defineProps({
   formTitle: {
     type: String,
     required: true
@@ -85,23 +93,27 @@ const props = defineProps({
   submitLabel: {
     type: String,
     required: true
+  },
+  roles: {
+    type: Array,
+    required: false
   }
 })
 
-// Define data
 interface FormInfo {
   username?: string
   email: string
   password: string
+  roles?: string
 }
 
 const formInfo: FormInfo = ref({
   username: '',
   email: '',
-  password: ''
+  password: '',
+  roles: ''
 })
 
-// Define methods
 const emit = defineEmits()
 const handleSubmit = () => {
   emit('form-submit', formInfo.value)

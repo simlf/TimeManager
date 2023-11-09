@@ -3,7 +3,7 @@
     <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
-          Groups
+          Group
         </h2>
         <p class="mt-2 text-sm text-gray-700">
           A list of all the users in your group including their username, email and role.
@@ -22,7 +22,7 @@
           class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           to="/register"
         >
-          Register a user
+          Create user
         </router-link>
       </div>
     </div>

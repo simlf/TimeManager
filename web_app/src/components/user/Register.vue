@@ -10,6 +10,7 @@ const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHan
 const createUser = (data: { username: string; email: string; password: string }) => {
   authStore.register(data)
 }
+const roles = ['EMPLOYEE', 'MANAGER']
 </script>
 
 <template>
@@ -23,8 +24,9 @@ const createUser = (data: { username: string; email: string; password: string })
         @dismiss="clearSuccess"
       />
       <AuthForm
-        formTitle="Register a user to your group"
-        submitLabel="Register"
+        formTitle="Create a user for your group"
+        submitLabel="Create User"
+        :roles="roles"
         @form-submit="createUser"
       />
       <div class="text-center">
