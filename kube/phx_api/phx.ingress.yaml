@@ -10,16 +10,11 @@ spec:
   entryPoints:
     - websecure
   routes:
-    - match: Host(`phx.time-manager-batman.com`)
-      kind: Rule
-      services:
-        - name: phx-api-service
-          port: 4000
     - match: Host(`pop.time-manager-batman.com`)
       kind: Rule
       services:
         - name: phx-api-service
-          port: 4000
+          port: 80
       middlewares:
         - name: default-headers
   tls:

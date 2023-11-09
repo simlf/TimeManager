@@ -15,11 +15,6 @@ spec:
       services:
         - name: vue-app-service
           port: 80
-    - match: Host(`test.time-manager-batman.com`)
-      kind: Rule
-      services:
-        - name: vue-app-service
-          port: 80
       middlewares:
         - name: default-headers
   tls:
