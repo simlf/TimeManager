@@ -21,7 +21,6 @@ defmodule TimeManager.Groups.Group do
   def changeset_update(group, attrs, opts \\ []) do
     group
     |> cast(attrs, [:name])
-    |> validate_name(opts)
   end
 
   defp validate_name(changeset, opts) do

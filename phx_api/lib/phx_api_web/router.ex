@@ -1,6 +1,6 @@
 defmodule TimeManagerWeb.Router do
   use TimeManagerWeb, :router
-
+#A DELETE APRES
   import TimeManager.UserAuth
 
   pipeline :api do
@@ -23,6 +23,7 @@ defmodule TimeManagerWeb.Router do
     get "/workingtimes/:user_id", WorkingtimesController, :get_all_by_id
     get "/times/:user_id", WorkingtimesController, :get_time_from_workingtimes_by_user_id
     get "/times/thisDay/:user_id", WorkingtimesController, :get_time_from_workingtimes_current_day_by_user_id
+    get "/times/info/:user_id", WorkingtimesController, :get_global_time_from_workingtimes_by_user_id
 
     get "/clocks/:userId", ClockController, :show_clocks_by_user_id
     post "/clocks/:userId", ClockController, :create
@@ -39,8 +40,6 @@ defmodule TimeManagerWeb.Router do
     put "/users/me", UserController, :update_me
     put "/users/update_password/:id", UserController, :password_update
     get "/users/log_out", UserController, :log_out
-
-    resources "/users", UserController, except: [:edit, :create]
   end
 
   @doc """
@@ -57,6 +56,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
+    resources "/users", UserController, only: [:delete, :index]
     resources "/groups", GroupController, only: [:index, :create, :delete]
   end
 
@@ -66,7 +66,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_managers_user]
 
-    resources "/users", UserController, only: [:create]
+    resources "/users", UserController, only: [:create, :update, :show]
     resources "/groups", GroupController, only: [:update, :show]
   end
 

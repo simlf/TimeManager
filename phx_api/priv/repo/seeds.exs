@@ -37,7 +37,7 @@ users = [
 Repo.transaction(fn ->
   Enum.each(users, fn user_params ->
     user = %User{}
-    |> User.registration_changeset(user_params)
+    |> User.registration_changeset_seeds(user_params)
     |> Repo.insert()
     case user do
       {:ok, _} -> IO.puts("User created successfully")

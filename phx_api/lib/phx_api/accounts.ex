@@ -16,18 +16,23 @@ defmodule TimeManager.Accounts do
   def list_users(username, email) do
     query = base_query()
 
-    if username != "" do
-      IO.inspect("DANS IF")
-      IO.inspect(email)
-      query = query
-      |> where([u], u.username == ^username)
-      Repo.all(query)
-    else
-      Repo.all(query)
+    query =
+    case {username != "", email != ""} do
+      {true, true} ->
+        query = query
+                |> where([u], like(u.username, ^"%#{username}%"))
+                |> where([u], like(u.email, ^"%#{email}%"))
+      {true, _} ->
+        query = query
+                |> where([u], like(u.username, ^"%#{username}%"))
+      {_, true} ->
+        query = query
+                |> where([u], like(u.email, ^"%#{email}%"))
+      _ ->
+        base_query()
     end
-    # def get_tasks_by_user_id(idUser) do
-    #   Repo.all(from(t in Task, where: t.user_id == ^idUser))
-    # end
+
+    Repo.all(query)
   end
 
   @doc """

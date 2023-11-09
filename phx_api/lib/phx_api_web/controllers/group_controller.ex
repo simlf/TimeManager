@@ -62,7 +62,7 @@ defmodule TimeManagerWeb.GroupController do
       _ ->
         employees = Map.get(group_params, "employees", [])
         managers = Map.get(group_params, "managers", [])
-        name = Map.get(group_params, "name")
+        name = Map.get(group_params, "name", group.name)
 
         with {:ok, %Group{} = group} <- Groups.update_group(group, %{name: name}) do
           if managers != [] && active_manager.role == :SUPER_MANAGER do
@@ -99,6 +99,7 @@ defmodule TimeManagerWeb.GroupController do
 
     Enum.each(manager_ids, fn manager_id ->
       user = Accounts.get_user!(manager_id)
+
       case user do
         %TimeManager.Accounts.User{} = user ->
           case user.group_id do
@@ -142,6 +143,7 @@ defmodule TimeManagerWeb.GroupController do
 
     Enum.each(employee_ids, fn employee_id ->
       user = Accounts.get_user!(employee_id)
+
       case user do
         %TimeManager.Accounts.User{} = user ->
           case user.group_id do
@@ -178,6 +180,31 @@ defmodule TimeManagerWeb.GroupController do
           IO.puts("User not found for ID: #{user.id}")
       end
     end)
+  end
+
+  def change_user_relation_table(updated_user) do
+    group_user_params = %{user_id: updated_user.id, group_id: updated_user.group_id}
+
+    changeset =
+    if updated_user.role == :MANAGER do
+      line = Repo.get_by!(Group_users, user_id: updated_user.id)
+      Repo.delete(line)
+      changeset = %Group_managers{}
+                 |> Group_managers.changeset(group_user_params)
+    else
+      line = Repo.get_by!(Group_managers, user_id: updated_user.id)
+      Repo.delete(line)
+      changeset = %Group_users{}
+                  |> Group_users.changeset(group_user_params)
+    end
+
+    case Repo.insert(changeset) do
+      {:ok, _} ->
+        IO.puts("OK")
+
+      {:error, changeset} ->
+        IO.puts("Failed to create Group_users.")
+    end
   end
 
 end

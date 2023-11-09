@@ -35,9 +35,17 @@ defmodule TimeManager.Accounts.User do
       submitting the form), this option can be set to `false`.
       Defaults to `true`.
   """
-  def registration_changeset(user, attrs, opts \\ []) do
+  def registration_changeset_seeds(user, attrs, opts \\ []) do
     user
     |> cast(attrs, [:email, :password, :username, :role, :group_id])
+    |> validate_email(opts)
+    |> validate_username(opts)
+    |> validate_password(opts)
+  end
+
+  def registration_changeset(user, attrs, opts \\ []) do
+    user
+    |> cast(attrs, [:email, :password, :username, :role])
     |> validate_email(opts)
     |> validate_username(opts)
     |> validate_password(opts)
@@ -52,7 +60,7 @@ defmodule TimeManager.Accounts.User do
 
   def user_update_changeset(user, attrs, opts \\ []) do
     user
-    |> cast(attrs, [:email, :username, :group_id, :role])
+    |> cast(attrs, [:email, :username, :role, :group_id])
     |> validate_username(opts)
     |> validate_email(opts)
   end
@@ -73,7 +81,7 @@ defmodule TimeManager.Accounts.User do
   defp validate_username(changeset, opts) do
     changeset
     |> validate_required([:username])
-    |> validate_length(:email, max: 20, min: 4)
+    |> validate_length(:username, max: 20, min: 4)
     |> maybe_validate_unique_username(opts)
   end
 

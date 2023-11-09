@@ -26,10 +26,22 @@ const router = createRouter({
       component: () => import('@/components/user/Register.vue')
     },
     {
-      path: '/workingTimes/:userId',
+      path: '/workingTimes/:userId?',
       name: 'workingTimes',
       meta: { requiresAuth: true },
       component: () => import('../components/WorkingTimes.vue')
+    },
+    {
+      path: '/workingTimesUser/:userId',
+      name: 'workingTimesUser',
+      meta: { requiresAuth: true },
+      component: () => import('../components/WorkingTimesUser.vue')
+    },
+    {
+      path: '/workingTimesManager',
+      name: 'workingTimesManager',
+      meta: { requiresAuth: true },
+      component: () => import('../components/WorkingTimesManager.vue')
     },
     {
       path: '/updateUser',
