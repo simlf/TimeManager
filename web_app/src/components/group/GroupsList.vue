@@ -9,22 +9,13 @@
           A list of all the groups including their name and the number of user
         </p>
       </div>
-      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex space-x-4">
-        <button
-          @click="isCreateGroupModalOpen = true"
-          v-if="authStore.isSuperManager"
-          type="button"
-          class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-        >
-          Create group
-        </button>
-        <router-link
-          class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
-          to="/register"
-        >
-          Create user
-        </router-link>
-      </div>
+      <router-link
+        :to="{ name: 'CreateGroup' }"
+        type="button"
+        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+      >
+        Create group
+      </router-link>
     </div>
     <div class="-mx-4 mt-8 sm:-mx-0">
       <table class="min-w-full divide-y divide-gray-300">
@@ -56,12 +47,12 @@
             </td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ group.count_users }}</td>
             <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-<!--              <button-->
-<!--                @click="openEditUserModal(person)"-->
-<!--                class="text-indigo-600 hover:text-indigo-900"-->
-<!--              >-->
-<!--                Edit-->
-<!--              </button>-->
+              <!--              <button-->
+              <!--                @click="openEditUserModal(person)"-->
+              <!--                class="text-indigo-600 hover:text-indigo-900"-->
+              <!--              >-->
+              <!--                Show Group-->
+              <!--              </button>-->
             </td>
           </tr>
         </tbody>
@@ -71,13 +62,9 @@
 </template>
 
 <script setup lang="ts">
-import {onMounted, ref, watch} from 'vue'
+import { onMounted, ref } from 'vue'
 import { useAuthStore } from '@/stores/auth.store'
 import axios from 'axios'
-
-const authStore = useAuthStore()
-
-const groups = ref<Group[] | []>([])
 
 type Group = {
   id: number
@@ -85,12 +72,14 @@ type Group = {
   count_users: number
 }
 
+const groups = ref<Group[] | []>([])
+
 onMounted(async () => {
   groups.value = await getGroups()
 })
 
 const getGroups = async (): Promise<Group[] | []> => {
   const groups = await axios.get('http://localhost:4000/api/groups')
-  return groups.data.data;
+  return groups.data.data
 }
 </script>
