@@ -1,0 +1,26 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: phoenix-ingress
+  namespace: default
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`phx.time-manager-batman.com`)
+      kind: Rule
+      services:
+        - name: phx-api-service
+          port: 4000
+    - match: Host(`pop.time-manager-batman.com`)
+      kind: Rule
+      services:
+        - name: phx-api-service
+          port: 4000
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: mon-secret-tls

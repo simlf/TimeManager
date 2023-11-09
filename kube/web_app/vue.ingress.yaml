@@ -1,0 +1,26 @@
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: vue-ingress
+  namespace: default
+  annotations: 
+    kubernetes.io/ingress.class: traefik-external
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: Host(`www.time-manager-batman.com`)
+      kind: Rule
+      services:
+        - name: vue-app-service
+          port: 80
+    - match: Host(`test.time-manager-batman.com`)
+      kind: Rule
+      services:
+        - name: vue-app-service
+          port: 80
+      middlewares:
+        - name: default-headers
+  tls:
+    secretName: mon-secret-tls
