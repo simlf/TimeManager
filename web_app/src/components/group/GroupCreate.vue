@@ -1,18 +1,17 @@
 <script setup lang="ts">
-import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
 import GroupForm from '@/components/group/GroupForm.vue'
 import axios from 'axios'
 import { ref } from 'vue'
-import router from "@/router";
+import router from '@/router'
 
 const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHandling()
 const errorRequest = ref<string>('')
 const createGroup = async (data: { name: string; employees: number[]; managers: number[] }) => {
   try {
     await axios.post('http://localhost:4000/api/groups', data)
-    await router.push({name: "GroupsList"})
+    await router.push({ name: 'GroupsList' })
   } catch (error: Error | any) {
     console.log(error)
   }

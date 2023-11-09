@@ -47,12 +47,12 @@
             </td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ group.count_users }}</td>
             <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <!--              <button-->
-              <!--                @click="openEditUserModal(person)"-->
-              <!--                class="text-indigo-600 hover:text-indigo-900"-->
-              <!--              >-->
-              <!--                Show Group-->
-              <!--              </button>-->
+              <router-link
+                :to="{ name: 'ShowGroup', params: { id: group.id } }"
+                class="text-indigo-600 hover:text-indigo-900"
+              >
+                Show Group
+              </router-link>
             </td>
           </tr>
         </tbody>
@@ -63,7 +63,6 @@
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { useAuthStore } from '@/stores/auth.store'
 import axios from 'axios'
 
 type Group = {

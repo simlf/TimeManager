@@ -38,7 +38,7 @@
           placeholder="Type to search"
           track-by="id"
           label="email"
-        ><span slot="noResult"
+          ><span slot="noResult"
             >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
         >
@@ -117,8 +117,8 @@ defineProps({
 })
 
 const filteredResult = ref<FilteredResult>()
-const tempManagers = ref<{ email: string; id: number }[]>([]);
-const tempEmployees = ref<{ email: string; id: number }[]>([]);
+const tempManagers = ref<{ email: string; id: number }[]>([])
+const tempEmployees = ref<{ email: string; id: number }[]>([])
 
 const formInfo: Ref<FormInfoGroup> = ref({
   name: '',
