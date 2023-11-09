@@ -3,7 +3,7 @@ import Config
 # Configure your database
 config :phx_api, TimeManager.Repo,
   username: System.get_env("PGUSER"),
-  password: System.get_env("PGPASSWORD"),
+  password: System.get_env("POSTGRES_PASSWORD"),
   hostname: System.get_env("PGHOST"),
   database: System.get_env("PGDATABASE"),
   port: System.get_env("PGPORT"),

@@ -1,0 +1,26 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: phoenix-deployment
+  namespace: default
+  labels:
+    app: phoenix
+spec:
+  selector:
+    matchLabels:
+      app: phoenix
+  template:
+    metadata:
+      labels:
+        app: phoenix
+    spec:
+      containers:
+      - name: phoenix
+        image: teorxiro/phx_api:latest 
+        ports:
+        - containerPort: 4000 
+        envFrom:
+            - configMapRef:
+                name: phx-api-configmap
+
+

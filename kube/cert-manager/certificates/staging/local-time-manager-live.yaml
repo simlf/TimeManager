@@ -1,0 +1,15 @@
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: local-time-manager-com
+  namespace: default
+spec:
+  secretName: local-time-manager-com-staging-tls
+  issuerRef:
+    name: letsencrypt-staging
+    kind: ClusterIssuer
+  commonName: "*.time-manager-batman.com"
+  dnsNames:
+  - "time-manager-batman.com"
+  - "*.time-manager-batman.com"
