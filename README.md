@@ -20,6 +20,8 @@
     <a href="https://github.com/simlf/TimeManager/issues">Report Bug</a>
     ·
     <a href="https://github.com/simlf/TimeManager/issues">Request Feature</a>
+    .
+    <a href="https://github.com/simlf/TimeManager/">Mirror repository</a>
   </p>
 </div>
 
