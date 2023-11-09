@@ -19,3 +19,7 @@ erl_crash.dump
 *.ez
 
 /test/
+
+/.git/
+*.md
+.dockerignore
