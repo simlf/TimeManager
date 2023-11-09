@@ -25,14 +25,11 @@ const loginUser = (data: { email: string; password: string }) => {
       />
       <AuthForm formTitle="Login" submitLabel="Login" @form-submit="loginUser" />
       <p class="text-center text-sm text-gray-500">
-        Don't have an account ?
+        Don't have an account yet ?
         {{ ' ' }}
-        <RouterLink
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          to="/register"
-        >
-          Register
-        </RouterLink>
+        <span class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">
+          Ask your manager to create one for you
+        </span>
       </p>
     </div>
   </div>
