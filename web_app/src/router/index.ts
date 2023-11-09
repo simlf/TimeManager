@@ -47,14 +47,26 @@ const router = createRouter({
     {
       path: '/register',
       name: 'Register',
-      meta: { requiresAuth: true, requiresManager: true },
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/components/user/Register.vue')
     },
     {
       path: '/groups',
       meta: { requiresAuth: true, requiresSuperManager: true },
-      name: 'UpdateGroup',
+      name: 'GroupsList',
       component: () => import('@/components/group/GroupsList.vue')
+    },
+    {
+      path: '/group/create',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      name: 'CreateGroup',
+      component: () => import('@/components/group/GroupCreate.vue')
+    },
+    {
+      path: '/group/show/:id',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      name: 'ShowGroup',
+      component: () => import('@/components/group/GroupShow.vue')
     },
     {
       path: '/:pathMatch(.*)*',
