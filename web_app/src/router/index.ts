@@ -54,7 +54,7 @@ const router = createRouter({
       path: '/groups',
       meta: { requiresAuth: true, requiresSuperManager: true },
       name: 'UpdateGroup',
-      component: () => import('@/components/group/UpdateGroup.vue')
+      component: () => import('@/components/group/GroupsList.vue')
     },
     {
       path: '/:pathMatch(.*)*',
