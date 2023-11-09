@@ -39,10 +39,16 @@ const router = createRouter({
       component: () => import('../components/WorkingTimesUser.vue')
     },
     {
-      path: '/workingTimesManager',
+      path: '/workingTimesManager/:groupId?',
       name: 'workingTimesManager',
       meta: { requiresAuth: true },
       component: () => import('../components/WorkingTimesManager.vue')
+    },
+    {
+      path: '/workingTimesSuperManager/',
+      name: 'workingTimesSuperManager',
+      meta: { requiresAuth: true },
+      component: () => import('../components/WorkingTimesSuperManager.vue')
     },
     {
       path: '/updateUser',

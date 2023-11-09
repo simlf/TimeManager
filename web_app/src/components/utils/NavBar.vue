@@ -36,7 +36,7 @@
             <router-link
               :to="{ name: 'workingTimes', params: { userId: authStore.id } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'workingTimes')"
+              :class="getLinkClass(String($route.name).startsWith('workingTimes'))"
             >
               Working Times
             </router-link>
