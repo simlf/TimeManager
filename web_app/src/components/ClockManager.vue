@@ -242,7 +242,7 @@ const closeWorkingtime = async (stop_work: boolean) => {
       type: lastWorkingtime.value.type != 'start_work' && stop_work ? 'end_work' : undefined
     }
 
-    if (stop_work && lastWorkingtime.value.type === 'start_work') {
+    if (stop_work && (lastWorkingtime.value.type === 'start_work' || lastWorkingtime.value.type === 'pause')) {
       newWorkingtimeToEndWorkday()
     }
 

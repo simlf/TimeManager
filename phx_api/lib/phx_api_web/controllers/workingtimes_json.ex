@@ -21,7 +21,11 @@ defmodule TimeManagerWeb.WorkingtimesJSON do
   end
 
   def showTimes(%{hours: hours, minutes: minutes, seconds: seconds}) do
-  %{data: %{hours: hours, minutes: minutes, seconds: seconds}}
+    %{data: %{hours: hours, minutes: minutes, seconds: seconds}}
+  end
+
+  def showTimesInfo(%{dateList: dateList,timePause: timePause,timeWork: timeWork}) do
+    %{data: %{dateList: dateList, timePause: timePause,timeWork: timeWork }}
   end
 
   defp data(%Workingtimes{} = workingtime) do
