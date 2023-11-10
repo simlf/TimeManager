@@ -1,7 +1,7 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: phx-api-configmap
+  name: phoenix
   namespace: default
   labels:
     app: phx-api
