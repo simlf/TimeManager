@@ -75,8 +75,10 @@ import Multiselect from 'vue-multiselect'
 import { useAuthStore } from '@/stores/auth.store'
 import { onMounted, Ref, ref } from 'vue'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
 interface FormInfoGroup {
   name: string
@@ -105,7 +107,7 @@ interface FilteredResult {
   employee?: SelectItem[]
 }
 
-defineProps({
+const { formTitle, submitLabel, groupName } = defineProps({
   formTitle: {
     type: String,
     required: true
@@ -113,6 +115,10 @@ defineProps({
   submitLabel: {
     type: String,
     required: true
+  },
+  groupName: {
+    type: String,
+    required: false
   }
 })
 
@@ -121,7 +127,7 @@ const tempManagers = ref<{ email: string; id: number }[]>([])
 const tempEmployees = ref<{ email: string; id: number }[]>([])
 
 const formInfo: Ref<FormInfoGroup> = ref({
-  name: '',
+  name: groupName ?? '',
   employees: [],
   managers: []
 })
@@ -135,24 +141,26 @@ const getUsers = async (): Promise<User[] | []> => {
   return users.data.data
 }
 
-const filterUsersData = async (): Promise<SelectItem[]> => {
+const filterUsersDataForSuperManager = async (): Promise<SelectItem[]> => {
   const filter: SelectItem[] = []
   const users = await getUsers()
 
   if (users && users.length > 0) {
     users.forEach((user) => {
       if (user.role !== 'SUPER_MANAGER') {
-        let role = user.group_id ? user.role + ' on groups' : user.role
-        role = role.toLowerCase()
+        if (!route.params.id || Number(route.params.id) !== user.group_id) {
+          let role = user.group_id ? user.role + ' on groups' : user.role
+          role = role.toLowerCase()
 
-        let existingRoleObject = filter.find((item) => item.role === role)
+          let existingRoleObject = filter.find((item) => item.role === role)
 
-        if (!existingRoleObject) {
-          existingRoleObject = { role: role, users: [] }
-          filter.push(existingRoleObject)
+          if (!existingRoleObject) {
+            existingRoleObject = { role: role, users: [] }
+            filter.push(existingRoleObject)
+          }
+
+          existingRoleObject.users.push({ email: user.username, id: user.id })
         }
-
-        existingRoleObject.users.push({ email: user.username, id: user.id })
       }
     })
   }
@@ -161,7 +169,7 @@ const filterUsersData = async (): Promise<SelectItem[]> => {
 }
 
 const getResultFilter = async (): Promise<FilteredResult> => {
-  const filter = await filterUsersData()
+  const filter = await filterUsersDataForSuperManager()
   const result: FilteredResult = {}
 
   filter.forEach((obj) => {
@@ -179,7 +187,7 @@ const getResultFilter = async (): Promise<FilteredResult> => {
 
 const emit = defineEmits()
 const handleSubmit = () => {
-  if (tempManagers.value.length > 0) {
+  if (tempManagers.value.length > 0 && authStore.isSuperManager) {
     tempManagers.value.forEach((manager) => {
       formInfo.value.managers.push(manager.id)
     })

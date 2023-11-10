@@ -58,6 +58,7 @@ defmodule TimeManagerWeb.Router do
 
     resources "/users", UserController, only: [:delete, :index]
     resources "/groups", GroupController, only: [:index, :create, :delete]
+    patch "/groups/:groupId/:userId", GroupController, :remove_user_from_group
   end
 
   @doc """

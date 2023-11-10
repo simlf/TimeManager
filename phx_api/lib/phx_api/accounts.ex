@@ -192,6 +192,15 @@ defmodule TimeManager.Accounts do
   end
 
   @doc """
+  Remove the group_id of one user
+  """
+  def remove_group_id_for_one_user(%User{} = user) do
+    user
+    |> User.user_remove_group_id(%{group_id: nil})
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a user.
 
   ## Examples

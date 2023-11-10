@@ -89,22 +89,14 @@
                     >Your Profile</router-link
                   >
                 </MenuItem>
-                <MenuItem
-                  v-if="authStore.isSuperManager"
-                  as="router-link"
-                  v-slot="{ active }"
-                >
+                <MenuItem v-if="authStore.isSuperManager" as="router-link" v-slot="{ active }">
                   <router-link
                     to="/groups"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >Groups list
                   </router-link>
                 </MenuItem>
-                <MenuItem
-                  v-if="authStore.isManager"
-                  as="router-link"
-                  v-slot="{ active }"
-                >
+                <MenuItem v-if="authStore.isManager" as="router-link" v-slot="{ active }">
                   <router-link
                     to="/groups"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"

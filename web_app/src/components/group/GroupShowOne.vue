@@ -18,14 +18,6 @@
           A list of all the users in your group including their username, email and role.
         </p>
       </div>
-      <!--      <div class="mt-4 sm:ml-16 sm:mt-0 sm:flex-none flex space-x-4">-->
-      <!--        <button-->
-      <!--            @click="openCreateGroupModal(authStore.user)"-->
-      <!--            v-if="authStore.isSuperManager"-->
-      <!--            type="button"-->
-      <!--            class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"-->
-      <!--        >-->
-      <!--          Create group-->
       <!--        </button>-->
       <!--        <router-link-->
       <!--            class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"-->
@@ -94,7 +86,35 @@
             </td>
             <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ user.email }}</td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ user.role }}</td>
-            <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+            <td class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+              <!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
+              <!--                <router-link-->
+              <!--                    :to="{ name: 'ShowGroup' }"-->
+              <!--                    class="text-indigo-600 hover:text-indigo-900"-->
+              <!--                >-->
+              <!--                  <EyeIcon class="h-6" />-->
+              <!--                </router-link>-->
+              <!--              </div>-->
+              <!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
+              <!--                <router-link-->
+              <!--                    :to="{ name: 'UpdateGroup' }"-->
+              <!--                    class="text-orange-500 hover:text-indigo-900"-->
+              <!--                >-->
+              <!--                  <AdjustmentsVerticalIcon class="h-6" />-->
+              <!--                </router-link>-->
+              <!--              </div>-->
+              <div
+                v-if="authStore.isSuperManager"
+                class="py-4 pl-3 pr-4 text-right text-sm font-medium"
+              >
+                <button
+                  type="button"
+                  class="text-red-600 hover:text-indigo-900"
+                  @click="removeUserFromGroup(user.id)"
+                >
+                  <UserMinusIcon class="h-6" />
+                </button>
+              </div>
               <!--            <button-->
               <!--                @click="openEditUserModal(person)"-->
               <!--                class="text-indigo-600 hover:text-indigo-900"-->
@@ -115,6 +135,7 @@ import User from '@/components/user/User.vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth.store'
+import { AdjustmentsVerticalIcon, EyeIcon, UserMinusIcon } from '@heroicons/vue/20/solid'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -151,5 +172,18 @@ function getInitials(username: string): string {
 const getGroupById = async (): Promise<Group> => {
   const group = await axios.get('http://localhost:4000/api/groups/' + route.params.id)
   return group.data.data
+}
+
+const removeUserFromGroup = async (userId: number): Promise<void> => {
+  try {
+    const removeUser = await axios.patch(
+      'http://localhost:4000/api/groups/' + route.params.id + '/' + userId
+    )
+    if (removeUser.status === 200) {
+      groupState.value = await getGroupById()
+    }
+  } catch (e) {
+    console.log('Something wrong happens during deletion')
+  }
 }
 </script>
