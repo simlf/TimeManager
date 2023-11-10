@@ -51,6 +51,12 @@ const router = createRouter({
       component: () => import('@/components/user/Register.vue')
     },
     {
+      path: '/users',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      name: 'UsersList',
+      component: () => import('@/components/user/UsersList.vue')
+    },
+    {
       path: '/groups',
       meta: { requiresAuth: true, requiresSuperManager: true },
       name: 'GroupsList',
