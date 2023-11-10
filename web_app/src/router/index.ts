@@ -45,8 +45,8 @@ const router = createRouter({
       component: () => import('@/components/user/UpdateUser.vue')
     },
     {
-      path: '/register',
-      name: 'Register',
+      path: '/createUser/:groupId?',
+      name: 'CreateUser',
       meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/components/user/Register.vue')
     },

@@ -65,11 +65,17 @@
                     </div>
                     <div v-if="authStore.isSuperManager" class="w-full sm:max-w-xs">
                       <label class="typo__label">Role</label>
-                      <multiselect v-model="role" :options="roles" :searchable="false" :close-on-select="true" :show-labels="true" placeholder="Pick a value"></multiselect>
+                      <multiselect
+                        v-model="role"
+                        :options="roles"
+                        :searchable="false"
+                        :close-on-select="true"
+                        :show-labels="true"
+                        placeholder="Pick a value"
+                      ></multiselect>
                     </div>
                   </form>
                 </div>
-
               </div>
               <div class="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                 <button
@@ -101,8 +107,8 @@ import { ref, watch } from 'vue'
 import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { UsersIcon } from '@heroicons/vue/24/outline'
 import Multiselect from 'vue-multiselect'
-import {useAuthStore} from "@/stores/auth.store";
-import axios from "axios";
+import { useAuthStore } from '@/stores/auth.store'
+import axios from 'axios'
 
 const authStore = useAuthStore()
 const roles = ['EMPLOYEE', 'MANAGER']
@@ -140,9 +146,14 @@ function closeModal() {
 
 const updateUser = async () => {
   try {
-    const data = {user: {
-      username: username.value, email: email.value, role: role.value, group_id: props.initialGroupId
-      }}
+    const data = {
+      user: {
+        username: username.value,
+        email: email.value,
+        role: role.value,
+        group_id: props.initialGroupId
+      }
+    }
     const updateUser = await axios.put('http://localhost:4000/api/users/' + props.userId, data)
     if (updateUser.status === 200) {
       emit('update:isUpdateUserModalOpen', false)

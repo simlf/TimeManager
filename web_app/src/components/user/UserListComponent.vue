@@ -53,7 +53,10 @@
           </td>
           <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ user.email }}</td>
           <td class="px-3 py-4 text-sm text-gray-500">{{ user.role }}</td>
-          <td v-if="user.role !== 'SUPER_MANAGER'" class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+          <td
+            v-if="user.role !== 'SUPER_MANAGER'"
+            class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
+          >
             <!-- TODO: ENZO -> Envoyer sur la page pour voir les workingTime de l'utilisateur -->
             <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
               <router-link
@@ -64,7 +67,11 @@
               </router-link>
             </div>
             <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
-              <button @click="openEditUserModal(user)" type="button" class="text-orange-500 hover:text-indigo-900">
+              <button
+                @click="openEditUserModal(user)"
+                type="button"
+                class="text-orange-500 hover:text-indigo-900"
+              >
                 <AdjustmentsVerticalIcon class="h-6" />
               </button>
             </div>
@@ -97,14 +104,14 @@
       </tbody>
     </table>
     <UpdateUserModal
-        v-if="currentUser"
-        :isUpdateUserModalOpen="isUpdateUserModalOpen"
-        :initialUsername="currentUser.username"
-        :initialEmail="currentUser.email"
-        :initialRole="currentUser.role"
-        :initialGroupId="currentUser.group_id"
-        :userId="currentUser.id"
-        @update:isUpdateUserModalOpen="isUpdateUserModalOpen = $event"
+      v-if="currentUser"
+      :isUpdateUserModalOpen="isUpdateUserModalOpen"
+      :initialUsername="currentUser.username"
+      :initialEmail="currentUser.email"
+      :initialRole="currentUser.role"
+      :initialGroupId="currentUser.group_id"
+      :userId="currentUser.id"
+      @update:isUpdateUserModalOpen="isUpdateUserModalOpen = $event"
     />
   </div>
 </template>
@@ -114,8 +121,8 @@ import { TrashIcon, UserMinusIcon, EyeIcon, AdjustmentsVerticalIcon } from '@her
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-import { ref } from "vue";
-import UpdateUserModal from "@/components/group/UpdateUserModal.vue";
+import { ref } from 'vue'
+import UpdateUserModal from '@/components/group/UpdateUserModal.vue'
 
 const route = useRoute()
 const authStore = useAuthStore()

@@ -18,14 +18,12 @@
           A list of all the users in your group including their username, email and role.
         </p>
       </div>
-      <!--        </button>-->
-      <!--        <router-link-->
-      <!--            class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"-->
-      <!--            to="/register"-->
-      <!--        >-->
-      <!--          Create user-->
-      <!--        </router-link>-->
-      <!--      </div>-->
+      <router-link
+        class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
+        :to="{ name: 'CreateUser', params: { groupId: route.params.id } }"
+      >
+        Create user
+      </router-link>
     </div>
     <UserListComponent v-if="groupState" :users="groupState.users" />
   </div>
