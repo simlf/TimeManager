@@ -203,6 +203,8 @@ export default {
 
       yourChartData.value = this.chartData.datasets
       labels.value = this.chartData.labels
+      // labels.value = ['t1', 't2', 't3', 't4']
+
 
       this.triggerChartDataUpdate()
       this.triggerChartDataDoughnutUpdate()
@@ -252,7 +254,7 @@ const tabs = [
 </script>
 
 <template>  
-<!-- <ChartTest :chartDataProp="yourChartData" :labelsProp="labels"  ></ChartTest> -->
+<ChartTest :chartDataProp="yourChartData" :labelsProp="labels" ref="chartTestComponent"  ></ChartTest>
   <div class="mx-auto max-w-7xl px-6 py-12 sm:py-10 lg:px-8">
 
     <div v-if="isManager">

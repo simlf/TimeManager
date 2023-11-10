@@ -1,72 +1,68 @@
 <script setup lang="ts">
-import { ref, defineProps, onMounted, watchEffect } from 'vue';
+import { ref, defineProps, onMounted, watchEffect, getCurrentInstance, watch } from 'vue';
 import { Bar } from 'vue-chartjs';
 
 const { chartDataProp, labelsProp } = defineProps(['chartDataProp', 'labelsProp']);
 const chartData = ref({
-  labels: labelsProp || ['t1', 't2', 't3', 't4'],
-  datasets: [
+  labels: labelsProp || [],
+  datasets: chartDataProp || [
     {
       label: 'Working Hours',
       backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-      data: [10, 20, 30, 5], // Données de test par défaut
-      stack: "Stack 0",
-    }
-  ]
+      data: [], // Données de test par défaut
+      stack: 'Stack 0',
+    },
+  ],
 });
+const ctx = getCurrentInstance();
+
+const updateChartData = () => {
+  // Mettre à jour les données du graphique ici
+  chartData.value.labels = labelsProp || [];
+  chartData.value.datasets = chartDataProp;
+
+};
 
 onMounted(() => {
-  console.log('ChartDataProp received:', chartDataProp);
-  console.log('LabelsProp received:', labelsProp);
+  // Écouter l'événement "updateChartDataEvent" émis par le composant parent
+  ctx.emit('updateChartDataEvent', () => {
+    updateChartData();
+  });
 
-  // Mise à jour du graphique une seule fois lors de l'initialisation
-  updateChartData();
+  // Utiliser watch pour détecter les changements dans les props
+  watch([() => chartDataProp, () => labelsProp], () => {
+    updateChartData();
+  });
 });
 
 watchEffect(() => {
-  // Mettez à jour la référence chartData lorsque chartDataProp change
+  // Mettre à jour le graphique lorsque les props changent
   updateChartData();
 });
 
-function updateChartData() {
-  if (chartDataProp && chartDataProp.datasets && chartDataProp.datasets.length > 0 && chartDataProp.datasets[0].data) {
-    chartData.value.labels = labelsProp || ['t1', 't2', 't3', 't4'];
-    chartData.value.datasets[0].data = chartDataProp.datasets[0].data.slice();
-  }
-}
+
+
 </script>
-
-<!-- Le reste du code reste inchangé -->
-
 
 <script lang="ts">
 export default {
-  name: 'ChartComponent',
+  name: 'chartTestComponent',
   components: { Bar },
   setup() {
     return {
       chartData,
-    };
-  },
-  computed: {
-    chartOptions() {
-      return {
+      chartOptions: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           title: {
             display: true,
-          }
-        }
-      };
-    }
+          },
+        },
+      },
+    };
   },
-  methods: {
-    updateChartData() {
-      // Mettez à jour les données du graphique ici
-    }
-  }
-};
+}
 </script>
 
 <template>
@@ -74,7 +70,7 @@ export default {
     <div v-if="chartDataProp && labelsProp">
       {{ chartDataProp }}
       {{ labelsProp }}
-      <Bar :data="chartData" :options="chartOptions" />
+      <Bar :data="chartData" :options="chartOptions" ref="chartTestComponent"/>
     </div>
   </div>
 </template>
