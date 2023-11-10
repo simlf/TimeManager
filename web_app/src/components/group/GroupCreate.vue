@@ -24,14 +24,14 @@ const createGroup = async (data: { name: string; employees: number[]; managers: 
       <AlertBox v-if="errorRequest" type="error" :message="errorRequest" @dismiss="clearError" />
       <GroupForm
         formTitle="Create a group"
-        submitLabel="Create Group"
+        submitLabel="Create"
         @group-form-submit="createGroup"
       />
       <div class="text-center">
-        <RouterLink
-          to="/GroupsList"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >Go Back</RouterLink
+        <router-link
+            :to="{ name: 'GroupsList' }"
+            class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+        >Go Back</router-link
         >
       </div>
     </div>

@@ -46,14 +46,25 @@
               {{ group.name }}
             </td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ group.count_users }}</td>
-            <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <router-link
-                :to="{ name: 'ShowGroup', params: { id: group.id } }"
-                class="text-indigo-600 hover:text-indigo-900"
-              >
-                Show Group
-              </router-link>
+            <td class="flex justify-end">
+              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                <router-link
+                    :to="{ name: 'ShowGroup', params: { id: group.id } }"
+                    class="text-indigo-600 hover:text-indigo-900"
+                >
+                  Show Group
+                </router-link>
+              </div>
+              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
+                <router-link
+                    :to="{ name: 'UpdateGroup', params: { id: group.id }, state: {test: 'MON CUL'} }"
+                    class="text-indigo-600 hover:text-indigo-900"
+                >
+                  Update Group
+                </router-link>
+              </div>
             </td>
+
           </tr>
         </tbody>
       </table>
@@ -64,6 +75,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import UpdateGroup from "@/components/users/UpdateGroup.vue";
 
 type Group = {
   id: number
