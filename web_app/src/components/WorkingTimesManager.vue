@@ -22,7 +22,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 <script lang="ts">
 const authStore = useAuthStore()
-const selectedUserId = ref(authStore.id)
+const defaultGroupId = authStore.user.groupId
 
 // const dateValue = ref([])
 let workingTimesRef = ref()
@@ -33,15 +33,11 @@ function dDate(date: object) {
 }
 
 const formatter = ref({
-  // date: 'DD-MM-YYYY',
   date: 'YYYY-MM-DD',
   month: 'MMM'
 })
 
-// localStorage.clear()
-
-const lastMonday = getLastMonday();
-const start = ref(localStorage.getItem('start') || lastMonday)
+const start = ref(localStorage.getItem('start') || getLastMonday())
 const end = ref(localStorage.getItem('end') || moment().format('YYYY-MM-DD'))
 
 const dateValue = ref([start.value, end.value]);
@@ -74,13 +70,6 @@ workingTimesRefUsers.value = chartDataTest
 export default {
   name: 'BarChart',
   components: { Bar, Doughnut, WorkingTimesUser },
-  setup() {
-    const route = useRoute();
-    const userId = route.params.id;
-
-    console.log(userId)
-
-  },
   data() {
     return {
       chartData: {
@@ -93,8 +82,7 @@ export default {
           }
         ]
       },
-      
-      // userId: selectedUserId,
+      selectedGroupId: useRoute().params.groupId || defaultGroupId,
     }
   },
   computed: {
@@ -124,7 +112,7 @@ export default {
 
       start.value += '%2000:00:00'
       end.value += '%2023:59:59'
-      const requestUrl = `http://localhost:4000/api/workingtimes/${selectedUserId.value}?start_time=${start.value}&end_time=${end.value}`
+      const requestUrl = `http://localhost:4000/api/workingtimes/${this.selectedGroupId}?start_time=${start.value}&end_time=${end.value}`
 
       console.log(requestUrl)
 
@@ -243,7 +231,6 @@ function getInitials(username: string): string {
         </div>  
       </div>      
     </div>
-
 
     <!-- Table group users -->
     <div class="sm:flex sm:items-center">

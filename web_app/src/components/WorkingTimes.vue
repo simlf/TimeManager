@@ -22,14 +22,13 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 <script lang="ts">
 const authStore = useAuthStore()
-const selectedUserId = ref(authStore.id)
+const defaultUserId = authStore.id
 
 const isManager = authStore.isManager || authStore.isSuperManager
 // const isManager = false
 
 // const dateValue = ref([])
 let workingTimesRef = ref()
-let workingTimesRefUsers = ref()
 let workingTimesRefDoughnut = ref()
 
 function dDate(date: object) {
@@ -77,16 +76,16 @@ const chartDataTest = [
 
 const labelsx = ['Worked Time', 'Break Time']
 const datasets= [
-    {
-      label: 'Working Hours',
-      backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-      // borderColor: 'rgba(75, 192, 192, 1)',
-      // borderWidth: 1,
-      // data: [],
-      data: [10, 20, 30, 5], // Données de test par défaut
-      stack: "Stack 0",
-    }
-  ]
+  {
+    label: 'Working Hours',
+    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
+    // borderColor: 'rgba(75, 192, 192, 1)',
+    // borderWidth: 1,
+    // data: [],
+    data: [10, 20, 30, 5], // Données de test par défaut
+    stack: "Stack 0",
+  }
+]
 
 const yourChartData = ref(datasets);
 const labels = ref(labelsx);
@@ -94,13 +93,6 @@ const labels = ref(labelsx);
 export default {
   name: 'BarChart',
   components: { Bar, Doughnut },
-  setup() {
-    const route = useRoute();
-    const userId = route.params.id;
-
-    console.log(userId)
-
-  },
   data() {
     return {
       chartDataDoughnut: {
@@ -127,7 +119,7 @@ export default {
           }
         ]
       },
-      userId: selectedUserId,
+      selectedUserId: useRoute().params.userId || defaultUserId,
     }
   },
   computed: {
@@ -156,7 +148,7 @@ export default {
 
       start.value += '%2000:00:00'
       end.value += '%2023:59:59'
-      const requestUrl = `http://localhost:4000/api/workingtimes/${selectedUserId.value}?start_time=${start.value}&end_time=${end.value}`
+      const requestUrl = `http://localhost:4000/api/workingtimes/${this.selectedUserId}?start_time=${start.value}&end_time=${end.value}`
 
       // console.log(requestUrl)
 
@@ -182,11 +174,6 @@ export default {
         console.error('Erreur API', error)
       }
     },
-    // updateCalendar() {
-    //    start.value = localStorage.getItem('start') || getLastMonday()
-    //    end.value = localStorage.getItem('end') || moment().format('YYYY-MM-DD')
-    //    dateValue.value = [start.value, end.value];
-    // },
     updateChartData() {
       this.chartData.labels = chartDataTest.map((item) =>
         moment(item.start_time).format('YYYY-MM-DD')
@@ -217,15 +204,11 @@ export default {
       yourChartData.value = this.chartData.datasets
       labels.value = this.chartData.labels
 
-      console.log(labels.value)
-
       this.triggerChartDataUpdate()
       this.triggerChartDataDoughnutUpdate()
     },
     handleDateClick(modelData: Array<string>) {
       [start.value, end.value] = modelData;
-
-      console.log(start.value)
 
       this.getWorkingTimes()
     },
