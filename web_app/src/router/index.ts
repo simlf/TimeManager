@@ -63,10 +63,16 @@ const router = createRouter({
       component: () => import('@/components/group/GroupCreate.vue')
     },
     {
+      path: '/group/update/:id',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      name: 'UpdateGroup',
+      component: () => import('@/components/group/GroupUpdate.vue')
+    },
+    {
       path: '/group/show/:id',
       meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       name: 'ShowGroup',
-      component: () => import('@/components/group/GroupShow.vue')
+      component: () => import('@/components/group/GroupShowOne.vue')
     },
     {
       path: '/:pathMatch(.*)*',
