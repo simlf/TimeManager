@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: phoenix
-        image: teorxiro/phx_api:latest 
+        image: teorxiro/phx_api_prod:latest 
         ports:
         - containerPort: 4000 
         envFrom:

@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vue-app
+  namespace: default
+  labels:
+    app: vue-app
+data:
+  SERVER_HOST: "https://phx.time-manager-batman.com"
+  VUE_HOST: "https://www.time-manager-batman.com"
