@@ -31,7 +31,7 @@ const roles = ['EMPLOYEE', 'MANAGER']
       />
       <div class="text-center">
         <RouterLink
-          to="/updateGroup"
+          to="/GroupsList"
           class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
           >Go Back</RouterLink
         >

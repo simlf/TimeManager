@@ -75,7 +75,7 @@ import Multiselect from 'vue-multiselect'
 import { useAuthStore } from '@/stores/auth.store'
 import { onMounted, Ref, ref } from 'vue'
 import axios from 'axios'
-import {useRoute} from "vue-router";
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
 const route = useRoute()

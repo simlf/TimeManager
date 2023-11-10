@@ -3,9 +3,9 @@ import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
 import GroupForm from '@/components/group/GroupForm.vue'
 import axios from 'axios'
-import {onMounted, ref} from 'vue'
+import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import router from "@/router";
+import router from '@/router'
 
 const route = useRoute()
 const { clearError, clearSuccess } = useMessageHandling()
@@ -55,23 +55,23 @@ const getGroupById = async (): Promise<Group> => {
     <div class="w-full sm:w-1/8 md:w-1/8 lg:w-1/8 xl:w-1/8">
       <AlertBox v-if="errorRequest" type="error" :message="errorRequest" @dismiss="clearError" />
       <AlertBox
-          v-if="successRequest"
-          type="success"
-          :message="successRequest"
-          @dismiss="clearSuccess"
+        v-if="successRequest"
+        type="success"
+        :message="successRequest"
+        @dismiss="clearSuccess"
       />
       <GroupForm
-          v-if="groupState"
-          :formTitle="`Update ${groupState.group.name}`"
-          :groupName="groupState.group.name"
-          submitLabel="Update"
-          @group-form-submit="updateGroup"
+        v-if="groupState"
+        :formTitle="`Update ${groupState.group.name}`"
+        :groupName="groupState.group.name"
+        submitLabel="Update"
+        @group-form-submit="updateGroup"
       />
       <div class="text-center">
         <router-link
-            :to="{ name: 'GroupsList' }"
-            class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-        >Go Back</router-link
+          :to="{ name: 'GroupsList' }"
+          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
+          >Go Back</router-link
         >
       </div>
     </div>

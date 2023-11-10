@@ -87,27 +87,30 @@
             <td class="hidden px-3 py-4 text-sm text-gray-500 sm:table-cell">{{ user.email }}</td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ user.role }}</td>
             <td class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-<!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
-<!--                <router-link-->
-<!--                    :to="{ name: 'ShowGroup' }"-->
-<!--                    class="text-indigo-600 hover:text-indigo-900"-->
-<!--                >-->
-<!--                  <EyeIcon class="h-6" />-->
-<!--                </router-link>-->
-<!--              </div>-->
-<!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
-<!--                <router-link-->
-<!--                    :to="{ name: 'UpdateGroup' }"-->
-<!--                    class="text-orange-500 hover:text-indigo-900"-->
-<!--                >-->
-<!--                  <AdjustmentsVerticalIcon class="h-6" />-->
-<!--                </router-link>-->
-<!--              </div>-->
-              <div v-if="authStore.isSuperManager" class="py-4 pl-3 pr-4 text-right text-sm font-medium">
+              <!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
+              <!--                <router-link-->
+              <!--                    :to="{ name: 'ShowGroup' }"-->
+              <!--                    class="text-indigo-600 hover:text-indigo-900"-->
+              <!--                >-->
+              <!--                  <EyeIcon class="h-6" />-->
+              <!--                </router-link>-->
+              <!--              </div>-->
+              <!--              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">-->
+              <!--                <router-link-->
+              <!--                    :to="{ name: 'UpdateGroup' }"-->
+              <!--                    class="text-orange-500 hover:text-indigo-900"-->
+              <!--                >-->
+              <!--                  <AdjustmentsVerticalIcon class="h-6" />-->
+              <!--                </router-link>-->
+              <!--              </div>-->
+              <div
+                v-if="authStore.isSuperManager"
+                class="py-4 pl-3 pr-4 text-right text-sm font-medium"
+              >
                 <button
-                    type="button"
-                    class="text-red-600 hover:text-indigo-900"
-                    @click="removeUserFromGroup(user.id)"
+                  type="button"
+                  class="text-red-600 hover:text-indigo-900"
+                  @click="removeUserFromGroup(user.id)"
                 >
                   <UserMinusIcon class="h-6" />
                 </button>
@@ -132,7 +135,7 @@ import User from '@/components/user/User.vue'
 import { useRoute } from 'vue-router'
 import axios from 'axios'
 import { useAuthStore } from '@/stores/auth.store'
-import {AdjustmentsVerticalIcon, EyeIcon, UserMinusIcon} from "@heroicons/vue/20/solid";
+import { AdjustmentsVerticalIcon, EyeIcon, UserMinusIcon } from '@heroicons/vue/20/solid'
 
 const route = useRoute()
 const authStore = useAuthStore()
@@ -173,12 +176,14 @@ const getGroupById = async (): Promise<Group> => {
 
 const removeUserFromGroup = async (userId: number): Promise<void> => {
   try {
-    const removeUser = await axios.patch('http://localhost:4000/api/groups/' + route.params.id + "/" + userId)
+    const removeUser = await axios.patch(
+      'http://localhost:4000/api/groups/' + route.params.id + '/' + userId
+    )
     if (removeUser.status === 200) {
-      groupState.value = await getGroupById();
+      groupState.value = await getGroupById()
     }
   } catch (e) {
-    console.log("Something wrong happens during deletion")
+    console.log('Something wrong happens during deletion')
   }
 }
 </script>

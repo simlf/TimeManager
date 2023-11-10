@@ -11,13 +11,12 @@ import {
   LinearScale,
   ArcElement
 } from 'chart.js'
-import {useAuthStore} from "@/stores/auth.store";
+import { useAuthStore } from '@/stores/auth.store'
 import moment from 'moment'
 import axios from 'axios'
-import { useRoute } from 'vue-router';
+import { useRoute } from 'vue-router'
 
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
-
 </script>
 
 <script lang="ts">
@@ -25,7 +24,7 @@ const authStore = useAuthStore()
 const selectedUserId = ref(authStore.id)
 
 // const roles = authStore.user!.roles!
-const roles = ["MANAGER"]
+const roles = ['MANAGER']
 
 // const dateValue = ref([])
 let workingTimesRef = ref()
@@ -33,28 +32,25 @@ let workingTimesRefUsers = ref()
 
 localStorage.clear()
 
-const lastMonday = getLastMonday();
+const lastMonday = getLastMonday()
 const start = ref(localStorage.getItem('start') || lastMonday)
 const end = ref(localStorage.getItem('end') || moment().format('YYYY-MM-DD'))
 
-
-const currentView = ref("Default View")
-const buttonText = ref("Manager View")
+const currentView = ref('Default View')
+const buttonText = ref('Manager View')
 
 export default {
   name: 'BarChart',
   components: { Bar, Doughnut },
   setup() {
-    const route = useRoute();
-    const userId = route.params.id;
+    const route = useRoute()
+    const userId = route.params.id
 
     console.log(userId)
-
-
   },
   props: {
     dataParam: {
-      type: Number, 
+      type: Number,
       required: true
     }
   },
@@ -95,19 +91,18 @@ export default {
     }
   },
   mounted() {
-    console.log('La valeur de la prop dataParam est :', this.dataParam);
+    console.log('La valeur de la prop dataParam est :', this.dataParam)
   },
   created() {
-    this.getWorkingTimes();
+    this.getWorkingTimes()
   },
   methods: {
-    async getWorkingTimes(
-      // start: string = '2023-11-01%',
-      // end: string = moment().format('YYYY-MM-DD') + "%"
-    ) {
+    async getWorkingTimes() // start: string = '2023-11-01%',
+    // end: string = moment().format('YYYY-MM-DD') + "%"
+    {
       console.log(this.dataParam)
 
-      // localStorage.setItem('start', start.value);  
+      // localStorage.setItem('start', start.value);
       // localStorage.setItem('end', end.value);
 
       start.value += '%2000:00:00'
@@ -135,7 +130,7 @@ export default {
       }
     },
     mounted() {
-      console.log('La valeur de la prop dataParam est :', this.dataParam);
+      console.log('La valeur de la prop dataParam est :', this.dataParam)
     },
     calculateDuration(startTime: string, endTime: string) {
       const startMoment = moment(startTime, 'YYYY-MM-DD HH:mm')
@@ -167,36 +162,37 @@ export default {
       }
     },
     toggleView() {
-      currentView.value = currentView.value === "Default View" ? "Manager View" : "Default View";
-      buttonText.value = currentView.value === "Default View" ? "Manager View" : "Default View";
-
-    },
+      currentView.value = currentView.value === 'Default View' ? 'Manager View' : 'Default View'
+      buttonText.value = currentView.value === 'Default View' ? 'Manager View' : 'Default View'
+    }
   }
 }
 
 function getLastMonday() {
-  const today = moment();
-  const dayOfWeek = today.day(); // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
+  const today = moment()
+  const dayOfWeek = today.day() // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
 
   if (dayOfWeek === 1) {
-    return today.format('YYYY-MM-DD');
+    return today.format('YYYY-MM-DD')
   } else {
-    const daysUntilLastMonday = (dayOfWeek + 6) % 7;
-    const lastMonday = today.subtract(daysUntilLastMonday, 'days');
-    return lastMonday.format('YYYY-MM-DD');
+    const daysUntilLastMonday = (dayOfWeek + 6) % 7
+    const lastMonday = today.subtract(daysUntilLastMonday, 'days')
+    return lastMonday.format('YYYY-MM-DD')
   }
-
 }
-
 </script>
 
 <template>
-
-  <div class=" md:items-center md:justify-center">
+  <div class="md:items-center md:justify-center">
     <div class="">
       <div class="mx-1 mt-2">
         <div>
-          <Doughnut id="my-doughnut-chart-id" :data="chartDataDoughnut" :options="chartOptions" ref="doughnut" />
+          <Doughnut
+            id="my-doughnut-chart-id"
+            :data="chartDataDoughnut"
+            :options="chartOptions"
+            ref="doughnut"
+          />
         </div>
 
         <div>

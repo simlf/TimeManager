@@ -86,7 +86,6 @@ export const useAuthStore = defineStore({
 
       try {
         await axios.post(`${API_BASE_URL}/log_in`, payload)
-        this.user = credentials
         this.isAuthenticated = true
         this.success = 'User logged in  successfully'
         this.redirectTo('/')
