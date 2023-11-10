@@ -11,6 +11,6 @@ COPY . /phx_api
 
 
 
-RUN chmod u+x entrypoint.sh
+RUN chmod o+x entrypoint.sh
 
 ENTRYPOINT [ "/phx_api/entrypoint.sh" ]
