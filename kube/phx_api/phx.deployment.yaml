@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: phoenix-deployment
+  name: phoenix
   namespace: default
   labels:
     app: phoenix
@@ -21,6 +21,6 @@ spec:
         - containerPort: 4000 
         envFrom:
             - configMapRef:
-                name: phx-api-configmap
+                name: phoenix
 
 

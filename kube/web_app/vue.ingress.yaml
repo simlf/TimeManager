@@ -6,11 +6,18 @@ metadata:
   namespace: default
   annotations: 
     kubernetes.io/ingress.class: traefik-external
+    traefik.ingress.kubernetes.io/router.entrypoints: websecure
+    traefik.ingress.kubernetes.io/router.tls: "true"
 spec:
   entryPoints:
     - websecure
   routes:
     - match: Host(`www.time-manager-batman.com`)
+      kind: Rule
+      services:
+        - name: vue-app-service
+          port: 80
+    - match: Host(`test.time-manager-batman.com`)
       kind: Rule
       services:
         - name: vue-app-service
