@@ -94,6 +94,24 @@ defmodule TimeManagerWeb.GroupController do
     end
   end
 
+  def remove_user_from_group(conn, %{"groupId" => groupId, "userId" => userId}) do
+    user = Repo.get(Accounts.User, userId)
+
+    case user do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Group not found"})
+        |> halt()
+      _ ->
+        Groups.remove_user_from_group_id(user, groupId)
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "Action done"})
+        |> halt()
+    end
+  end
+
   def insert_managers(manager_ids, group_id) do
     user_params = %{"group_id" => group_id}
 
