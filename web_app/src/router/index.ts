@@ -10,21 +10,15 @@ const router = createRouter({
       component: () => import('@/components/utils/Home.vue')
     },
     {
-      path: '/clockManager/:username',
-      name: 'clockManager',
-      meta: { requiresAuth: true },
-      component: () => import('../components/ClockManager.vue')
-    },
-    {
       path: '/login',
       name: 'Login',
       component: () => import('@/components/user/Login.vue')
     },
     {
-      path: '/register',
-      name: 'Register',
-      meta: { requiresAuth: true, requiresManager: true },
-      component: () => import('@/components/user/Register.vue')
+      path: '/clockManager/:username',
+      name: 'clockManager',
+      meta: { requiresAuth: true },
+      component: () => import('../components/ClockManager.vue')
     },
     {
       path: '/workingTimes/:userId?',
@@ -51,10 +45,28 @@ const router = createRouter({
       component: () => import('@/components/user/UpdateUser.vue')
     },
     {
-      path: '/updateGroup',
-      meta: { requiresAuth: true, requiresManager: true },
-      name: 'UpdateGroup',
-      component: () => import('@/components/group/UpdateGroup.vue')
+      path: '/register',
+      name: 'Register',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/components/user/Register.vue')
+    },
+    {
+      path: '/groups',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      name: 'GroupsList',
+      component: () => import('@/components/group/GroupsList.vue')
+    },
+    {
+      path: '/group/create',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      name: 'CreateGroup',
+      component: () => import('@/components/group/GroupCreate.vue')
+    },
+    {
+      path: '/group/show/:id',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      name: 'ShowGroup',
+      component: () => import('@/components/group/GroupShow.vue')
     },
     {
       path: '/:pathMatch(.*)*',
@@ -67,6 +79,8 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const requiresManager = to.meta.requiresManager
+  const requiresManagerOrSuperManager = to.meta.requiresManagerOrSuperManager
+  const requiresSuperManager = to.meta.requiresSuperManager
   const authStore = useAuthStore()
 
   const isAuthenticated = await authStore.checkAuth()
@@ -74,9 +88,20 @@ router.beforeEach(async (to, from, next) => {
   if (requiresAuth && !isAuthenticated) {
     // Redirect unauthenticated users to the Login page
     next({ name: 'Login' })
+  } else if (requiresManagerOrSuperManager) {
+    // Check if user is a manager or super_manager
+    if (authStore.isSuperManager || authStore.isManager) {
+      next() // Proceed as normal for managers and super_managers
+    } else {
+      // Redirect non-managers to Home or a 'NotAuthorized' page
+      next({ name: 'Home' })
+    }
+  } else if (requiresSuperManager && !authStore.isSuperManager) {
+    // Redirect non-super_managers to Home or a 'NotAuthorized' page
+    next({ name: 'Home' })
   } else if (requiresManager && !authStore.isSuperManager && !authStore.isManager) {
-    // Redirect non-managers or unauthenticated users to a 'NotAuthorized' or similar page
-    next({ name: 'Home' }) // Make sure you have defined a route with the name 'NotAuthorized'
+    // Redirect non-managers to Home or a 'NotAuthorized' page
+    next({ name: 'Home' })
   } else {
     // No special requirements, proceed as normal
     next()
