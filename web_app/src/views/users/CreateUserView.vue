@@ -1,10 +1,10 @@
 <script setup lang="ts">
-import AuthForm from './AuthForm.vue'
+import AuthForm from '../../components/user/AuthForm.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
 import { useRoute } from 'vue-router'
-import router from '@/router'
+import BackLinkComponent from '@/components/BackLinkComponent.vue'
 
 const authStore = useAuthStore()
 const route = useRoute()
@@ -36,13 +36,7 @@ const roles = ['EMPLOYEE', 'MANAGER']
         @form-submit="createUser"
       />
       <div class="text-center">
-        <button
-          type="button"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          @click="router.go(-1)"
-        >
-          Go Back
-        </button>
+        <BackLinkComponent />
       </div>
     </div>
   </div>

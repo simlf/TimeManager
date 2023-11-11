@@ -15,7 +15,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-import WorkingTimesUser from './WorkingTimesUser.vue'
+import WorkingTimesUser from './WorkingTimesUserView.vue'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 </script>
 
@@ -268,7 +268,9 @@ const tabs = [
               <td class="px-6 py-4">{{ user.username }}</td>
               <td class="px-6 py-4">{{ user.total_hours }}</td>
               <td class="px-6 py-4">
-                <RouterLink :to="'/workingTimes/' + user.userId">Check user</RouterLink>
+                <router-link :to="{ name: 'WorkingTimesPage', params: { userId: user.id } }"
+                  >Check user</router-link
+                >
               </td>
             </tr>
           </tbody>

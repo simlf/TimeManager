@@ -66,6 +66,7 @@
                     <div v-if="authStore.isSuperManager" class="w-full sm:max-w-xs">
                       <label class="typo__label">Role</label>
                       <multiselect
+                        v-if="roles"
                         v-model="role"
                         :options="roles"
                         :searchable="false"

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import AuthForm from './AuthForm.vue'
+import AuthForm from '../components/user/AuthForm.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'

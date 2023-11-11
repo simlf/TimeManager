@@ -6,6 +6,7 @@ import axios from 'axios'
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import router from '@/router'
+import BackLinkComponent from '@/components/BackLinkComponent.vue'
 
 const route = useRoute()
 const { clearError, clearSuccess } = useMessageHandling()
@@ -37,7 +38,7 @@ const updateGroup = async (data: { name: string; employees: number[]; managers: 
     await axios.put('http://localhost:4000/api/groups/' + route.params.id, data)
     successRequest.value = "Group udpated, you'll be redirect ..."
     setTimeout(() => {
-      router.push({ name: 'GroupsList' })
+      router.push({ name: 'GroupsListPage' })
     }, 3000)
   } catch (error: Error | any) {
     console.log(error)
@@ -68,11 +69,7 @@ const getGroupById = async (): Promise<Group> => {
         @group-form-submit="updateGroup"
       />
       <div class="text-center">
-        <router-link
-          :to="{ name: 'GroupsList' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >Go Back</router-link
-        >
+        <BackLinkComponent />
       </div>
     </div>
   </div>

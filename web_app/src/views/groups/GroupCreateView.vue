@@ -5,13 +5,14 @@ import GroupForm from '@/components/group/GroupForm.vue'
 import axios from 'axios'
 import { ref } from 'vue'
 import router from '@/router'
+import BackLinkComponent from '@/components/BackLinkComponent.vue'
 
 const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHandling()
 const errorRequest = ref<string>('')
 const createGroup = async (data: { name: string; employees: number[]; managers: number[] }) => {
   try {
     await axios.post('http://localhost:4000/api/groups', data)
-    await router.push({ name: 'GroupsList' })
+    await router.push({ name: 'GroupsListPage' })
   } catch (error: Error | any) {
     console.log(error)
   }
@@ -24,11 +25,7 @@ const createGroup = async (data: { name: string; employees: number[]; managers: 
       <AlertBox v-if="errorRequest" type="error" :message="errorRequest" @dismiss="clearError" />
       <GroupForm formTitle="Create a group" submitLabel="Create" @group-form-submit="createGroup" />
       <div class="text-center">
-        <router-link
-          :to="{ name: 'GroupsList' }"
-          class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >Go Back</router-link
-        >
+        <BackLinkComponent />
       </div>
     </div>
   </div>
