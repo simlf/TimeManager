@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { Bar, Doughnut, Pie } from 'vue-chartjs'
+import { Doughnut } from 'vue-chartjs'
 import {
   Chart as ChartJS,
   Title,
@@ -15,7 +15,6 @@ import {useAuthStore} from "@/stores/auth.store";
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router';
-import WorkingTimesUser from './WorkingTimesUser.vue';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 
 </script>
@@ -68,8 +67,8 @@ const chartDataTest = [
 workingTimesRefUsers.value = chartDataTest
 
 export default {
-  name: 'BarChart',
-  components: { Bar, Doughnut, WorkingTimesUser },
+  name: 'DonutChart',
+  components: { Doughnut },
   data() {
     return {
       chartData: {
@@ -100,13 +99,10 @@ export default {
     }
   },
   created() {
-    // this.getWorkingTimes();
+    this.getWorkingTimes();
   },
   methods: {
-    async getWorkingTimes(
-      // start: string = '2023-11-01%',
-      // end: string = moment().format('YYYY-MM-DD') + "%"
-    ) {
+    async getWorkingTimes() {
       localStorage.setItem('start', start.value);  
       localStorage.setItem('end', end.value);
 
