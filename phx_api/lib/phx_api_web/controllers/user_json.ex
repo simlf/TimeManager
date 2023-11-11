@@ -15,6 +15,13 @@ defmodule TimeManagerWeb.UserJSON do
     %{data: data(user)}
   end
 
+  @doc """
+  Renders a single for check_auth function
+  """
+  def show_auth(%{user: user}) do
+    %{data: data_with_group_id(user)}
+  end
+
   defp data(%User{} = user) do
     %{
       id: user.id,
@@ -30,7 +37,7 @@ defmodule TimeManagerWeb.UserJSON do
       email: user.email,
       username: user.username,
       role: user.role,
-      group_id: user.group_id
+      group_id: user.group_id || nil
     }
   end
 end

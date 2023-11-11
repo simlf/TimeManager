@@ -19,7 +19,6 @@ defmodule TimeManager.Groups.Group_users do
   defp validate_user_is_employee(changeset, _opts) do
     user_id = get_field(changeset, :user_id)
     user = Repo.get(TimeManager.Accounts.User, user_id)
-    IO.inspect(user)
 
     case user.role do
       :EMPLOYEE ->

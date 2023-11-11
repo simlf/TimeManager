@@ -105,7 +105,7 @@
                 </MenuItem>
                 <MenuItem v-if="authStore.isManager" as="router-link" v-slot="{ active }">
                   <router-link
-                    :to="{ name: 'GroupsListPage' }"
+                    :to="{ name: 'ShowGroupPage', params: { id: authStore.groupId } }"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >Your Group</router-link
                   >

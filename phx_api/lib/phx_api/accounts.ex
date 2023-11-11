@@ -35,6 +35,15 @@ defmodule TimeManager.Accounts do
     Repo.all(query)
   end
 
+  def list_users_for_manager() do
+    query =
+      from(u in User,
+        where: u.role == ^:EMPLOYEE and is_nil(u.group_id)
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a user by email.
 
@@ -223,7 +232,6 @@ defmodule TimeManager.Accounts do
   """
   def generate_user_session_token(user) do
     {token, user_token} = UserToken.build_session_token(user)
-    IO.inspect(user_token)
     Repo.insert!(user_token)
     token
   end
