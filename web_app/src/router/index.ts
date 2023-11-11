@@ -33,16 +33,16 @@ const router = createRouter({
       component: () => import('@/views/workingTimes/WorkingTimesView.vue')
     },
     {
-      path: '/workingTimesUser/:userId',
-      name: 'WorkingTimesUserPage',
-      meta: { requiresAuth: true },
-      component: () => import('@/views/workingTimes/WorkingTimesUserView.vue')
+      path: '/workingTimesManager/:groupId?',
+      name: 'WorkingTimesManagerPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
     },
     {
-      path: '/workingTimesManager',
-      name: 'WorkingTimesManagerPage',
-      meta: { requiresAuth: true },
-      component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
+      path: '/workingTimesSuperManager/',
+      name: 'WorkingTimesSuperManagerPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/workingTimes/WorkingTimesSuperManagerView.vue')
     },
     {
       path: '/groups',

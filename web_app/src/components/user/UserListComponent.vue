@@ -64,13 +64,12 @@
             v-if="user.role !== 'SUPER_MANAGER'"
             class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
           >
-            <!-- TODO: ENZO -> Envoyer sur la page pour voir les workingTime de l'utilisateur -->
             <div
               v-if="authStore.isSuperManager || (authStore.isManager && user.role !== 'MANAGER')"
               class="py-4 pl-3 pr-4 text-right text-sm font-medium"
             >
               <router-link
-                :to="{ name: '', params: { userId: user.id } }"
+                :to="{ name: 'WorkingTimesPage', params: { userId: user.id } }"
                 class="text-indigo-600 hover:text-indigo-900"
               >
                 <EyeIcon class="h-6" />
