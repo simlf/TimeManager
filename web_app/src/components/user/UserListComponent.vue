@@ -1,5 +1,12 @@
 <template>
   <div class="-mx-4 mt-8 sm:-mx-0">
+    <AlertBox v-if="errorRequest" type="error" :message="errorRequest" @dismiss="clearError" />
+    <AlertBox
+      v-if="successRequest"
+      type="success"
+      :message="successRequest"
+      @dismiss="clearSuccess"
+    />
     <table class="min-w-full divide-y divide-gray-300">
       <thead>
         <tr>
@@ -121,9 +128,12 @@ import { TrashIcon, UserMinusIcon, EyeIcon, AdjustmentsVerticalIcon } from '@her
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-import { ref } from 'vue'
-import UpdateUserModal from '@/components/group/UpdateUserModal.vue'
+import { ref, watch } from 'vue'
+import UpdateUserModal from '@/components/user/UpdateUserModal.vue'
+import AlertBox from '@/components/utils/AlertBox.vue'
+import useMessageHandling from '@/composables/useMessageHandling'
 
+const { clearError, clearSuccess } = useMessageHandling()
 const route = useRoute()
 const authStore = useAuthStore()
 
@@ -137,10 +147,17 @@ type User = {
 
 const isUpdateUserModalOpen = ref(false)
 const currentUser = ref<User>()
+const errorRequest = ref<string>('')
+const successRequest = ref<string>('')
 
 const { users } = defineProps<{
   users: User[]
 }>()
+
+watch(
+  () => users,
+  () => {}
+)
 
 function getInitials(username: string): string {
   return username
@@ -160,9 +177,13 @@ const removeUserFromGroup = async (userId: number): Promise<void> => {
     const removeUser = await axios.patch(
       'http://localhost:4000/api/groups/' + route.params.id + '/' + userId
     )
-    // if (removeUser.status === 200) {
-    //   groupState.value = await getGroupById()
-    // }
+    if (removeUser.status === 200) {
+      successRequest.value = 'User remove from the group !'
+      users.splice(
+        users.findIndex((u) => u.id === userId),
+        1
+      )
+    }
   } catch (e) {
     console.log('Something wrong happens during deletion')
   }
@@ -172,7 +193,11 @@ const deleteUser = async (userId: number): Promise<void> => {
   try {
     const deleteUser = await axios.delete('http://localhost:4000/api/users/' + userId)
     if (deleteUser.status === 204) {
-      // users.find((user) => user.id !== userId)
+      successRequest.value = 'User deleted !'
+      users.splice(
+        users.findIndex((u) => u.id === userId),
+        1
+      )
     }
   } catch (e) {
     console.log('Something wrong happens during deletion')

@@ -17,17 +17,15 @@
         Create user
       </router-link>
     </div>
-    <UserListComponent :users="usersList" />
+    <UserListComponent v-if="usersList.length > 0" :users="usersList" />
+    <p v-else class="text-center text-4xl pt-4">No users to show you</p>
   </div>
 </template>
 
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth.store'
 import UserListComponent from '@/components/user/UserListComponent.vue'
-
-const authStore = useAuthStore()
 
 type User = {
   id: number
