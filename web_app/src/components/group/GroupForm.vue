@@ -42,28 +42,30 @@
             >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
         >
-        <label
-          v-if="authStore.isSuperManager"
-          for="name"
-          class="block text-sm font-medium leading-6 text-gray-900"
+        <div v-if="authStore.isSuperManager">
+          <label
+              for="name"
+              class="block text-sm font-medium leading-6 text-gray-900"
           >Managers</label
-        >
-        <multiselect
-          v-if="filteredResult && filteredResult.manager && authStore.isSuperManager"
-          :close-on-select="false"
-          v-model="tempManagers"
-          :options="filteredResult.manager"
-          :multiple="true"
-          group-values="users"
-          group-label="role"
-          :group-select="true"
-          placeholder="Type to search"
-          track-by="id"
-          label="email"
+          >
+          <multiselect
+              v-if="filteredResult && filteredResult.manager && filteredResult.manager.length > 0"
+              :close-on-select="false"
+              v-model="tempManagers"
+              :options="filteredResult.manager"
+              :multiple="true"
+              group-values="users"
+              group-label="role"
+              :group-select="true"
+              placeholder="Type to search"
+              track-by="id"
+              label="email"
           ><span slot="noResult"
-            >Oops! No elements found. Consider changing the search query.</span
+          >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
-        >
+          >
+          <p v-else class="text-red-400 text-center">No manager available for join this group -> Create one</p>
+        </div>
         <button
           type="submit"
           class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

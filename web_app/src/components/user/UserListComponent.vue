@@ -66,7 +66,7 @@
           >
             <!-- TODO: ENZO -> Envoyer sur la page pour voir les workingTime de l'utilisateur -->
             <div
-              v-if="authStore.isManager && user.role !== 'MANAGER'"
+              v-if="authStore.isSuperManager || (authStore.isManager && user.role !== 'MANAGER')"
               class="py-4 pl-3 pr-4 text-right text-sm font-medium"
             >
               <router-link
@@ -77,7 +77,7 @@
               </router-link>
             </div>
             <div
-              v-if="authStore.isManager && user.role !== 'MANAGER'"
+              v-if="authStore.isSuperManager || (authStore.isManager && user.role !== 'MANAGER')"
               class="py-4 pl-3 pr-4 text-right text-sm font-medium"
             >
               <button
