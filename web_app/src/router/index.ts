@@ -99,7 +99,7 @@ router.beforeEach(async (to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     // Redirect unauthenticated users to the Login page
-    next({ name: 'Login' })
+    next({ name: 'LoginPage' })
   } else if (requiresManagerOrSuperManager) {
     // Check if user is a manager or super_manager
     if (authStore.isSuperManager || authStore.isManager) {
