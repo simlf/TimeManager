@@ -15,7 +15,6 @@ import {useAuthStore} from "@/stores/auth.store";
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router';
-import ChartTest from './ChartTest.vue';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 
 </script>
@@ -25,11 +24,14 @@ const authStore = useAuthStore()
 const defaultUserId = authStore.id
 
 const isManager = authStore.isManager || authStore.isSuperManager
-// const isManager = false
-
-// const dateValue = ref([])
 let workingTimesRef = ref()
-let workingTimesRefDoughnut = ref()
+let totalHoursRef = ref()
+
+const start = ref(localStorage.getItem('start') || getLastMonday())
+const end = ref(localStorage.getItem('end') || moment().format('YYYY-MM-DD'))
+const dateValue = ref([start.value, end.value]);
+
+const noData = ref(false)
 
 function dDate(date: object) {
   return date > new Date()
@@ -39,56 +41,6 @@ const formatter = ref({
   date: 'YYYY-MM-DD',
   month: 'MMM'
 })
-
-// localStorage.clear()
-// console.log(localStorage.getItem('start'))
-
-const start = ref(localStorage.getItem('start') || getLastMonday())
-const end = ref(localStorage.getItem('end') || moment().format('YYYY-MM-DD'))
-const dateValue = ref([start.value, end.value]);
-
-const chartDataTest = [
-  {
-    "total_hours": 7.45,
-    "total_break": 0.25,
-    "start_time": "2023-11-06 09:34",
-    "end_time": "2023-11-06 17:34"
-  },
-  {
-    "total_hours": 6.5,
-    "total_break": 0.5,
-    "start_time": "2023-11-07 08:45",
-    "end_time": "2023-11-07 15:15"
-  },
-  {
-    "total_hours": 8.0,
-    "total_break": 0.75,
-    "start_time": "2023-11-08 10:00",
-    "end_time": "2023-11-08 18:00"
-  },
-  {
-    "total_hours": 6.30,
-    "total_break": 0.45,
-    "start_time": "2023-11-10 11:00",
-    "end_time": "2023-11-10 17:50"
-  }
-];
-
-const labelsx = ['Worked Time', 'Break Time']
-const datasets= [
-  {
-    label: 'Working Hours',
-    backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-    // borderColor: 'rgba(75, 192, 192, 1)',
-    // borderWidth: 1,
-    // data: [],
-    data: [10, 20, 30, 5], // Données de test par défaut
-    stack: "Stack 0",
-  }
-]
-
-const yourChartData = ref(datasets);
-const labels = ref(labelsx);
 
 export default {
   name: 'BarChart',
@@ -126,19 +78,19 @@ export default {
     chartOptions() {
       return {
         responsive: true,
-        maintainAspectRatio: false,
+        maintainAspectRatio: true,
         plugins: {
           title: {
             display: true,
             // text: 'Hours Worked'
           }
-        }
+        },
+        height: 400
       }
     }
   },
   created() {
     this.getWorkingTimes();
-    // this.updateCalendar()
   },
   methods: {
     async getWorkingTimes() {
@@ -148,86 +100,85 @@ export default {
 
       start.value += '%2000:00:00'
       end.value += '%2023:59:59'
-      const requestUrl = `http://localhost:4000/api/workingtimes/${this.selectedUserId}?start_time=${start.value}&end_time=${end.value}`
-
-      // console.log(requestUrl)
-
-      workingTimesRefDoughnut.value = chartDataTest
-      workingTimesRef.value = chartDataTest
-      this.updateChartData()
-
-      return
-      // this.updateChartData()
-
-      console.log(workingTimesRefDoughnut)
+      const requestUrl = `http://localhost:4000/api/times/info/${this.selectedUserId}?start_time=${start.value}&end_time=${end.value}`
 
       try {
         const response = await axios.get(requestUrl)
-        const data = response.data
-        workingTimesRef.value = data.data
+        const data = response.data.data
+        workingTimesRef.value = data.dateList
 
         console.log(data)
+
+        totalHoursRef.value = [data.timeWork.hours, data.timePause.hours]
+
+        noData.value = false
 
         // Mise à jour du graphique
         this.updateChartData()
       } catch (error) {
+
+        if (error.code == "ERR_BAD_RESPONSE") {
+          noData.value = true
+          
+        }
+
         console.error('Erreur API', error)
       }
     },
     updateChartData() {
-      this.chartData.labels = chartDataTest.map((item) =>
-        moment(item.start_time).format('YYYY-MM-DD')
+      this.chartData.labels = workingTimesRef.value.map((item) =>
+        moment(item.date).format('YYYY-MM-DD')
       );
       this.chartData.datasets = [
         {
-          label: 'Total Time',
-          data: chartDataTest.map((item) => item.total_hours),
+          label: 'Worked Time',
+          data: workingTimesRef.value.map((item) => item.hours_work),
           backgroundColor: ['#41B883'],
           stack: 'Stack 0', 
         },
         {
           label: 'Break Time',
-          data: chartDataTest.map((item) => item.total_break),
+          data: workingTimesRef.value.map((item) => item.hours_pause),
           backgroundColor: ['#E46651'],
           stack: 'Stack 0', 
         },
       ];
 
-      const totalHoursAndBreak = chartDataTest.reduce((acc, item) => {
-        acc.total_hours += item.total_hours;
-        acc.total_break += item.total_break;
-        return acc;
-      }, { total_hours: 0, total_break: 0 });
-
-      this.chartDataDoughnut.datasets[0].data = [totalHoursAndBreak.total_hours, totalHoursAndBreak.total_break];
-
-      yourChartData.value = this.chartData.datasets
-      labels.value = this.chartData.labels
-      // labels.value = ['t1', 't2', 't3', 't4']
-
-
-      this.triggerChartDataUpdate()
-      this.triggerChartDataDoughnutUpdate()
+      this.chartDataDoughnut.datasets[0].data = totalHoursRef
+      this.triggerChartsDataUpdate()
     },
     handleDateClick(modelData: Array<string>) {
+      // Si on clique sur "this month", le sélecteur outrepasse la règle dDate
+      if (new Date(modelData[1]) > new Date()) {
+        const today_date_str = moment().format('YYYY-MM-DD')
+        modelData[1] = today_date_str
+      }
+
       [start.value, end.value] = modelData;
 
       this.getWorkingTimes()
     },
-    triggerChartDataUpdate() {
+    triggerChartsDataUpdate() {
       this.chartData = {
         ...this.chartData,
         datasets: [...this.chartData.datasets],
         labels: [...this.chartData.labels]
-      }
-    },
-    triggerChartDataDoughnutUpdate() {
+      },
       this.chartDataDoughnut = {
         ...this.chartDataDoughnut,
         datasets: [...this.chartDataDoughnut.datasets],
         labels: [...this.chartDataDoughnut.labels]
       }
+      
     },
+    formatHoursMinutes(decimalHours: number): string {
+      // Diviser les heures et les minutes
+      const hours = Math.floor(decimalHours);
+      const minutes = Math.round((decimalHours - hours) * 60);
+
+      return `${hours} hours ${minutes} minutes`;
+    }
+
   }
 }
 
@@ -254,7 +205,7 @@ const tabs = [
 </script>
 
 <template>  
-<ChartTest :chartDataProp="yourChartData" :labelsProp="labels" ref="chartTestComponent"  ></ChartTest>
+<!-- <ChartTest :chartDataProp="yourChartData" :labelsProp="labels" ref="chartTestComponent"  ></ChartTest> -->
   <div class="mx-auto max-w-7xl px-6 py-12 sm:py-10 lg:px-8">
 
     <div v-if="isManager">
@@ -291,20 +242,21 @@ const tabs = [
       @update:model-value="handleDateClick"
     />
   </div>
-  <div class="md:flex md:items-center md:justify-center">
 
-  <div class="md:w-1/3 mx-1 mt-2">
-    <Doughnut id="my-doughnut-chart-id" :data="chartDataDoughnut" :options="chartOptions" ref="doughnut" />
-  </div>
-  <div class="md:w-1/3 mx-1 mt-2">
-    <Bar id="my-chart-id" :data="chartData" :options="chartOptions" ref="bar" />
-  </div>
-</div>
+  <div v-if="!noData">
+    <div class="md:flex md:items-center md:justify-center">
 
+      <div class="md:w-1/3 mx-1 mt-2">
+        <Doughnut id="my-doughnut-chart-id" :data="chartDataDoughnut" :options="chartOptions" ref="doughnut" />
+      </div>
+      <div class="md:w-2/3 mx-1 mt-2 h-full">
+        <Bar id="my-chart-id" :data="chartData" :options="chartOptions" ref="bar" />
+      </div>
+      
+    </div>
 
-
-  <!-- Table group users -->
-  <div class="sm:flex sm:items-center">
+    <!-- Table group users -->
+    <div class="sm:flex sm:items-center">
       <div class="sm:flex-auto">
         <!-- <h2 class="text-2xl font-bold tracking-tight text-gray-900 sm:text-3xl md:text-4xl">
           Groups
@@ -324,7 +276,7 @@ const tabs = [
             >
               Date
             </th>
-            <th
+            <!-- <th
               scope="col"
               class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
             >
@@ -335,7 +287,7 @@ const tabs = [
               class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-0"
             >
               End Time
-            </th>
+            </th> -->
 
             <th
               scope="col"
@@ -357,43 +309,45 @@ const tabs = [
           <tr v-for="(time, index) in workingTimesRef" :key="index" class="even:bg-gray-50">
             <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
               <div class="flex items-center">
-                {{ moment(time.start_time).utc(false).format('YYYY-MM-DD') }}
+                {{ time.date }}
                 <dl class="font-normal lg:hidden">
-                  <dt class="sr-only">Title</dt>
+                  <dt class="sr-only">Date</dt>
                 </dl>
               </div>
+            </td>
+
+            <!-- <td
+              class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
+            >
+              {{ moment(time.start_time).utc(false).format('HH:mm') }}
+              <dl class="font-normal lg:hidden">
+                <dt class="sr-only">Start Time</dt>
+              </dl>
             </td>
 
             <td
               class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
             >
-              {{ moment(time.start_time).utc(false).format('HH:mm') }}
-              <dl class="font-normal lg:hidden">
-                <dt class="sr-only">Title</dt>
-              </dl>
-            </td>
-            <td
-              class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
-            >
               {{ moment(time.end_time).utc(false).format('HH:mm') }}
               <dl class="font-normal lg:hidden">
-                <dt class="sr-only">Hours worked</dt>
+                <dt class="sr-only">End Time</dt>
+              </dl>
+            </td> -->
+
+            <td
+              class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
+            >
+              {{ formatHoursMinutes(time.hours_work) }}
+              <dl class="font-normal lg:hidden">
+                <dt class="sr-only">Worked Time</dt>
               </dl>
             </td>
             <td
               class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
             >
-              {{ time.total_hours}}
+              {{ formatHoursMinutes(time.hours_pause) }}
               <dl class="font-normal lg:hidden">
-                <dt class="sr-only">Hours worked</dt>
-              </dl>
-            </td>
-            <td
-              class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
-            >
-              {{ time.total_break}}
-              <dl class="font-normal lg:hidden">
-                <dt class="sr-only">Hours worked</dt>
+                <dt class="sr-only">Break Time</dt>
               </dl>
             </td>
             
@@ -401,7 +355,16 @@ const tabs = [
         </tbody>
       </table>
     </div>
-        </div>
+  
+  </div>
+
+  <div v-else class="md:flex md:items-center md:justify-center mt-5">
+    <h1>No data to display for selected dates</h1>
+  </div>
+</div>
+
+  
+
 </template>
 
 <style scoped></style>
