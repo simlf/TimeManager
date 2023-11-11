@@ -121,7 +121,7 @@ import { TrashIcon, UserMinusIcon, EyeIcon, AdjustmentsVerticalIcon } from '@her
 import axios from 'axios'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.store'
-import { ref } from 'vue'
+import {ref, watch} from 'vue'
 import UpdateUserModal from '@/components/group/UpdateUserModal.vue'
 
 const route = useRoute()
@@ -142,6 +142,9 @@ const { users } = defineProps<{
   users: User[]
 }>()
 
+watch(() => users, () => {
+})
+
 function getInitials(username: string): string {
   return username
     .split(' ')
@@ -160,9 +163,9 @@ const removeUserFromGroup = async (userId: number): Promise<void> => {
     const removeUser = await axios.patch(
       'http://localhost:4000/api/groups/' + route.params.id + '/' + userId
     )
-    // if (removeUser.status === 200) {
-    //   groupState.value = await getGroupById()
-    // }
+    if (removeUser.status === 200) {
+      users.splice(users.findIndex(u => u.id === userId), 1);
+    }
   } catch (e) {
     console.log('Something wrong happens during deletion')
   }
@@ -172,7 +175,7 @@ const deleteUser = async (userId: number): Promise<void> => {
   try {
     const deleteUser = await axios.delete('http://localhost:4000/api/users/' + userId)
     if (deleteUser.status === 204) {
-      // users.find((user) => user.id !== userId)
+      users.splice(users.findIndex(u => u.id === userId), 1);
     }
   } catch (e) {
     console.log('Something wrong happens during deletion')

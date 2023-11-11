@@ -17,7 +17,8 @@
         Create user
       </router-link>
     </div>
-    <UserListComponent :users="usersList" />
+    <UserListComponent v-if="usersList.length > 0" :users="usersList" />
+    <p v-else class="text-center text-4xl pt-4">No users to show you</p>
   </div>
 </template>
 
