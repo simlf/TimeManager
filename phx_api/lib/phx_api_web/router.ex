@@ -48,6 +48,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_manager_user]
 
+    get "/users/employees_list", UserController, :index_for_manager
   end
 
   @doc """

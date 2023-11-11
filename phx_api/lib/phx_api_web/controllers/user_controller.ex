@@ -17,6 +17,11 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
+  def index_for_manager(conn, _params) do
+    users = Accounts.list_users_for_manager()
+    render(conn, "index.json", users: users)
+  end
+
   def create(conn, %{"user" => user_params}) do
     current_user = conn.assigns[:current_user]
 
@@ -107,7 +112,6 @@ defmodule TimeManagerWeb.UserController do
         with {:ok, %User{} = updated_user} <- Accounts.update_user(user, user_params) do
           # If user have group and his role is updated, need to update relation table
           if updated_user.group_id && updated_user.role != user.role do
-            IO.inspect("je passe pas la ?")
             GroupController.change_user_relation_table(updated_user)
           end
           render(conn, "show.json", user: updated_user)
@@ -159,7 +163,7 @@ defmodule TimeManagerWeb.UserController do
 
   def check_auth(conn, _params) do
     if user = conn.assigns[:current_user] do
-      render(conn, "show.json", user: user)
+      render(conn, "show_auth.json", user: user)
     else
       conn
       |> put_status(:unauthorized)

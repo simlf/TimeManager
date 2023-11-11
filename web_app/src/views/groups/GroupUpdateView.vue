@@ -38,8 +38,8 @@ const updateGroup = async (data: { name: string; employees: number[]; managers: 
     await axios.put('http://localhost:4000/api/groups/' + route.params.id, data)
     successRequest.value = "Group udpated, you'll be redirect ..."
     setTimeout(() => {
-      router.push({ name: 'GroupsListPage' })
-    }, 3000)
+      router.go(-1)
+    }, 2000)
   } catch (error: Error | any) {
     console.log(error)
   }
