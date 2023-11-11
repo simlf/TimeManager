@@ -7,6 +7,7 @@ defmodule TimeManagerWeb.UserController do
 
   action_fallback TimeManagerWeb.FallbackController
 
+  # Function used for get all users (only SM)
   def index(conn, _params) do
     data = conn.query_params
 
@@ -17,11 +18,13 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
+  # Function used for get all employees without group (only M)
   def index_for_manager(conn, _params) do
     users = Accounts.list_users_for_manager()
     render(conn, "index.json", users: users)
   end
 
+  # Allow for SM\M to create users
   def create(conn, %{"user" => user_params}) do
     current_user = conn.assigns[:current_user]
 
@@ -67,6 +70,7 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  # Show one user with his id (M can only see member of his group)
   def show(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
     active_user = conn.assigns[:current_user]
@@ -81,6 +85,7 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "show.json", user: user)
   end
 
+  # Function used for update himself if connected
   def update_me(conn, %{"user" => user_params}) do
     # No need to add more error management (Middleware send error if no current_user)
     active_user_id = conn.assigns[:current_user].id
@@ -124,6 +129,7 @@ defmodule TimeManagerWeb.UserController do
       end
   end
 
+  # Function used for update the password of connected user
   def password_update(conn, %{"id" => id, "user" => user_params}) do
     user = Accounts.get_user!(id)
 
@@ -132,6 +138,7 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  # Function used for delete one user
   def delete(conn, %{"id" => id}) do
     user = Accounts.get_user!(id)
 
@@ -148,6 +155,7 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  # Function used for connect user and create session cookie if success
   def connection(conn, %{"user" => user_params}) do
     %{"email" => email, "password" => password} = user_params
 
@@ -161,6 +169,7 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  # Function used for check if user is auth and get information about him
   def check_auth(conn, _params) do
     if user = conn.assigns[:current_user] do
       render(conn, "show_auth.json", user: user)
@@ -171,6 +180,7 @@ defmodule TimeManagerWeb.UserController do
     end
   end
 
+  # Function used for disconnect the user
   def log_out(conn, _params) do
     if user = conn.assigns[:current_user] do
       conn = TimeManager.UserAuth.log_out_user(conn)
