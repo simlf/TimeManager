@@ -15,7 +15,7 @@ import { useAuthStore } from '@/stores/auth.store'
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router'
-import WorkingTimesUser from './WorkingTimesUser.vue'
+import WorkingTimesUser from './WorkingTimesUserView.vue'
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
 </script>
 
