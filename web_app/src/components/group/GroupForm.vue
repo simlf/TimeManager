@@ -42,7 +42,12 @@
             >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
         >
-        <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Managers</label>
+        <label
+          v-if="authStore.isSuperManager"
+          for="name"
+          class="block text-sm font-medium leading-6 text-gray-900"
+          >Managers</label
+        >
         <multiselect
           v-if="filteredResult && filteredResult.manager && authStore.isSuperManager"
           :close-on-select="false"
@@ -137,7 +142,10 @@ onMounted(async () => {
 })
 
 const getUsers = async (): Promise<User[] | []> => {
-  const users = await axios.get('http://localhost:4000/api/users')
+  const url = authStore.isSuperManager
+    ? 'http://localhost:4000/api/users'
+    : 'http://localhost:4000/api/users/employees_list'
+  const users = await axios.get(url)
   return users.data.data
 }
 

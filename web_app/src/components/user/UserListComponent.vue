@@ -65,7 +65,10 @@
             class="flex justify-end py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0"
           >
             <!-- TODO: ENZO -> Envoyer sur la page pour voir les workingTime de l'utilisateur -->
-            <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
+            <div
+              v-if="authStore.isManager && user.role !== 'MANAGER'"
+              class="py-4 pl-3 pr-4 text-right text-sm font-medium"
+            >
               <router-link
                 :to="{ name: '', params: { userId: user.id } }"
                 class="text-indigo-600 hover:text-indigo-900"
@@ -73,7 +76,10 @@
                 <EyeIcon class="h-6" />
               </router-link>
             </div>
-            <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
+            <div
+              v-if="authStore.isManager && user.role !== 'MANAGER'"
+              class="py-4 pl-3 pr-4 text-right text-sm font-medium"
+            >
               <button
                 @click="openEditUserModal(user)"
                 type="button"
