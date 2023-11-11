@@ -9,12 +9,12 @@ defmodule TimeManager.Workingtime do
 
   @doc """
   Returns the list of workingtimes.
-  
+
   ## Examples
-  
+
       iex> list_workingtimes()
       [%Workingtimes{}, ...]
-  
+
   """
   def list_workingtimes do
     Repo.all(Workingtimes)
@@ -22,31 +22,31 @@ defmodule TimeManager.Workingtime do
 
   @doc """
   Gets a single workingtimes.
-  
+
   Raises `Ecto.NoResultsError` if the Workingtimes does not exist.
-  
+
   ## Examples
-  
+
       iex> get_workingtimes!(123)
       %Workingtimes{}
-  
+
       iex> get_workingtimes!(456)
       ** (Ecto.NoResultsError)
-  
+
   """
   def get_workingtimes!(id), do: Repo.get!(Workingtimes, id)
 
   @doc """
   Creates a workingtimes.
-  
+
   ## Examples
-  
+
       iex> create_workingtimes(%{field: value})
       {:ok, %Workingtimes{}}
-  
+
       iex> create_workingtimes(%{field: bad_value})
       {:error, %Ecto.Changeset{}}
-  
+
   """
   def create_workingtimes(attrs \\ %{}) do
     %Workingtimes{}
@@ -56,15 +56,15 @@ defmodule TimeManager.Workingtime do
 
   @doc """
   Updates a workingtimes.
-  
+
   ## Examples
-  
+
       iex> update_workingtimes(workingtimes, %{field: new_value})
       {:ok, %Workingtimes{}}
-  
+
       iex> update_workingtimes(workingtimes, %{field: bad_value})
       {:error, %Ecto.Changeset{}}
-  
+
   """
   def update_workingtimes(%Workingtimes{} = workingtimes, attrs) do
     workingtimes
@@ -74,15 +74,15 @@ defmodule TimeManager.Workingtime do
 
   @doc """
   Deletes a workingtimes.
-  
+
   ## Examples
-  
+
       iex> delete_workingtimes(workingtimes)
       {:ok, %Workingtimes{}}
-  
+
       iex> delete_workingtimes(workingtimes)
       {:error, %Ecto.Changeset{}}
-  
+
   """
   def delete_workingtimes(%Workingtimes{} = workingtimes) do
     Repo.delete(workingtimes)
@@ -90,12 +90,12 @@ defmodule TimeManager.Workingtime do
 
   @doc """
   Returns an `%Ecto.Changeset{}` for tracking workingtimes changes.
-  
+
   ## Examples
-  
+
       iex> change_workingtimes(workingtimes)
       %Ecto.Changeset{data: %Workingtimes{}}
-  
+
   """
   def change_workingtimes(%Workingtimes{} = workingtimes, attrs \\ %{}) do
     Workingtimes.changeset(workingtimes, attrs)
@@ -119,9 +119,9 @@ defmodule TimeManager.Workingtime do
     workingtimes
   end
 
-  def get_info_by_day_from_period(start_time, end_time) do
+  def get_info_by_day_from_period(user_id, start_time, end_time) do
     sql =
-      "SELECT date(start_time) AS date, array_agg((start_time, end_time, is_pause, type)) AS data FROM workingtimes WHERE  ( start_time >= '#{start_time}' and end_time <= '#{end_time}') OR (start_time <= '#{start_time}' and end_time >= '#{start_time}') OR (start_time <= '#{end_time}' and end_time >= '#{end_time}') GROUP BY date(start_time) ORDER BY date;"
+      "SELECT date(start_time) AS date, array_agg((start_time, end_time, is_pause, type)) AS data FROM workingtimes WHERE user_id = '#{user_id}' AND ( start_time >= '#{start_time}' and end_time <= '#{end_time}') OR (start_time <= '#{start_time}' and end_time >= '#{start_time}') OR (start_time <= '#{end_time}' and end_time >= '#{end_time}') GROUP BY date(start_time) ORDER BY date;"
 
     Ecto.Adapters.SQL.query(Repo, sql, [])
   end
