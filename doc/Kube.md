@@ -25,18 +25,14 @@ To deploy your back-end, front-end, and database using Kubernetes, follow these 
 
 ### 4. Configuring Traefik with Helm
 
-[Helm](https://helm.sh/) is a package manager for Kubernetes that simplifies the deployment and management of applications. To configure Traefik using Helm:
-
-- Install Helm on your Kubernetes cluster.
-- Add the Traefik Helm repository: `helm repo add traefik https://helm.traefik.io/traefik`
-- Install Traefik with your desired configuration: `helm install traefik traefik/traefik -f traefik-values.yaml`
+[Helm](https://helm.sh/) is a package manager for Kubernetes that simplifies the deployment and management of applications. To configure Traefik using Helm. Traefik is a modern reverse proxy and load balancer that integrates with Kubernetes seamlessly. To easily configure Traefik using Helm, refer to the [Traefik Helm Chart documentation](https://doc.traefik.io/traefik/getting-started/install-traefik/#use-the-helm-chart).
 
 ### 5. Deploying the Site
 
 To access your deployed site, you need to update your hosts file. Run the following commands:
 
 
-Linux:
+Linux or Mac:
 ```bash
 
 echo '188.166.139.113 pop.time-manager-batman.com' | sudo tee -a /etc/hosts
