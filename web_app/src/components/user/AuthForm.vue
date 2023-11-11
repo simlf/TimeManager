@@ -28,6 +28,7 @@
         <div v-if="authStore.isSuperManager" class="w-full">
           <label class="typo__label">Role</label>
           <multiselect
+            v-if="roles"
             v-model="formInfo.role"
             :options="roles"
             :searchable="false"
