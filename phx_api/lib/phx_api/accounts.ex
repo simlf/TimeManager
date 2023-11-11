@@ -35,6 +35,15 @@ defmodule TimeManager.Accounts do
     Repo.all(query)
   end
 
+  def list_users_for_manager() do
+    query =
+      from(u in User,
+        where: u.role == ^:EMPLOYEE and is_nil(u.group_id)
+      )
+
+    Repo.all(query)
+  end
+
   @doc """
   Gets a user by email.
 
@@ -192,6 +201,15 @@ defmodule TimeManager.Accounts do
   end
 
   @doc """
+  Remove the group_id of one user
+  """
+  def remove_group_id_for_one_user(%User{} = user) do
+    user
+    |> User.user_remove_group_id(%{group_id: nil})
+    |> Repo.update()
+  end
+
+  @doc """
   Deletes a user.
 
   ## Examples
@@ -214,7 +232,6 @@ defmodule TimeManager.Accounts do
   """
   def generate_user_session_token(user) do
     {token, user_token} = UserToken.build_session_token(user)
-    IO.inspect(user_token)
     Repo.insert!(user_token)
     token
   end

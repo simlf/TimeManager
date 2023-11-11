@@ -48,6 +48,7 @@ defmodule TimeManagerWeb.Router do
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_manager_user]
 
+    get "/users/employees_list", UserController, :index_for_manager
   end
 
   @doc """
@@ -58,6 +59,7 @@ defmodule TimeManagerWeb.Router do
 
     resources "/users", UserController, only: [:delete, :index]
     resources "/groups", GroupController, only: [:index, :create, :delete]
+    patch "/groups/:groupId/:userId", GroupController, :remove_user_from_group
   end
 
   @doc """

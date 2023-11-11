@@ -170,7 +170,7 @@ defmodule TimeManagerWeb.WorkingtimesController do
       current_end_time = end_time
     end
 
-    data = Workingtime.get_info_by_day_from_period(start_time, end_time)
+    data = Workingtime.get_info_by_day_from_period(user_id, start_time, end_time)
     requestData = elem(data, 1)
     numberOfElement = length(requestData.rows)
 
@@ -204,16 +204,13 @@ defmodule TimeManagerWeb.WorkingtimesController do
                     end
                   end)
 
-                hms_worked = seconds_to_hms(totalSecondsForDateWorked)
-                hms_pause = seconds_to_hms(totalSecondsForDatePause)
+                hms_worked = seconds_to_hours(totalSecondsForDateWorked)
+                hms_pause = seconds_to_hours(totalSecondsForDatePause)
                 date_obj = %{
                   date: currentDate,
                   hours_pause: hms_pause.hours,
-                  minutes_pause: hms_pause.minutes,
-                  seconds_pause: hms_pause.seconds,
                   hours_work: hms_worked.hours,
-                  minutes_work: hms_worked.minutes,
-                  seconds_work: hms_worked.seconds
+
                 }
 
                 updated_list = [date_obj | acc_list]
@@ -224,7 +221,7 @@ defmodule TimeManagerWeb.WorkingtimesController do
         end
       end)
     dateList = Enum.reverse(dateList)
-    render(conn, "showTimesInfo.json", %{dateList: dateList,timePause: seconds_to_hms(totalSecondsForPeriodPause),timeWork: seconds_to_hms(totalSecondsForPeriodWork)})
+    render(conn, "showTimesInfo.json", %{dateList: dateList,timePause: seconds_to_hours(totalSecondsForPeriodPause),timeWork: seconds_to_hours(totalSecondsForPeriodWork)})
   end
 
   defp calculate_total_times(workingtimes, total_hours \\ 0) do
@@ -253,6 +250,11 @@ defmodule TimeManagerWeb.WorkingtimesController do
     time_worked = Timex.diff(end_time, start_time, :second)
 
     time_worked
+  end
+
+  defp seconds_to_hours(total_seconds) do
+    hours = Float.round(total_seconds / 3600, 2)
+    %{hours: hours}
   end
 
   defp seconds_to_hms(total_seconds) do

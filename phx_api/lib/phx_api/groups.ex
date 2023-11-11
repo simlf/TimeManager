@@ -9,6 +9,8 @@ defmodule TimeManager.Groups do
   alias TimeManager.Groups.Group
   alias TimeManager.Groups.Group_managers
   alias TimeManager.Groups.Group_users
+  alias TimeManager.Accounts
+  alias TimeManager.Accounts.User
 
   @doc """
   Returns the list of groups.
@@ -145,5 +147,20 @@ defmodule TimeManager.Groups do
   """
   def delete_group(%Group{} = group) do
     Repo.delete(group)
+  end
+
+  def remove_user_from_group_id(%User{} = user, group_id) do
+    cond do
+      user.role == :MANAGER ->
+        line = Repo.get_by(Group_managers, user_id: user.id)
+        Accounts.remove_group_id_for_one_user(user)
+        Repo.delete(line)
+
+      user.role == :EMPLOYEE ->
+        line = Repo.get_by(Group_users, user_id: user.id)
+        Accounts.remove_group_id_for_one_user(user)
+        Repo.delete(line)
+
+    end
   end
 end

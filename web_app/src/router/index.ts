@@ -6,72 +6,84 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: () => import('@/components/utils/Home.vue')
+      name: 'HomePage',
+      component: () => import('@/views/HomeView.vue')
     },
     {
       path: '/login',
-      name: 'Login',
-      component: () => import('@/components/user/Login.vue')
+      name: 'LoginPage',
+      component: () => import('@/views/LoginView.vue')
+    },
+    {
+      path: '/profile',
+      name: 'ProfilePage',
+      meta: { requiresAuth: true },
+      component: () => import('@/views/users/ProfileView.vue')
     },
     {
       path: '/clockManager/:username',
-      name: 'clockManager',
+      name: 'ClockManagerPage',
       meta: { requiresAuth: true },
-      component: () => import('../components/ClockManager.vue')
+      component: () => import('@/views/ClockManagerView.vue')
     },
     {
       path: '/workingTimes/:userId?',
-      name: 'workingTimes',
+      name: 'WorkingTimesPage',
       meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimes.vue')
+      component: () => import('@/views/workingTimes/WorkingTimesView.vue')
     },
     {
-      path: '/workingTimesUser/:userId',
-      name: 'workingTimesUser',
-      meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimesUser.vue')
-    },
-    {
-      path: '/workingTimesManager',
-      name: 'workingTimesManager',
-      meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimesManager.vue')
-    },
-    {
-      path: '/updateUser',
-      meta: { requiresAuth: true },
-      name: 'UpdateUser',
-      component: () => import('@/components/user/UpdateUser.vue')
-    },
-    {
-      path: '/register',
-      name: 'Register',
+      path: '/workingTimesManager/:groupId?',
+      name: 'WorkingTimesManagerPage',
       meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
-      component: () => import('@/components/user/Register.vue')
+      component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
+    },
+    {
+      path: '/workingTimesSuperManager/',
+      name: 'WorkingTimesSuperManagerPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/workingTimes/WorkingTimesSuperManagerView.vue')
     },
     {
       path: '/groups',
+      name: 'GroupsListPage',
       meta: { requiresAuth: true, requiresSuperManager: true },
-      name: 'GroupsList',
-      component: () => import('@/components/group/GroupsList.vue')
+      component: () => import('@/views/groups/GroupsListView.vue')
     },
     {
-      path: '/group/create',
+      path: '/groups/create',
+      name: 'CreateGroupPage',
       meta: { requiresAuth: true, requiresSuperManager: true },
-      name: 'CreateGroup',
-      component: () => import('@/components/group/GroupCreate.vue')
+      component: () => import('@/views/groups/GroupCreateView.vue')
     },
     {
-      path: '/group/show/:id',
+      path: '/groups/update/:id',
+      name: 'UpdateGroupPage',
       meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
-      name: 'ShowGroup',
-      component: () => import('@/components/group/GroupShow.vue')
+      component: () => import('@/views/groups/GroupUpdateView.vue')
+    },
+    {
+      path: '/groups/show/:id',
+      name: 'ShowGroupPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/groups/GroupShowOneView.vue')
+    },
+    {
+      path: '/users',
+      name: 'UsersListPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/users/UsersListView.vue')
+    },
+    {
+      path: '/users/create/:groupId?',
+      name: 'CreateUserPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/users/CreateUserView.vue')
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'Not Found',
-      component: () => import('@/components/utils/PageNotFound.vue')
+      name: 'NotFound',
+      component: () => import('@/views/NotFoundView.vue')
     }
   ]
 })
@@ -87,21 +99,21 @@ router.beforeEach(async (to, from, next) => {
 
   if (requiresAuth && !isAuthenticated) {
     // Redirect unauthenticated users to the Login page
-    next({ name: 'Login' })
+    next({ name: 'LoginPage' })
   } else if (requiresManagerOrSuperManager) {
     // Check if user is a manager or super_manager
     if (authStore.isSuperManager || authStore.isManager) {
       next() // Proceed as normal for managers and super_managers
     } else {
       // Redirect non-managers to Home or a 'NotAuthorized' page
-      next({ name: 'Home' })
+      next({ name: 'HomePage' })
     }
   } else if (requiresSuperManager && !authStore.isSuperManager) {
     // Redirect non-super_managers to Home or a 'NotAuthorized' page
-    next({ name: 'Home' })
+    next({ name: 'HomePage' })
   } else if (requiresManager && !authStore.isSuperManager && !authStore.isManager) {
     // Redirect non-managers to Home or a 'NotAuthorized' page
-    next({ name: 'Home' })
+    next({ name: 'HomePage' })
   } else {
     // No special requirements, proceed as normal
     next()

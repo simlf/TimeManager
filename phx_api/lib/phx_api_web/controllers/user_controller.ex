@@ -17,6 +17,11 @@ defmodule TimeManagerWeb.UserController do
     render(conn, "index.json", users: users)
   end
 
+  def index_for_manager(conn, _params) do
+    users = Accounts.list_users_for_manager()
+    render(conn, "index.json", users: users)
+  end
+
   def create(conn, %{"user" => user_params}) do
     current_user = conn.assigns[:current_user]
 
@@ -36,7 +41,7 @@ defmodule TimeManagerWeb.UserController do
         id = Map.get(user_params, "group_id", nil)
 
         if id != nil do
-          updated_json = Map.delete(user_params, "group_id")
+          Map.delete(user_params, "group_id")
           id
         else
           nil
@@ -158,7 +163,7 @@ defmodule TimeManagerWeb.UserController do
 
   def check_auth(conn, _params) do
     if user = conn.assigns[:current_user] do
-      render(conn, "show.json", user: user)
+      render(conn, "show_auth.json", user: user)
     else
       conn
       |> put_status(:unauthorized)

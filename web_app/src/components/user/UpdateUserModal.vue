@@ -1,5 +1,5 @@
 <template>
-  <TransitionRoot as="template" :show="isUpdateUserGroupModalOpen">
+  <TransitionRoot as="template" :show="isUpdateUserModalOpen">
     <Dialog as="div" class="relative z-10" @click.stop="closeModal">
       <TransitionChild
         as="template"
@@ -36,7 +36,7 @@
                   <UsersIcon class="h-6 w-6 text-green-600" aria-hidden="true" />
                 </div>
                 <div class="mt-3 text-center sm:mt-5">
-                  <form @submit.prevent="updateProfile" class="mt-5 sm:flex sm:items-center">
+                  <form @submit.prevent="updateProfile" class="mt-5 flex flex-col items-center">
                     <div class="w-full sm:max-w-xs">
                       <label
                         for="username"
@@ -63,6 +63,18 @@
                         placeholder="Email"
                       />
                     </div>
+                    <div v-if="authStore.isSuperManager" class="w-full sm:max-w-xs">
+                      <label class="typo__label">Role</label>
+                      <multiselect
+                        v-if="roles"
+                        v-model="role"
+                        :options="roles"
+                        :searchable="false"
+                        :close-on-select="true"
+                        :show-labels="true"
+                        placeholder="Pick a value"
+                      ></multiselect>
+                    </div>
                   </form>
                 </div>
               </div>
@@ -70,7 +82,7 @@
                 <button
                   type="button"
                   class="inline-flex w-full justify-center rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 sm:col-start-2"
-                  @click="closeModal"
+                  @click="updateUser"
                 >
                   Save
                 </button>
@@ -93,32 +105,62 @@
 
 <script setup>
 import { ref, watch } from 'vue'
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue'
+import { Dialog, DialogPanel, TransitionChild, TransitionRoot } from '@headlessui/vue'
 import { UsersIcon } from '@heroicons/vue/24/outline'
+import Multiselect from 'vue-multiselect'
+import { useAuthStore } from '@/stores/auth.store'
+import axios from 'axios'
+
+const authStore = useAuthStore()
+const roles = ['EMPLOYEE', 'MANAGER']
 
 const props = defineProps({
-  isUpdateUserGroupModalOpen: Boolean,
+  isUpdateUserModalOpen: Boolean,
   initialUsername: String,
-  initialEmail: String
+  initialEmail: String,
+  initialRole: String,
+  initialGroupId: Number,
+  userId: Number
 })
 
-const emit = defineEmits(['update:isUpdateUserGroupModalOpen'])
+const emit = defineEmits(['update:isUpdateUserModalOpen'])
 
 const username = ref('')
 const email = ref('')
+const role = ref('')
 
 watch(
-  () => props.isUpdateUserGroupModalOpen,
+  () => props.isUpdateUserModalOpen,
   (newValue) => {
     if (newValue) {
       username.value = props.initialUsername
       email.value = props.initialEmail
+      role.value = props.initialRole
     }
   },
   { immediate: true }
 )
 
 function closeModal() {
-  emit('update:isUpdateUserGroupModalOpen', false)
+  emit('update:isUpdateUserModalOpen', false)
+}
+
+const updateUser = async () => {
+  try {
+    const data = {
+      user: {
+        username: username.value,
+        email: email.value,
+        role: role.value,
+        group_id: props.initialGroupId
+      }
+    }
+    const updateUser = await axios.put('http://localhost:4000/api/users/' + props.userId, data)
+    if (updateUser.status === 200) {
+      emit('update:isUpdateUserModalOpen', false)
+    }
+  } catch (e) {
+    console.log('Something wrong happens during update')
+  }
 }
 </script>

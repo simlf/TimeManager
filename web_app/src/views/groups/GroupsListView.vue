@@ -10,7 +10,7 @@
         </p>
       </div>
       <router-link
-        :to="{ name: 'CreateGroup' }"
+        :to="{ name: 'CreateGroupPage' }"
         type="button"
         class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
@@ -46,13 +46,35 @@
               {{ group.name }}
             </td>
             <td class="px-3 py-4 text-sm text-gray-500">{{ group.count_users }}</td>
-            <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <router-link
-                :to="{ name: 'ShowGroup', params: { id: group.id } }"
-                class="text-indigo-600 hover:text-indigo-900"
+            <td class="flex justify-end">
+              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
+                <router-link
+                  :to="{ name: 'ShowGroupPage', params: { id: group.id } }"
+                  class="text-indigo-600 hover:text-indigo-900"
+                >
+                  <EyeIcon class="h-6" />
+                </router-link>
+              </div>
+              <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
+                <router-link
+                  :to="{ name: 'UpdateGroupPage', params: { id: group.id } }"
+                  class="text-orange-500 hover:text-indigo-900"
+                >
+                  <AdjustmentsVerticalIcon class="h-6" />
+                </router-link>
+              </div>
+              <div
+                v-if="authStore.isSuperManager"
+                class="py-4 pl-3 pr-4 text-right text-sm font-medium"
               >
-                Show Group
-              </router-link>
+                <button
+                  type="button"
+                  class="text-red-600 hover:text-indigo-900"
+                  @click="deleteGroup(group.id)"
+                >
+                  <TrashIcon class="h-6" />
+                </button>
+              </div>
             </td>
           </tr>
         </tbody>
@@ -64,6 +86,10 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
+import { EyeIcon, AdjustmentsVerticalIcon, TrashIcon } from '@heroicons/vue/20/solid'
+import { useAuthStore } from '@/stores/auth.store'
+
+const authStore = useAuthStore()
 
 type Group = {
   id: number
@@ -80,5 +106,16 @@ onMounted(async () => {
 const getGroups = async (): Promise<Group[] | []> => {
   const groups = await axios.get('http://localhost:4000/api/groups')
   return groups.data.data
+}
+
+const deleteGroup = async (id: number): Promise<void> => {
+  try {
+    const deleteGroup = await axios.delete('http://localhost:4000/api/groups/' + id)
+    if (deleteGroup.status === 204) {
+      groups.value = await getGroups()
+    }
+  } catch (e) {
+    console.log('Something wrong happens during deletion')
+  }
 }
 </script>
