@@ -33,12 +33,6 @@ const router = createRouter({
       component: () => import('../components/WorkingTimes.vue')
     },
     {
-      path: '/workingTimesUser/:userId',
-      name: 'workingTimesUser',
-      meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimesUser.vue')
-    },
-    {
       path: '/workingTimesManager/:groupId?',
       name: 'workingTimesManager',
       meta: { requiresAuth: true },
