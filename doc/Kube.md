@@ -38,9 +38,13 @@ To access your deployed site, you need to update your hosts file. Run the follow
 
 Linux:
 ```bash
+
 echo '188.166.139.113 pop.time-manager-batman.com' | sudo tee -a /etc/hosts
 echo '188.166.139.113 www.time-manager-batman.com' | sudo tee -a /etc/hosts
+```
 
 Windows:
+```bash
 echo 188.166.139.113 pop.time-manager-batman.com >> C:\Windows\System32\drivers\etc\hosts
 echo 188.166.139.113 www.time-manager-batman.com >> C:\Windows\System32\drivers\etc\hosts
+```
