@@ -17,6 +17,7 @@ interface User {
   username: string
   email: string
   role: string
+  group_id: number | null
 }
 
 const createPayload = (user: {
@@ -42,6 +43,7 @@ export const useAuthStore = defineStore({
     username: (state) => state.user?.username || 'null',
     email: (state) => state.user?.email || '',
     id: (state) => state.user?.id || -1,
+    groupId: (state) => state.user?.group_id || -1,
     isSuperManager: (state) => state.user?.role === 'SUPER_MANAGER',
     isManager: (state) => state.user?.role === 'MANAGER',
     isEmployee: (state) => state.user?.role === 'EMPLOYEE'
@@ -78,7 +80,10 @@ export const useAuthStore = defineStore({
 
       try {
         await axios.post(`${API_BASE_URL}/`, payload)
-        this.success = 'User registered successfully'
+        this.success = 'User registered successfully, wait ...'
+        setTimeout(() => {
+          router.go(-1)
+        }, 2000)
       } catch (error: Error | any) {
         this.handleError(
           error,
