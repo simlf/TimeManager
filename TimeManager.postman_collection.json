@@ -1,392 +1,355 @@
 {
 	"info": {
-		"_postman_id": "985b1d24-6733-4210-a12c-b8b31b34933d",
+		"_postman_id": "2a33b7cf-d90c-4a9b-80ba-4eb4a1ffcb9b",
 		"name": "TimeManager",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "30697496"
+		"_exporter_id": "15980878"
 	},
 	"item": [
 		{
-			"name": "WorkingTimes",
+			"name": "Need Session",
 			"item": [
 				{
-					"name": "Get (all) WorkingTimes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/workingtimes/1?start_time=2000-01-01%2008:00:00&end_time=2030-12-31%2017:30:00",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"workingtimes",
-								"1"
-							],
-							"query": [
-								{
-									"key": "start_time",
-									"value": "2000-01-01%2008:00:00"
-								},
-								{
-									"key": "end_time",
-									"value": "2030-12-31%2017:30:00"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "Get (one) WorkingTimes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/workingtimes/1/3",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"workingtimes",
-								"1",
-								"3"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetAllTimes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/times/2?start_time=2000-01-01%2008:00:00&end_time=2030-12-31%2017:30:00",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"times",
-								"2"
-							],
-							"query": [
-								{
-									"key": "start_time",
-									"value": "2000-01-01%2008:00:00"
-								},
-								{
-									"key": "end_time",
-									"value": "2030-12-31%2017:30:00"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTimes Work/Pause",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/times/2?start_time=2000-01-01%2008:00:00&end_time=2030-12-31%2017:30:00",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"times",
-								"2"
-							],
-							"query": [
-								{
-									"key": "start_time",
-									"value": "2000-01-01%2008:00:00"
-								},
-								{
-									"key": "end_time",
-									"value": "2030-12-31%2017:30:00"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTotalWorktimeToday",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/times/thisDay/1?start_time=2023-01-01%2008:00:00&end_time=2023-12-31%2017:30:00",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"times",
-								"thisDay",
-								"1"
-							],
-							"query": [
-								{
-									"key": "start_time",
-									"value": "2023-01-01%2008:00:00"
-								},
-								{
-									"key": "end_time",
-									"value": "2023-12-31%2017:30:00"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "DeleteWorkingTimes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "http://localhost:4000/api/workingtimes/:id",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"workingtimes",
-								":id"
-							],
-							"variable": [
-								{
-									"key": "id",
-									"value": ""
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetLastWorkingTimes",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/workingtimes/last/1",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"workingtimes",
-								"last",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "GetTimesByPeriod",
-					"request": {
-						"method": "GET",
-						"header": [],
-						"url": {
-							"raw": "{{base_url}}/times/info/1?start_time=2023-01-01%2008:00:00&end_time=2023-12-31%2017:30:00",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"times",
-								"info",
-								"1"
-							],
-							"query": [
-								{
-									"key": "start_time",
-									"value": "2023-01-01%2008:00:00"
-								},
-								{
-									"key": "end_time",
-									"value": "2023-12-31%2017:30:00"
-								}
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "PutWorkingTimes",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"workingtimes\": {\n        \"start_time\": \"2020-10-24T14:15:09Z\",\n        \"end_time\": \"2020-10-24T15:50:50Z\",\n        \"is_pause\": false\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/workingtimes/9",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"workingtimes",
-								"9"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "CreateWorkingTimes",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"workingtimes\": {\n        \"start_time\": \"2023-11-01T07:00:00Z\",\n        \"end_time\": \"2023-11-01T12:00:00Z\",\n        \"is_pause\": true\n    }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/workingtimes/2",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"workingtimes",
-								"2"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Clocks",
-			"item": [
-				{
-					"name": "GetClockByUserId",
-					"request": {
-						"method": "GET",
-						"header": []
-					},
-					"response": []
-				},
-				{
-					"name": "CreateClockByUserId",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"clock\" : {\r\n        \"status\": true,\r\n        \"time\": \"2000-01-01T23:00:07\",\r\n        \"user_id\": 1\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/clocks/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"clocks",
-								"1"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "UpdateCLockByUserId",
-					"request": {
-						"method": "PUT",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\r\n    \"clock\" : {\r\n        \"status\": true,\r\n        \"time\": \"2000-06-01T12:10:17\",\r\n        \"user_id\": 1\r\n    }\r\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "http://localhost:4000/api/clocks/1",
-							"protocol": "http",
-							"host": [
-								"localhost"
-							],
-							"port": "4000",
-							"path": [
-								"api",
-								"clocks",
-								"1"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Users",
-			"item": [
-				{
-					"name": "Need Auth",
+					"name": "Users",
 					"item": [
 						{
-							"name": "GetUserByUsername And/Or Email",
+							"name": "All roles",
+							"item": [
+								{
+									"name": "UpdateMe",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"email\": \"voici.unemail@hotmail.com\",\n    \"username\": \"Jean-Michel\"\n  }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/users/me",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users",
+												"me"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "UpdateUserPassword",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"password\": \"Azertyuiop2007\"\n  }\n}",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/users/update_password/3",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users",
+												"update_password",
+												"3"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "For SM/M",
+							"item": [
+								{
+									"name": "Create user",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"email\": \"userakdjkad@gotham.com\",\n    \"username\": \"dlkadlkaj\",\n    \"password\": \"Azertaay2007\",\n    \"role\": \"EMPLOYEE\",\n    \"group_id\": \"2\"\n  }\n}\n\n// FOR SUPER_MANAGER\n    // \"email\": \"userakdjkad@gotham.com\", => REQUIRED\n    // \"username\": \"dlkadlkaj\", => REQUIRED\n    // \"password\": \"Azertaay2007\", => REQUIRED\n    // \"role\": \"EMPLOYEE\" | \"MANAGER\", => REQUIRED\n    // \"group_id\": \"2\" => OPTIONAL\n\n// FOR MANAGER\n    // \"email\": \"userakdjkad@gotham.com\", => REQUIRED\n    // \"username\": \"dlkadlkaj\", => REQUIRED\n    // \"password\": \"Azertaay2007\", => REQUIRED",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/users",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update User",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"user\": {\n    \"username\": \"Trouze\",\n    \"email\": \"trzoue@gotham.com\",\n    \"role\": \"EMPLOYEE\"\n  }\n}\n\n\n// FOR SUPER_MANAGER\n    // \"email\": \"userakdjkad@gotham.com\",\n    // \"username\": \"dlkadlkaj\",\n    // \"role\": \"EMPLOYEE\" | \"MANAGER\",\n\n// FOR MANAGER\n    // \"email\": \"userakdjkad@gotham.com\",\n    // \"username\": \"dlkadlkaj\",",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/users/9",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users",
+												"9"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get User By Id",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/users/10",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users",
+												"10"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "For SM",
+							"item": [
+								{
+									"name": "Delete User",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/users/10",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users",
+												"10"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Get All Users",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/users",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"users"
+											],
+											"query": [
+												{
+													"key": "email",
+													"value": "manager",
+													"disabled": true
+												},
+												{
+													"key": "username",
+													"value": "The",
+													"disabled": true
+												}
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "Group",
+					"item": [
+						{
+							"name": "For SM",
+							"item": [
+								{
+									"name": "Get All Groups",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/groups",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"groups"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Create Group",
+									"request": {
+										"method": "POST",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"group\": {\n    \"name\": \"Gotham\",\n    \"managers\": [3, 5],\n    \"employees\": [10]\n    }\n}\n\n\n    // \"name\": \"Gotham\",\n    // \"managers\": [3, 5],\n    // \"employees\": [10]\n\n    // \"name\": \"Gotham\"",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/groups",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"groups"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Delete group",
+									"request": {
+										"method": "DELETE",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/groups/3",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"groups",
+												"3"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						},
+						{
+							"name": "For SM/M",
+							"item": [
+								{
+									"name": "Get Group By Id",
+									"request": {
+										"method": "GET",
+										"header": [],
+										"url": {
+											"raw": "{{base_url}}/groups/1",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"groups",
+												"1"
+											]
+										}
+									},
+									"response": []
+								},
+								{
+									"name": "Update group",
+									"request": {
+										"method": "PUT",
+										"header": [],
+										"body": {
+											"mode": "raw",
+											"raw": "{\n  \"group\": {\n    // \"name\": \"Pinguin\",\n    \"employees\": [10],\n    \"managers\": []\n    }\n}\n\n\n    // \"name\": \"Pinguin\",\n    // \"employees\": [10],\n    // \"managers\": [] => ONLY SM can add managers\n\n    // \"name\": \"Pinguin\",\n\n    // \"employees\": [10],\n",
+											"options": {
+												"raw": {
+													"language": "json"
+												}
+											}
+										},
+										"url": {
+											"raw": "{{base_url}}/groups/2",
+											"host": [
+												"{{base_url}}"
+											],
+											"path": [
+												"groups",
+												"2"
+											]
+										}
+									},
+									"response": []
+								}
+							]
+						}
+					]
+				},
+				{
+					"name": "WorkingTimes",
+					"item": [
+						{
+							"name": "Get (all) WorkingTimes",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/users?username=key&email=key",
+									"raw": "{{base_url}}/workingtimes/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users"
+										"workingtimes",
+										"1"
 									],
 									"query": [
 										{
-											"key": "username",
-											"value": "key"
+											"key": "start_time",
+											"value": "2000-01-01%2008:00:00",
+											"disabled": true
 										},
 										{
-											"key": "email",
-											"value": "key"
+											"key": "end_time",
+											"value": "2030-12-31%2017:30:00",
+											"disabled": true
 										}
 									]
 								}
@@ -394,17 +357,18 @@
 							"response": []
 						},
 						{
-							"name": "GetUserById",
+							"name": "Get (one) WorkingTimes",
 							"request": {
 								"method": "GET",
 								"header": [],
 								"url": {
-									"raw": "{{base_url}}/users/3",
+									"raw": "{{base_url}}/workingtimes/1/3",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
+										"workingtimes",
+										"1",
 										"3"
 									]
 								}
@@ -412,13 +376,170 @@
 							"response": []
 						},
 						{
-							"name": "UpdateMe",
+							"name": "GetAllTimes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/times/2?start_time=2000-01-01%2008:00:00&end_time=2030-12-31%2017:30:00",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"times",
+										"2"
+									],
+									"query": [
+										{
+											"key": "start_time",
+											"value": "2000-01-01%2008:00:00"
+										},
+										{
+											"key": "end_time",
+											"value": "2030-12-31%2017:30:00"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTimes Work/Pause",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/times/2?start_time=2000-01-01%2008:00:00&end_time=2030-12-31%2017:30:00",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"times",
+										"2"
+									],
+									"query": [
+										{
+											"key": "start_time",
+											"value": "2000-01-01%2008:00:00"
+										},
+										{
+											"key": "end_time",
+											"value": "2030-12-31%2017:30:00"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTotalWorktimeToday",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/times/thisDay/1?start_time=2023-01-01%2008:00:00&end_time=2023-12-31%2017:30:00",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"times",
+										"thisDay",
+										"1"
+									],
+									"query": [
+										{
+											"key": "start_time",
+											"value": "2023-01-01%2008:00:00"
+										},
+										{
+											"key": "end_time",
+											"value": "2023-12-31%2017:30:00"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "DeleteWorkingTimes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/workingtimes/:id",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"workingtimes",
+										":id"
+									],
+									"variable": [
+										{
+											"key": "id",
+											"value": ""
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetLastWorkingTimes",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/workingtimes/last/1",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"workingtimes",
+										"last",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "GetTimesByPeriod",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "{{base_url}}/times/info/1?start_time=2023-01-01%2008:00:00&end_time=2023-12-31%2017:30:00",
+									"host": [
+										"{{base_url}}"
+									],
+									"path": [
+										"times",
+										"info",
+										"1"
+									],
+									"query": [
+										{
+											"key": "start_time",
+											"value": "2023-01-01%2008:00:00"
+										},
+										{
+											"key": "end_time",
+											"value": "2023-12-31%2017:30:00"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "PutWorkingTimes",
 							"request": {
 								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"user\": {\n    \"username\": \"Michel\"\n  }\n}",
+									"raw": "{\n    \"workingtimes\": {\n        \"start_time\": \"2020-10-24T14:15:09Z\",\n        \"end_time\": \"2020-10-24T15:50:50Z\",\n        \"is_pause\": false\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -426,26 +547,26 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/me",
+									"raw": "{{base_url}}/workingtimes/9",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
-										"me"
+										"workingtimes",
+										"9"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "UpdateUser (SM/M)",
+							"name": "CreateWorkingTimes",
 							"request": {
-								"method": "PUT",
+								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"user\": {\n    \"username\": \"JeanMichel\"\n  }\n}",
+									"raw": "{\n    \"workingtimes\": {\n        \"start_time\": \"2023-11-01T07:00:00Z\",\n        \"end_time\": \"2023-11-01T12:00:00Z\",\n        \"is_pause\": true\n    }\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -453,59 +574,13 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/users/4",
+									"raw": "{{base_url}}/workingtimes/2",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"users",
-										"4"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "UpdateUserPassword",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"user\": {\n    \"password\": \"Azertyuiop2007\"\n  }\n}",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/users/update_password/3",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"users",
-										"update_password",
-										"3"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "DeleteUser",
-							"request": {
-								"method": "DELETE",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/users/3",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"users",
-										"3"
+										"workingtimes",
+										"2"
 									]
 								}
 							},
@@ -514,74 +589,27 @@
 					]
 				},
 				{
-					"name": "CreateUser",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"user\": {\n    \"email\": \"azy@ahsiss.com\",\n    \"username\": \"s\",\n    \"password\": \"Azertaay2007\",\n    \"roles\": \"EMPLOYEE\"\n  }\n}",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users"
-							]
-						}
-					},
-					"response": []
-				},
-				{
-					"name": "ConnectionUser",
-					"request": {
-						"method": "POST",
-						"header": [],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n  \"user\": {\n    \"email\": \"patron@gotham.com\",\n    \"password\": \"PatronPassword\"\n  }\n}\n\n    // \"email\": \"patron@gotham.com\",\n    // \"password\": \"PatronPassword\"\n\n    // \"email\": \"manager@gotham.com\",\n    // \"password\": \"ManagerPassword\"\n\n    // \"email\": \"employee@gotham.com\",\n    // \"password\": \"EmployeePassword\"",
-							"options": {
-								"raw": {
-									"language": "json"
-								}
-							}
-						},
-						"url": {
-							"raw": "{{base_url}}/users/log_in",
-							"host": [
-								"{{base_url}}"
-							],
-							"path": [
-								"users",
-								"log_in"
-							]
-						}
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Group",
-			"item": [
-				{
-					"name": "Need Auth SM",
+					"name": "Clocks",
 					"item": [
 						{
-							"name": "Create Group",
+							"name": "GetClockByUserId",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": ""
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "CreateClockByUserId",
 							"request": {
 								"method": "POST",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "{\n  \"group\": {\n    \"name\": \"Gotham\",\n    \"managers\": [3, 5, 10]\n    }\n}\n",
+									"raw": "{\r\n    \"clock\" : {\r\n        \"status\": true,\r\n        \"time\": \"2000-01-01T23:00:07\",\r\n        \"user_id\": 1\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -589,25 +617,26 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/groups",
+									"raw": "{{base_url}}/clocks/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"groups"
+										"clocks",
+										"1"
 									]
 								}
 							},
 							"response": []
 						},
 						{
-							"name": "Delete group",
+							"name": "UpdateCLockByUserId",
 							"request": {
-								"method": "DELETE",
+								"method": "PUT",
 								"header": [],
 								"body": {
 									"mode": "raw",
-									"raw": "",
+									"raw": "{\r\n    \"clock\" : {\r\n        \"status\": true,\r\n        \"time\": \"2000-06-01T12:10:17\",\r\n        \"user_id\": 1\r\n    }\r\n}",
 									"options": {
 										"raw": {
 											"language": "json"
@@ -615,12 +644,12 @@
 									}
 								},
 								"url": {
-									"raw": "{{base_url}}/groups/1",
+									"raw": "{{base_url}}/clocks/1",
 									"host": [
 										"{{base_url}}"
 									],
 									"path": [
-										"groups",
+										"clocks",
 										"1"
 									]
 								}
@@ -628,58 +657,35 @@
 							"response": []
 						}
 					]
-				},
-				{
-					"name": "Need Auth SM/M",
-					"item": [
-						{
-							"name": "Update group",
-							"request": {
-								"method": "PUT",
-								"header": [],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n  \"group\": {\n    \"name\": \"MICHOU\",\n    \"employees\": [8],\n    \"managers\": [3]\n    }\n}\n",
-									"options": {
-										"raw": {
-											"language": "json"
-										}
-									}
-								},
-								"url": {
-									"raw": "{{base_url}}/groups/2",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"groups",
-										"2"
-									]
-								}
-							},
-							"response": []
-						},
-						{
-							"name": "GetGroupById",
-							"request": {
-								"method": "GET",
-								"header": [],
-								"url": {
-									"raw": "{{base_url}}/groups/2",
-									"host": [
-										"{{base_url}}"
-									],
-									"path": [
-										"groups",
-										"2"
-									]
-								}
-							},
-							"response": []
-						}
-					]
 				}
 			]
+		},
+		{
+			"name": "ConnectionUser",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"user\": {\n    \"email\": \"patron@gotham.com\",\n    \"password\": \"PatronPassword\"\n  }\n}\n\n    // \"email\": \"patron@gotham.com\",\n    // \"password\": \"PatronPassword\"\n\n    // \"email\": \"manager@gotham.com\",\n    // \"password\": \"ManagerPassword\"\n\n    // \"email\": \"employee2@gotham.com\",\n    // \"password\": \"EmployeePassword\"",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/users/log_in",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"users",
+						"log_in"
+					]
+				}
+			},
+			"response": []
 		}
 	],
 	"event": [
