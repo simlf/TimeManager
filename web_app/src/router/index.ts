@@ -16,62 +16,62 @@ const router = createRouter({
     },
     {
       path: '/profile',
-      meta: { requiresAuth: true },
       name: 'ProfilePage',
+      meta: { requiresAuth: true },
       component: () => import('@/views/users/ProfileView.vue')
     },
     {
       path: '/clockManager/:username',
-      name: 'clockManagerPage',
+      name: 'ClockManagerPage',
       meta: { requiresAuth: true },
       component: () => import('@/views/ClockManagerView.vue')
     },
     {
       path: '/workingTimes/:userId?',
-      name: 'workingTimesPage',
+      name: 'WorkingTimesPage',
       meta: { requiresAuth: true },
       component: () => import('@/views/workingTimes/WorkingTimesView.vue')
     },
     {
       path: '/workingTimesUser/:userId',
-      name: 'workingTimesUserPage',
+      name: 'WorkingTimesUserPage',
       meta: { requiresAuth: true },
       component: () => import('@/views/workingTimes/WorkingTimesUserView.vue')
     },
     {
       path: '/workingTimesManager',
-      name: 'workingTimesManagerPage',
-      meta: {requiresAuth: true},
+      name: 'WorkingTimesManagerPage',
+      meta: { requiresAuth: true },
       component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
     },
     {
       path: '/groups',
-      meta: { requiresAuth: true, requiresSuperManager: true },
       name: 'GroupsListPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
       component: () => import('@/views/groups/GroupsListView.vue')
     },
     {
       path: '/groups/create',
-      meta: { requiresAuth: true, requiresSuperManager: true },
       name: 'CreateGroupPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
       component: () => import('@/views/groups/GroupCreateView.vue')
     },
     {
-      path: '/group/update/:id',
-      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      path: '/groups/update/:id',
       name: 'UpdateGroupPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/views/groups/GroupUpdateView.vue')
     },
     {
-      path: '/group/show/:id',
-      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      path: '/groups/show/:id',
       name: 'ShowGroupPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/views/groups/GroupShowOneView.vue')
     },
     {
       path: '/users',
-      meta: { requiresAuth: true, requiresSuperManager: true },
       name: 'UsersListPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
       component: () => import('@/views/users/UsersListView.vue')
     },
     {
@@ -82,7 +82,7 @@ const router = createRouter({
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'Not Found',
+      name: 'NotFound',
       component: () => import('@/views/NotFoundView.vue')
     }
   ]
@@ -106,14 +106,14 @@ router.beforeEach(async (to, from, next) => {
       next() // Proceed as normal for managers and super_managers
     } else {
       // Redirect non-managers to Home or a 'NotAuthorized' page
-      next({ name: 'Home' })
+      next({ name: 'HomePage' })
     }
   } else if (requiresSuperManager && !authStore.isSuperManager) {
     // Redirect non-super_managers to Home or a 'NotAuthorized' page
-    next({ name: 'Home' })
+    next({ name: 'HomePage' })
   } else if (requiresManager && !authStore.isSuperManager && !authStore.isManager) {
     // Redirect non-managers to Home or a 'NotAuthorized' page
-    next({ name: 'Home' })
+    next({ name: 'HomePage' })
   } else {
     // No special requirements, proceed as normal
     next()

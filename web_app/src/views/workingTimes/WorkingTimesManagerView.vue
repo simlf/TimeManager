@@ -268,7 +268,9 @@ const tabs = [
               <td class="px-6 py-4">{{ user.username }}</td>
               <td class="px-6 py-4">{{ user.total_hours }}</td>
               <td class="px-6 py-4">
-                <RouterLink :to="'/workingTimes/' + user.userId">Check user</RouterLink>
+                <router-link :to="{ name: 'WorkingTimesPage', params: { userId: user.id } }"
+                  >Check user</router-link
+                >
               </td>
             </tr>
           </tbody>

@@ -10,7 +10,7 @@
         </p>
       </div>
       <router-link
-        :to="{ name: 'CreateGroup' }"
+        :to="{ name: 'CreateGroupPage' }"
         type="button"
         class="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
       >
@@ -49,7 +49,7 @@
             <td class="flex justify-end">
               <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
                 <router-link
-                  :to="{ name: 'ShowGroup', params: { id: group.id } }"
+                  :to="{ name: 'ShowGroupPage', params: { id: group.id } }"
                   class="text-indigo-600 hover:text-indigo-900"
                 >
                   <EyeIcon class="h-6" />
@@ -57,7 +57,7 @@
               </div>
               <div class="py-4 pl-3 pr-4 text-right text-sm font-medium">
                 <router-link
-                  :to="{ name: 'UpdateGroup', params: { id: group.id } }"
+                  :to="{ name: 'UpdateGroupPage', params: { id: group.id } }"
                   class="text-orange-500 hover:text-indigo-900"
                 >
                   <AdjustmentsVerticalIcon class="h-6" />
