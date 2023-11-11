@@ -22,7 +22,7 @@ ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale,
 
 <script lang="ts">
 const authStore = useAuthStore()
-const defaultGroupId = authStore.user.groupId
+const defaultGroupId = authStore.groupId
 
 // const dateValue = ref([])
 let workingTimesRef = ref()
@@ -170,7 +170,7 @@ function getLastMonday() {
 
 const tabs = [
   { name: 'Default View', href: '/workingTimes/', current: false, hidden: false },
-  { name: 'Manager View', href: '/workingTimesManager/', current: true, hidden: false },
+  { name: 'Manager View', href: '/workingTimesManager/', current: true, hidden: authStore.isSuperManager },
   { name: 'SuperManager View', href: '/workingTimesSuperManager', current: false, hidden: !authStore.isSuperManager },
 ]
 
