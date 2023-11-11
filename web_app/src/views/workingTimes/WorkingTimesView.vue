@@ -96,16 +96,15 @@ export default {
       localStorage.setItem('start', start.value)
       localStorage.setItem('end', end.value)
 
-      start.value += '%2000:00:00'
-      end.value += '%2023:59:59'
-      const requestUrl = `http://localhost:4000/api/times/info/${this.selectedUserId}?start_time=${start.value}&end_time=${end.value}`
+      const start_time = start.value + "%2000:00:00"
+      const end_time = end.value + "%2023:59:59"
+
+      const requestUrl = `http://localhost:4000/api/times/info/${this.selectedUserId}?start_time=${start_time}&end_time=${end_time}`
 
       try {
         const response = await axios.get(requestUrl)
         const data = response.data.data
         workingTimesRef.value = data.dateList
-
-        console.log(data)
 
         totalHoursRef.value = [data.timeWork.hours, data.timePause.hours]
 
@@ -141,15 +140,6 @@ export default {
           stack: 'Stack 0'
         }
       ]
-
-      const totalHoursAndBreak = chartDataTest.reduce(
-        (acc, item) => {
-          acc.total_hours += item.total_hours
-          acc.total_break += item.total_break
-          return acc
-        },
-        { total_hours: 0, total_break: 0 }
-      )
 
       this.chartDataDoughnut.datasets[0].data = totalHoursRef
       this.triggerChartsDataUpdate()
@@ -217,7 +207,7 @@ const tabs = [
 
       <div class="relative border-b border-gray-200 pb-5 sm:pb-0">
         <div class="md:flex md:items-center md:justify-between">
-          <!-- <h3 class="text-base font-semibold leading-6 text-gray-900">User View</h3> -->
+          <h3 v-if="selectedUserId" class="text-base font-semibold leading-6 text-gray-900">Selected User : {{ selectedUserId }}</h3>
         </div>
         <div class="mt-4">
           <div class="sm:hidden">

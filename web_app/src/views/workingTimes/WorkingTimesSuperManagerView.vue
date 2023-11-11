@@ -1,22 +1,27 @@
 <script setup lang="ts">
-const chartDataTest = [
-  {
-    group_name: "Dev Front 1",
-    groupId: 33,
-  },
-  {
-    group_name: "Dev Back 1",
-    groupId: 23,
-  },
-  {
-    group_name: "Managers 1",
-    groupId: 34,
-  },
-  {
-    group_name: "Devops Team",
-    groupId: 13,
-  }
-];
+import { onMounted, ref } from 'vue'
+import axios from 'axios'
+import { EyeIcon } from '@heroicons/vue/20/solid'
+import { useAuthStore } from '@/stores/auth.store'
+
+const authStore = useAuthStore()
+
+type Group = {
+  id: number
+  name: string
+  count_users: number
+}
+
+const groups = ref<Group[] | []>([])
+
+onMounted(async () => {
+  groups.value = await getGroups()
+})
+
+const getGroups = async (): Promise<Group[] | []> => {
+  const groups = await axios.get('http://localhost:4000/api/groups')
+  return groups.data.data
+}
 
 function getInitials(group_name: string): string {
   return group_name
@@ -92,13 +97,13 @@ const tabs = [
           </tr>
         </thead>
         <tbody class="divide-y divide-gray-200 bg-white">
-          <tr v-for="group in chartDataTest" :key="group.groupId" class="even:bg-gray-50">
+          <tr v-for="group in groups" :key="group.id" class="even:bg-gray-50">
             <td class="whitespace-nowrap py-5 pl-4 pr-3 text-sm sm:pl-0">
               <div class="flex items-center">
                 <div
                   class="bg-indigo-500 flex w-10 h-10 flex-shrink-0 items-center justify-center rounded-full text-sm font-medium text-white md:w-12 md:h-12"
                 >
-                  {{ getInitials(group.group_name) }}
+                  {{ getInitials(group.name) }}
                 </div>
               </div>
             </td>
@@ -106,7 +111,7 @@ const tabs = [
             <td
               class="w-full max-w-0 py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:w-auto sm:max-w-none sm:pl-0"
             >
-              {{ group.group_name }}
+              {{ group.name }}
               <dl class="font-normal lg:hidden">
                 <dt class="sr-only">Title</dt>
               </dl>
@@ -114,12 +119,13 @@ const tabs = [
 
 
             <td class="py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-              <td class="px-6 py-4"><RouterLink :to="'/workingTimesManager/' + group.groupId">
-                <button
+              <router-link
+                :to="{ name: 'WorkingTimesManagerPage', params: { groupId: group.id } }"
                 class="text-indigo-600 hover:text-indigo-900"
               >
-                Check group
-              </button></RouterLink></td>
+                <EyeIcon class="h-6" />
+              </router-link>
+              
             </td>
           </tr>
         </tbody>

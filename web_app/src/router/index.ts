@@ -35,13 +35,13 @@ const router = createRouter({
     {
       path: '/workingTimesManager/:groupId?',
       name: 'WorkingTimesManagerPage',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
     },
     {
       path: '/workingTimesSuperManager/',
       name: 'WorkingTimesSuperManagerPage',
-      meta: { requiresAuth: true },
+      meta: { requiresAuth: true, requiresSuperManager: true },
       component: () => import('@/views/workingTimes/WorkingTimesSuperManagerView.vue')
     },
     {
