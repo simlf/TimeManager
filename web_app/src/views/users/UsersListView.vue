@@ -25,10 +25,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import axios from 'axios'
-import { useAuthStore } from '@/stores/auth.store'
 import UserListComponent from '@/components/user/UserListComponent.vue'
-
-const authStore = useAuthStore()
 
 type User = {
   id: number
