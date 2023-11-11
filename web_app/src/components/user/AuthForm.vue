@@ -24,11 +24,17 @@
               class="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
             />
           </div>
-          <SelectDropdown
-            v-if="authStore.isSuperManager"
+        </div>
+        <div v-if="authStore.isSuperManager" class="w-full">
+          <label class="typo__label">Role</label>
+          <multiselect
+            v-model="formInfo.role"
             :options="roles"
-            v-model="formInfo.roles"
-          />
+            :searchable="false"
+            :close-on-select="true"
+            :show-labels="true"
+            placeholder="Pick a value"
+          ></multiselect>
         </div>
         <div>
           <label for="email" class="block text-sm font-medium leading-6 text-gray-900"
@@ -80,8 +86,8 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import SelectDropdown from '@/components/utils/SelectDropdown.vue'
 import { useAuthStore } from '@/stores/auth.store'
+import Multiselect from 'vue-multiselect'
 
 const authStore = useAuthStore()
 
@@ -104,14 +110,14 @@ interface FormInfo {
   username?: string
   email: string
   password: string
-  roles?: string
+  role?: string
 }
 
 const formInfo: FormInfo = ref({
   username: '',
   email: '',
   password: '',
-  roles: ''
+  role: ''
 })
 
 const emit = defineEmits()

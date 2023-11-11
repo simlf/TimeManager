@@ -36,7 +36,7 @@ defmodule TimeManagerWeb.UserController do
         id = Map.get(user_params, "group_id", nil)
 
         if id != nil do
-          updated_json = Map.delete(user_params, "group_id")
+          Map.delete(user_params, "group_id")
           id
         else
           nil
@@ -107,6 +107,7 @@ defmodule TimeManagerWeb.UserController do
         with {:ok, %User{} = updated_user} <- Accounts.update_user(user, user_params) do
           # If user have group and his role is updated, need to update relation table
           if updated_user.group_id && updated_user.role != user.role do
+            IO.inspect("je passe pas la ?")
             GroupController.change_user_relation_table(updated_user)
           end
           render(conn, "show.json", user: updated_user)

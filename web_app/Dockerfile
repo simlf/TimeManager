@@ -9,6 +9,6 @@ COPY . /web_app
 # Définissez le répertoire de travail dans le conteneur
 
 
-RUN chmod u+x entrypoint.sh
+RUN chmod o+x entrypoint.sh
 
 ENTRYPOINT [ "/web_app/entrypoint.sh" ]

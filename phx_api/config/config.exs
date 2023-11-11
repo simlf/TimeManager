@@ -14,7 +14,7 @@ config :phx_api,
 
 # Configures the endpoint
 config :phx_api, TimeManagerWeb.Endpoint,
-  url: [host: "localhost"],
+  url: [host: System.get_env("HOST")],
   adapter: Phoenix.Endpoint.Cowboy2Adapter,
   render_errors: [
     formats: [json: TimeManagerWeb.ErrorJSON],

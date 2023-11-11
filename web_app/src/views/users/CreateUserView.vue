@@ -3,11 +3,17 @@ import AuthForm from '../../components/user/AuthForm.vue'
 import { useAuthStore } from '@/stores/auth.store'
 import AlertBox from '@/components/utils/AlertBox.vue'
 import useMessageHandling from '@/composables/useMessageHandling'
+import { useRoute } from 'vue-router'
+import router from '@/router'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
 const { clearError, clearSuccess, errorMessage, successMessage } = useMessageHandling()
 const createUser = (data: { username: string; email: string; password: string }) => {
+  if (authStore.isSuperManager && route.params.groupId) {
+    data['group_id'] = Number(route.params.groupId)
+  }
   authStore.register(data)
 }
 const roles = ['EMPLOYEE', 'MANAGER']
@@ -30,11 +36,13 @@ const roles = ['EMPLOYEE', 'MANAGER']
         @form-submit="createUser"
       />
       <div class="text-center">
-        <RouterLink
-          to="/GroupsList"
+        <button
+          type="button"
           class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500"
-          >Go Back</RouterLink
+          @click="router.go(-1)"
         >
+          Go Back
+        </button>
       </div>
     </div>
   </div>

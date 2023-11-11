@@ -41,7 +41,7 @@ const router = createRouter({
     {
       path: '/workingTimesManager',
       name: 'workingTimesManagerPage',
-      meta: { requiresAuth: true },
+      meta: {requiresAuth: true},
       component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
     },
     {
@@ -69,7 +69,13 @@ const router = createRouter({
       component: () => import('@/views/groups/GroupShowOneView.vue')
     },
     {
-      path: '/users/create',
+      path: '/users',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      name: 'UsersListPage',
+      component: () => import('@/views/users/UsersListView.vue')
+    },
+    {
+      path: '/users/create/:groupId?',
       name: 'CreateUserPage',
       meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
       component: () => import('@/views/users/CreateUserView.vue')
