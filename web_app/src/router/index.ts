@@ -6,60 +6,84 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: () => import('@/components/utils/Home.vue')
-    },
-    {
-      path: '/clockManager/:username',
-      name: 'clockManager',
-      meta: { requiresAuth: true },
-      component: () => import('../components/ClockManager.vue')
+      name: 'HomePage',
+      component: () => import('@/views/HomeView.vue')
     },
     {
       path: '/login',
-      name: 'Login',
-      component: () => import('@/components/user/Login.vue')
+      name: 'LoginPage',
+      component: () => import('@/views/LoginView.vue')
     },
     {
-      path: '/register',
-      name: 'Register',
-      meta: { requiresAuth: true, requiresManager: true },
-      component: () => import('@/components/user/Register.vue')
+      path: '/profile',
+      name: 'ProfilePage',
+      meta: { requiresAuth: true },
+      component: () => import('@/views/users/ProfileView.vue')
+    },
+    {
+      path: '/clockManager/:username',
+      name: 'ClockManagerPage',
+      meta: { requiresAuth: true },
+      component: () => import('@/views/ClockManagerView.vue')
     },
     {
       path: '/workingTimes/:userId?',
-      name: 'workingTimes',
+      name: 'WorkingTimesPage',
       meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimes.vue')
+      component: () => import('@/views/workingTimes/WorkingTimesView.vue')
     },
     {
       path: '/workingTimesManager/:groupId?',
-      name: 'workingTimesManager',
+      name: 'WorkingTimesManagerPage',
       meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimesManager.vue')
+      component: () => import('@/views/workingTimes/WorkingTimesManagerView.vue')
     },
     {
       path: '/workingTimesSuperManager/',
-      name: 'workingTimesSuperManager',
+      name: 'WorkingTimesSuperManagerPage',
       meta: { requiresAuth: true },
-      component: () => import('../components/WorkingTimesSuperManager.vue')
+      component: () => import('@/views/workingTimes/WorkingTimesSuperManagerView.vue')
     },
     {
-      path: '/updateUser',
-      meta: { requiresAuth: true },
-      name: 'UpdateUser',
-      component: () => import('@/components/user/UpdateUser.vue')
+      path: '/groups',
+      name: 'GroupsListPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/groups/GroupsListView.vue')
     },
     {
-      path: '/updateGroup',
-      meta: { requiresAuth: true, requiresManager: true },
-      name: 'UpdateGroup',
-      component: () => import('@/components/group/UpdateGroup.vue')
+      path: '/groups/create',
+      name: 'CreateGroupPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/groups/GroupCreateView.vue')
+    },
+    {
+      path: '/groups/update/:id',
+      name: 'UpdateGroupPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/groups/GroupUpdateView.vue')
+    },
+    {
+      path: '/groups/show/:id',
+      name: 'ShowGroupPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/groups/GroupShowOneView.vue')
+    },
+    {
+      path: '/users',
+      name: 'UsersListPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/users/UsersListView.vue')
+    },
+    {
+      path: '/users/create/:groupId?',
+      name: 'CreateUserPage',
+      meta: { requiresAuth: true, requiresManagerOrSuperManager: true },
+      component: () => import('@/views/users/CreateUserView.vue')
     },
     {
       path: '/:pathMatch(.*)*',
-      name: 'Not Found',
-      component: () => import('@/components/utils/PageNotFound.vue')
+      name: 'NotFound',
+      component: () => import('@/views/NotFoundView.vue')
     }
   ]
 })
@@ -67,6 +91,8 @@ const router = createRouter({
 router.beforeEach(async (to, from, next) => {
   const requiresAuth = to.meta.requiresAuth
   const requiresManager = to.meta.requiresManager
+  const requiresManagerOrSuperManager = to.meta.requiresManagerOrSuperManager
+  const requiresSuperManager = to.meta.requiresSuperManager
   const authStore = useAuthStore()
 
   const isAuthenticated = await authStore.checkAuth()
@@ -74,9 +100,20 @@ router.beforeEach(async (to, from, next) => {
   if (requiresAuth && !isAuthenticated) {
     // Redirect unauthenticated users to the Login page
     next({ name: 'Login' })
+  } else if (requiresManagerOrSuperManager) {
+    // Check if user is a manager or super_manager
+    if (authStore.isSuperManager || authStore.isManager) {
+      next() // Proceed as normal for managers and super_managers
+    } else {
+      // Redirect non-managers to Home or a 'NotAuthorized' page
+      next({ name: 'HomePage' })
+    }
+  } else if (requiresSuperManager && !authStore.isSuperManager) {
+    // Redirect non-super_managers to Home or a 'NotAuthorized' page
+    next({ name: 'HomePage' })
   } else if (requiresManager && !authStore.isSuperManager && !authStore.isManager) {
-    // Redirect non-managers or unauthenticated users to a 'NotAuthorized' or similar page
-    next({ name: 'Home' }) // Make sure you have defined a route with the name 'NotAuthorized'
+    // Redirect non-managers to Home or a 'NotAuthorized' page
+    next({ name: 'HomePage' })
   } else {
     // No special requirements, proceed as normal
     next()

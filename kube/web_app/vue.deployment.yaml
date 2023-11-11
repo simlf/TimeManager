@@ -19,3 +19,6 @@ spec:
           image: teorxiro/web_app:latest
           ports:
             - containerPort: 5173 
+          envFrom:
+            - configMapRef:
+                name: vue-app

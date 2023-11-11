@@ -14,15 +14,15 @@ do
 done
 
 # cd phx_api
-  mix deps.get
+  MIX_ENV=prod mix deps.get
 
 # Create, migrate, and seed database if it doesn't exist.
 if [[ -z `psql -Atqc "\\list $PGDATABASE"` ]]; then
   echo "Database $PGDATABASE does not exist. Creating..."
-  mix ecto.create
-  mix ecto.migrate
-  mix run priv/repo/seeds.exs
+  MIX_ENV=prod mix ecto.create
+  MIX_ENV=prod mix ecto.migrate
+  MIX_ENV=prod mix run priv/repo/seeds.exs
   echo "Database $PGDATABASE created."
 fi
 
-exec mix phx.server
+MIX_ENV=prod exec mix phx.server

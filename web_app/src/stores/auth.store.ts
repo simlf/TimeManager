@@ -23,6 +23,8 @@ const createPayload = (user: {
   username?: string
   email?: string
   password?: string
+  role?: 'EMPLOYEE' | 'MANAGER'
+  group_id?: number | null
 }): LoginPayload => ({
   user: user
 })
@@ -58,18 +60,25 @@ export const useAuthStore = defineStore({
         return false
       }
     },
-    async register(credentials: { username: string; email: string; password: string }) {
+    async register(credentials: {
+      username: string
+      email: string
+      password: string
+      role?: 'EMPLOYEE' | 'MANAGER'
+      group_id?: number
+    }) {
       this.error = null
       const payload = createPayload({
         username: credentials.username,
         email: credentials.email,
-        password: credentials.password
+        password: credentials.password,
+        role: credentials.role ?? 'EMPLOYEE',
+        group_id: credentials.group_id ?? null
       })
 
       try {
         await axios.post(`${API_BASE_URL}/`, payload)
         this.success = 'User registered successfully'
-        this.redirectTo('/login')
       } catch (error: Error | any) {
         this.handleError(
           error,
@@ -86,7 +95,6 @@ export const useAuthStore = defineStore({
 
       try {
         await axios.post(`${API_BASE_URL}/log_in`, payload)
-        this.user = credentials
         this.isAuthenticated = true
         this.success = 'User logged in  successfully'
         this.redirectTo('/')

@@ -25,6 +25,7 @@
     "pinia": "^2.1.7",
     "vue": "^3.3.4",
     "vue-chartjs": "^5.2.0",
+    "vue-multiselect": "^3.0.0-beta.3",
     "vue-router": "^4.2.5",
     "vue-tailwind-datepicker": "^1.6.1"
   },

@@ -11,12 +11,11 @@ import {
   LinearScale,
   ArcElement
 } from 'chart.js'
-import {useAuthStore} from "@/stores/auth.store";
+import { useAuthStore } from '@/stores/auth.store'
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
-
 </script>
 
 <script lang="ts">
@@ -39,7 +38,7 @@ const formatter = ref({
 const start = ref(localStorage.getItem('start') || getLastMonday())
 const end = ref(localStorage.getItem('end') || moment().format('YYYY-MM-DD'))
 
-const dateValue = ref([start.value, end.value]);
+const dateValue = ref([start.value, end.value])
 
 const chartDataTest = [
   {
@@ -62,7 +61,7 @@ const chartDataTest = [
     userId: 13,
     total_hours: 7.10,
   }
-];
+]
 
 workingTimesRefUsers.value = chartDataTest
 
@@ -117,7 +116,7 @@ export default {
       this.updateChartData()
 
       return
-      
+
       try {
         const response = await axios.get(requestUrl)
         const data = response.data
@@ -132,9 +131,9 @@ export default {
       }
     },
     updateChartData() {
-      this.chartData.labels = chartDataTest.map((item) => item.username);
-      this.chartData.datasets[0].data = chartDataTest.map((item) => item.total_hours);
-      
+      this.chartData.labels = chartDataTest.map((item) => item.username)
+      this.chartData.datasets[0].data = chartDataTest.map((item) => item.total_hours)
+
       this.triggerChartDataUpdate()
     },
     handleDateClick(modelData: Array<string>) {
@@ -149,22 +148,21 @@ export default {
         datasets: [...this.chartData.datasets],
         labels: [...this.chartData.labels]
       }
-    },
+    }
   }
 }
 
 function getLastMonday() {
-  const today = moment();
-  const dayOfWeek = today.day(); // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
+  const today = moment()
+  const dayOfWeek = today.day() // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
 
   if (dayOfWeek === 1) {
-    return today.format('YYYY-MM-DD');
+    return today.format('YYYY-MM-DD')
   } else {
-    const daysUntilLastMonday = (dayOfWeek + 6) % 7;
-    const lastMonday = today.subtract(daysUntilLastMonday, 'days');
-    return lastMonday.format('YYYY-MM-DD');
+    const daysUntilLastMonday = (dayOfWeek + 6) % 7
+    const lastMonday = today.subtract(daysUntilLastMonday, 'days')
+    return lastMonday.format('YYYY-MM-DD')
   }
-
 }
 
 const tabs = [
@@ -205,6 +203,7 @@ function getInitials(username: string): string {
         </div>
       </div>
     </div>
+  </div>
 
     <!-- Calendar / dashboard -->
     <div class="md:flex md:items-center md:justify-center">

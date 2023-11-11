@@ -39,7 +39,7 @@ defmodule TimeManagerWeb.GroupJSON do
   defp user_data(%User{} = user) do
     %{
       id: user.id,
-      name: user.username,
+      username: user.username,
       email: user.email,
       role: user.role,
       group_id: user.group_id,

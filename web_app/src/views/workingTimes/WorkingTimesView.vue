@@ -11,12 +11,11 @@ import {
   LinearScale,
   ArcElement
 } from 'chart.js'
-import {useAuthStore} from "@/stores/auth.store";
+import { useAuthStore } from '@/stores/auth.store'
 import moment from 'moment'
 import axios from 'axios'
 import { useRoute } from 'vue-router';
 ChartJS.register(Title, Tooltip, Legend, BarElement, CategoryScale, LinearScale, ArcElement)
-
 </script>
 
 <script lang="ts">
@@ -53,7 +52,7 @@ export default {
           {
             // label: 'Worked Time',
             backgroundColor: ['#41B883', '#E46651', '#00D8FF', '#DD1B16'],
-            data: [25, 30 ]
+            data: [25, 30]
           }
         ]
       },
@@ -67,7 +66,7 @@ export default {
             // borderWidth: 1,
             // data: [],
             data: [10, 20, 30, 5], // Données de test par défaut
-            stack: "Stack 0",
+            stack: 'Stack 0'
           }
         ]
       },
@@ -81,7 +80,7 @@ export default {
         maintainAspectRatio: true,
         plugins: {
           title: {
-            display: true,
+            display: true
             // text: 'Hours Worked'
           }
         },
@@ -94,9 +93,8 @@ export default {
   },
   methods: {
     async getWorkingTimes() {
-
-      localStorage.setItem('start', start.value);  
-      localStorage.setItem('end', end.value);
+      localStorage.setItem('start', start.value)
+      localStorage.setItem('end', end.value)
 
       start.value += '%2000:00:00'
       end.value += '%2023:59:59'
@@ -134,15 +132,24 @@ export default {
           label: 'Worked Time',
           data: workingTimesRef.value.map((item) => item.hours_work),
           backgroundColor: ['#41B883'],
-          stack: 'Stack 0', 
+          stack: 'Stack 0'
         },
         {
           label: 'Break Time',
           data: workingTimesRef.value.map((item) => item.hours_pause),
           backgroundColor: ['#E46651'],
-          stack: 'Stack 0', 
+          stack: 'Stack 0'
+        }
+      ]
+
+      const totalHoursAndBreak = chartDataTest.reduce(
+        (acc, item) => {
+          acc.total_hours += item.total_hours
+          acc.total_break += item.total_break
+          return acc
         },
-      ];
+        { total_hours: 0, total_break: 0 }
+      )
 
       this.chartDataDoughnut.datasets[0].data = totalHoursRef
       this.triggerChartsDataUpdate()
@@ -183,17 +190,16 @@ export default {
 }
 
 function getLastMonday() {
-  const today = moment();
-  const dayOfWeek = today.day(); // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
+  const today = moment()
+  const dayOfWeek = today.day() // Récupérez le jour de la semaine actuel (0 = dimanche, 1 = lundi, ..., 6 = samedi)
 
   if (dayOfWeek === 1) {
-    return today.format('YYYY-MM-DD');
+    return today.format('YYYY-MM-DD')
   } else {
-    const daysUntilLastMonday = (dayOfWeek + 6) % 7;
-    const lastMonday = today.subtract(daysUntilLastMonday, 'days');
-    return lastMonday.format('YYYY-MM-DD');
+    const daysUntilLastMonday = (dayOfWeek + 6) % 7
+    const lastMonday = today.subtract(daysUntilLastMonday, 'days')
+    return lastMonday.format('YYYY-MM-DD')
   }
-
 }
 
 const tabs = [
@@ -201,7 +207,6 @@ const tabs = [
   { name: 'Manager View', href: '/workingTimesManager/', current: false, hidden: !isManager },
   { name: 'SuperManager View', href: '/workingTimesSuperManager/', current: false, hidden: !authStore.isSuperManager },
 ]
-
 </script>
 
 <template>  
