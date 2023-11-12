@@ -1,35 +1,11 @@
 describe('Main Flow', () => {
   beforeEach(() => {
-    // Load user data and log in before each test
     cy.fixture('users/employee.json').then((userData) => {
       cy.login(userData.email, userData.password)
     })
   })
 
-  it('should click on the Start button of the Clock Manager', () => {
-    cy.fixture('users/employee.json').then((userData) => {
-      cy.visit(`/clockManager/${userData.username.replace(/ /g, '%20')}`)
-      cy.contains('Start').should('be.visible').wait(1000).click()
-    })
-  })
-
-  it('should click on the Break time button of the Clock Manager', () => {
-    cy.fixture('users/employee.json').then((userData) => {
-      cy.visit(`/clockManager/${userData.username.replace(/ /g, '%20')}`)
-      cy.contains('Break Time').should('be.visible').wait(1000).click()
-      cy.wait(1000)
-    })
-  })
-
-  it('should click on the Stop button of the Clock Manager', () => {
-    cy.fixture('users/employee.json').then((userData) => {
-      cy.visit(`/clockManager/${userData.username.replace(/ /g, '%20')}`)
-      cy.contains('Stop').should('be.visible').wait(1000).click()
-    })
-  })
-
   it('should navigate to the home page', () => {
-    // Wait for the navigation to the home page to be complete
     cy.url().should('eq', Cypress.config().baseUrl + '/')
   })
 
@@ -37,7 +13,7 @@ describe('Main Flow', () => {
     cy.get('nav').should('not.contain', 'Login')
   })
 
-  it('should click on the Clock Manager button on the NavBar', () => {
+  it('should click on the Clock Manager button on the NavBar and redirect to /clockManager/:username', () => {
     cy.get('nav').contains('Clock Manager').should('be.visible').wait(2000).click()
 
     cy.fixture('users/employee.json').then((userData) => {
@@ -45,6 +21,41 @@ describe('Main Flow', () => {
       cy.log('Expected URL:', expectedUrl)
 
       cy.url().should('include', expectedUrl)
+    })
+  })
+
+  it('should click on Working Times button on the NavBar and redirect to /workingTimes/:userId', () => {
+    cy.get('nav').contains('Working Times').should('be.visible').wait(2000).click()
+
+    cy.fixture('users/employee.json').then((userData) => {
+      const expectedUrl = `/workingTimes/${userData.id}`
+      cy.log('Expected URL:', expectedUrl)
+
+      cy.url().should('include', expectedUrl)
+    })
+  })
+
+  it('should start a clock manager, take a break and stop', () => {
+    cy.fixture('users/employee.json').then((userData) => {
+      cy.visit(`/clockManager/${userData.username.replace(/ /g, '%20')}`)
+      cy.contains('Start').should('be.visible').wait(1000).click()
+
+      cy.contains('Break Time').should('be.visible').wait(1000).click()
+
+      cy.contains('Stop').should('be.visible').wait(1000).click()
+    })
+  })
+
+  it('should start a clock manager, take a break, go back to work and stop', () => {
+    cy.fixture('users/employee.json').then((userData) => {
+      cy.visit(`/clockManager/${userData.username.replace(/ /g, '%20')}`)
+      cy.contains('Start').should('be.visible').wait(3000).click()
+
+      cy.contains('Break Time').should('be.visible').wait(3000).click()
+
+      cy.contains('Back to work').should('be.visible').wait(1000).click()
+
+      cy.contains('Stop').should('be.visible').wait(3000).click()
     })
   })
 })
