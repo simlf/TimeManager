@@ -12,13 +12,13 @@ before_script:
   - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
 
 script:  
-  #- docker build -t $DOCKER_USERNAME/phx_api:latest phx_api/
-  #- docker push $DOCKER_USERNAME/phx_api:latest
-  #- docker build -f phx_api/Dockerfile.prod -t $DOCKER_USERNAME/phx_api_prod:latest phx_api/
-  #- docker push $DOCKER_USERNAME/phx_api_prod:latest
+  - docker build -t $DOCKER_USERNAME/phx_api:latest phx_api/
+  - docker push $DOCKER_USERNAME/phx_api:latest
+  - docker build -f phx_api/Dockerfile.prod -t $DOCKER_USERNAME/phx_api_prod:latest phx_api/
+  - docker push $DOCKER_USERNAME/phx_api_prod:latest
 
-  #- docker build -t $DOCKER_USERNAME/web_app:latest web_app/
-  #- docker push $DOCKER_USERNAME/web_app:latest
+  - docker build -t $DOCKER_USERNAME/web_app:latest web_app/
+  - docker push $DOCKER_USERNAME/web_app:latest
 
   
   - mix local.hex --force
