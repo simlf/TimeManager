@@ -172,6 +172,7 @@ const tabs = [
   { name: 'Default View', href: '/workingTimes/', current: false, hidden: false },
   { name: 'Manager View', href: '/workingTimesManager/', current: true, hidden: authStore.isSuperManager },
   { name: 'SuperManager View', href: '/workingTimesSuperManager', current: false, hidden: !authStore.isSuperManager },
+  { name: 'Editor', href: '/workingTimesEditor/', current: false, hidden: !authStore.isSuperManager },
 ]
 
 function getInitials(username: string): string {
