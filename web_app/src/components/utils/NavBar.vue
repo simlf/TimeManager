@@ -19,24 +19,24 @@
           </div>
           <div class="hidden sm:ml-6 sm:flex sm:space-x-8">
             <router-link
-              :to="{ name: 'Home' }"
+              :to="{ name: 'HomePage' }"
               exact
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'Home')"
+              :class="getLinkClass($route.name === 'HomePage')"
             >
               Home
             </router-link>
             <router-link
-              :to="{ name: 'clockManager', params: { username: authStore.username } }"
+              :to="{ name: 'ClockManagerPage', params: { username: authStore.username } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'clockManager')"
+              :class="getLinkClass($route.name === 'ClockManagerPage')"
             >
               Clock Manager
             </router-link>
             <router-link
-              :to="{ name: 'workingTimes', params: { userId: authStore.id } }"
+              :to="{ name: 'WorkingTimesPage', params: { userId: authStore.id } }"
               class="inline-flex items-center px-1 pt-1 text-sm font-medium border-b-2"
-              :class="getLinkClass($route.name === 'workingTimes')"
+              :class="getLinkClass(String($route.name).startsWith('WorkingTimes'))"
             >
               Working Times
             </router-link>
@@ -84,29 +84,28 @@
               >
                 <MenuItem as="router-link" v-slot="{ active }">
                   <router-link
-                    to="/updateUser"
+                    :to="{ name: 'ProfilePage' }"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >Your Profile</router-link
                   >
                 </MenuItem>
-                <MenuItem
-                  v-if="authStore.isSuperManager"
-                  as="router-link"
-                  v-slot="{ active }"
-                >
+                <MenuItem v-if="authStore.isSuperManager" as="router-link" v-slot="{ active }">
                   <router-link
-                    to="/groups"
+                    :to="{ name: 'GroupsListPage' }"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >Groups list
                   </router-link>
                 </MenuItem>
-                <MenuItem
-                  v-if="authStore.isManager"
-                  as="router-link"
-                  v-slot="{ active }"
-                >
+                <MenuItem v-if="authStore.isSuperManager" as="router-link" v-slot="{ active }">
                   <router-link
-                    to="/groups"
+                    :to="{ name: 'UsersListPage' }"
+                    :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
+                    >Users list
+                  </router-link>
+                </MenuItem>
+                <MenuItem v-if="authStore.isManager" as="router-link" v-slot="{ active }">
+                  <router-link
+                    :to="{ name: 'ShowGroupPage', params: { id: authStore.groupId } }"
                     :class="[active ? 'bg-gray-100' : '', 'block px-4 py-2 text-sm text-gray-700']"
                     >Your Group</router-link
                   >
@@ -132,7 +131,6 @@
         >
           <router-link to="/login">
             <button
-              as="router-link"
               type="button"
               class="rounded-md bg-indigo-600 px-3 py-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             >
@@ -144,29 +142,29 @@
     </div>
     <DisclosurePanel class="sm:hidden">
       <div class="space-y-1 pb-4 pt-2">
-        <router-link :to="{ name: 'Home' }">
+        <router-link :to="{ name: 'HomePage' }">
           <DisclosureButton
             as="a"
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'Home')"
+            :class="getLinkClass($route.name === 'HomePage')"
           >
             Home
           </DisclosureButton>
         </router-link>
-        <router-link :to="{ name: 'clockManager', params: { username: authStore.username } }">
+        <router-link :to="{ name: 'ClockManagerPage', params: { username: authStore.username } }">
           <DisclosureButton
             as="a"
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'clockManager')"
+            :class="getLinkClass($route.name === 'ClockManagerPage')"
           >
             Clock Manager
           </DisclosureButton>
         </router-link>
-        <router-link :to="{ name: 'workingTimes', params: { userId: authStore.id } }">
+        <router-link :to="{ name: 'WorkingTimesPage', params: { userId: authStore.id } }">
           <DisclosureButton
             as="a"
             class="block py-2 pl-3 pr-4 text-base font-medium border-l-4"
-            :class="getLinkClass($route.name === 'workingTimes')"
+            :class="getLinkClass($route.name === 'WorkingTimesPage')"
           >
             Working Times
           </DisclosureButton>
@@ -186,7 +184,7 @@ import {
   MenuItem,
   MenuItems
 } from '@headlessui/vue'
-import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/vue/24/outline'
+import { Bars3Icon, XMarkIcon } from '@heroicons/vue/24/outline'
 import { useAuthStore } from '@/stores/auth.store'
 import { onMounted } from 'vue'
 

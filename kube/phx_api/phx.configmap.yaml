@@ -1,13 +1,15 @@
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  name: phx-api-configmap
+  name: phoenix
   namespace: default
   labels:
-    app: phx-api
+    app: phoenix
 data:
   PGPORT: "5432"
   PGUSER: "time_manager"
   PGDATABASE: "phx_api_dev"
   POSTGRES_PASSWORD: "yN5ehRPdEiDrszR!neYDQ8HXPQF"
   PGHOST: "postgresdb"
+  CORS_ORIGIN: "https://phx.time-manager-batman.com/"
+  HOST: "https://www.time-manager-batman.com/"

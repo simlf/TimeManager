@@ -21,8 +21,6 @@ const updateProfile = async (): Promise<void> => {
 }
 
 const updateProfilePassword = async (): Promise<void> => {
-  console.log(password.value)
-
   authStore.updateUserPassword({
     id: authStore.id,
     password: password.value

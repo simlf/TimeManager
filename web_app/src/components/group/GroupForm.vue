@@ -42,23 +42,30 @@
             >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
         >
-        <label for="name" class="block text-sm font-medium leading-6 text-gray-900">Managers</label>
-        <multiselect
-          v-if="filteredResult && filteredResult.manager && authStore.isSuperManager"
-          :close-on-select="false"
-          v-model="tempManagers"
-          :options="filteredResult.manager"
-          :multiple="true"
-          group-values="users"
-          group-label="role"
-          :group-select="true"
-          placeholder="Type to search"
-          track-by="id"
-          label="email"
+        <div v-if="authStore.isSuperManager">
+          <label
+              for="name"
+              class="block text-sm font-medium leading-6 text-gray-900"
+          >Managers</label
+          >
+          <multiselect
+              v-if="filteredResult && filteredResult.manager && filteredResult.manager.length > 0"
+              :close-on-select="false"
+              v-model="tempManagers"
+              :options="filteredResult.manager"
+              :multiple="true"
+              group-values="users"
+              group-label="role"
+              :group-select="true"
+              placeholder="Type to search"
+              track-by="id"
+              label="email"
           ><span slot="noResult"
-            >Oops! No elements found. Consider changing the search query.</span
+          >Oops! No elements found. Consider changing the search query.</span
           ></multiselect
-        >
+          >
+          <p v-else class="text-red-400 text-center">No manager available for join this group -> Create one</p>
+        </div>
         <button
           type="submit"
           class="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
@@ -75,8 +82,10 @@ import Multiselect from 'vue-multiselect'
 import { useAuthStore } from '@/stores/auth.store'
 import { onMounted, Ref, ref } from 'vue'
 import axios from 'axios'
+import { useRoute } from 'vue-router'
 
 const authStore = useAuthStore()
+const route = useRoute()
 
 interface FormInfoGroup {
   name: string
@@ -105,7 +114,7 @@ interface FilteredResult {
   employee?: SelectItem[]
 }
 
-defineProps({
+const { formTitle, submitLabel, groupName } = defineProps({
   formTitle: {
     type: String,
     required: true
@@ -113,6 +122,10 @@ defineProps({
   submitLabel: {
     type: String,
     required: true
+  },
+  groupName: {
+    type: String,
+    required: false
   }
 })
 
@@ -121,7 +134,7 @@ const tempManagers = ref<{ email: string; id: number }[]>([])
 const tempEmployees = ref<{ email: string; id: number }[]>([])
 
 const formInfo: Ref<FormInfoGroup> = ref({
-  name: '',
+  name: groupName ?? '',
   employees: [],
   managers: []
 })
@@ -131,28 +144,33 @@ onMounted(async () => {
 })
 
 const getUsers = async (): Promise<User[] | []> => {
-  const users = await axios.get('http://localhost:4000/api/users')
+  const url = authStore.isSuperManager
+    ? 'http://localhost:4000/api/users'
+    : 'http://localhost:4000/api/users/employees_list'
+  const users = await axios.get(url)
   return users.data.data
 }
 
-const filterUsersData = async (): Promise<SelectItem[]> => {
+const filterUsersDataForSuperManager = async (): Promise<SelectItem[]> => {
   const filter: SelectItem[] = []
   const users = await getUsers()
 
   if (users && users.length > 0) {
     users.forEach((user) => {
       if (user.role !== 'SUPER_MANAGER') {
-        let role = user.group_id ? user.role + ' on groups' : user.role
-        role = role.toLowerCase()
+        if (!route.params.id || Number(route.params.id) !== user.group_id) {
+          let role = user.group_id ? user.role + ' on groups' : user.role
+          role = role.toLowerCase()
 
-        let existingRoleObject = filter.find((item) => item.role === role)
+          let existingRoleObject = filter.find((item) => item.role === role)
 
-        if (!existingRoleObject) {
-          existingRoleObject = { role: role, users: [] }
-          filter.push(existingRoleObject)
+          if (!existingRoleObject) {
+            existingRoleObject = { role: role, users: [] }
+            filter.push(existingRoleObject)
+          }
+
+          existingRoleObject.users.push({ email: user.username, id: user.id })
         }
-
-        existingRoleObject.users.push({ email: user.username, id: user.id })
       }
     })
   }
@@ -161,7 +179,7 @@ const filterUsersData = async (): Promise<SelectItem[]> => {
 }
 
 const getResultFilter = async (): Promise<FilteredResult> => {
-  const filter = await filterUsersData()
+  const filter = await filterUsersDataForSuperManager()
   const result: FilteredResult = {}
 
   filter.forEach((obj) => {
@@ -179,7 +197,7 @@ const getResultFilter = async (): Promise<FilteredResult> => {
 
 const emit = defineEmits()
 const handleSubmit = () => {
-  if (tempManagers.value.length > 0) {
+  if (tempManagers.value.length > 0 && authStore.isSuperManager) {
     tempManagers.value.forEach((manager) => {
       formInfo.value.managers.push(manager.id)
     })

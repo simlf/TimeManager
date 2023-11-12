@@ -10,11 +10,14 @@ defmodule TimeManagerWeb.GroupController do
 
   action_fallback TimeManagerWeb.FallbackController
 
+  # Function used for get all the groups (SM only)
   def index(conn, _params) do
     groups = Groups.list_groups()
     render(conn, :index, groups: groups)
   end
 
+  # Function used for create one group -> Can insert user with it (SM only)
+  # Verification during user insertion (no able to insert employees in group_managers)
   def create(conn, %{"group" => group_params}) do
     employees = Map.get(group_params, "employees", [])
     managers = Map.get(group_params, "managers", [])
@@ -35,8 +38,18 @@ defmodule TimeManagerWeb.GroupController do
     end
   end
 
+  # Show the group with all his users (SM all groups and M only his groups)
   def show(conn, %{"id" => id}) do
+    active_manager = conn.assigns[:current_user]
     group_and_user = Groups.get_group_and_user(id)
+
+    id_integer = String.to_integer(id)
+    if active_manager.role == :MANAGER && active_manager.group_id != id_integer do
+      conn
+      |> put_status(:forbidden)
+      |> json(%{error: "You can only see your group"})
+      |> halt()
+    end
 
     case group_and_user do
       nil ->
@@ -49,6 +62,7 @@ defmodule TimeManagerWeb.GroupController do
     end
   end
 
+  # Function used for update group by SM and M
   def update(conn, %{"id" => id, "group" => group_params}) do
     active_manager = conn.assigns[:current_user]
     group = Groups.get_group(id)
@@ -77,6 +91,7 @@ defmodule TimeManagerWeb.GroupController do
     end
   end
 
+  # Function used for delete one group (SM only)
   def delete(conn, %{"id" => id}) do
     group = Groups.get_group(id)
 
@@ -91,6 +106,25 @@ defmodule TimeManagerWeb.GroupController do
           Accounts.remove_group_id(id)
           send_resp(conn, :no_content, "")
         end
+    end
+  end
+
+  # Function used for remove user from a particular group (SM only)
+  def remove_user_from_group(conn, %{"groupId" => groupId, "userId" => userId}) do
+    user = Repo.get(Accounts.User, userId)
+
+    case user do
+      nil ->
+        conn
+        |> put_status(:not_found)
+        |> json(%{error: "Group not found"})
+        |> halt()
+      _ ->
+        Groups.remove_user_from_group_id(user, groupId)
+        conn
+        |> put_status(:ok)
+        |> json(%{message: "Action done"})
+        |> halt()
     end
   end
 

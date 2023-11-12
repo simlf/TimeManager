@@ -8,9 +8,6 @@ WORKDIR /phx_api
 
 COPY . /phx_api
 
+RUN chmod u+x entrypoint_prod.sh
 
-
-
-RUN chmod o+x entrypoint.sh
-
-ENTRYPOINT [ "/phx_api/entrypoint.sh" ]
+ENTRYPOINT [ "/phx_api/entrypoint_prod.sh" ]
