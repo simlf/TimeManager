@@ -35,6 +35,7 @@ const tabs = [
   { name: 'Default View', href: '/workingTimes/', current: false, hidden: false },
   { name: 'Manager View', href: '/workingTimesManager/', current: false, hidden: authStore.isSuperManager },
   { name: 'SuperManager View', href: '/workingTimesSuperManager', current: true, hidden: false },
+  { name: 'Editor', href: '/workingTimesEditor/', current: false, hidden: !authStore.isSuperManager },
 ]
 
 </script>

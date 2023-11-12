@@ -45,6 +45,12 @@ const router = createRouter({
       component: () => import('@/views/workingTimes/WorkingTimesSuperManagerView.vue')
     },
     {
+      path: '/workingTimesEditor/',
+      name: 'WorkingTimesEditorPage',
+      meta: { requiresAuth: true, requiresSuperManager: true },
+      component: () => import('@/views/workingTimes/WorkingTimesEditorView.vue')
+    },
+    {
       path: '/groups',
       name: 'GroupsListPage',
       meta: { requiresAuth: true, requiresSuperManager: true },
