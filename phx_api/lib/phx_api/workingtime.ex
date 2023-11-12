@@ -110,7 +110,7 @@ defmodule TimeManager.Workingtime do
             ((w.start_time >= ^start_time and w.end_time <= ^end_time) or
                (w.start_time <= ^start_time and w.end_time >= ^start_time) or
                (w.start_time <= ^end_time and w.end_time >= ^end_time)),
-        order_by: [asc: w.start_time],
+        order_by: [asc: w.id],
         select: w
       )
 
