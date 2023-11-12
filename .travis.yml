@@ -1,0 +1,35 @@
+language: minimal
+otp_release: 25.0
+dist: focal  
+services:
+  - docker
+
+before_script:
+  - sudo apt-get update
+  - sudo apt-get install -y build-essential
+  - sudo apt-get install -y erlang
+  - sudo apt-get install -y elixir
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_USERNAME" --password-stdin
+
+script:  
+  #- docker build -t $DOCKER_USERNAME/phx_api:latest phx_api/
+  #- docker push $DOCKER_USERNAME/phx_api:latest
+  #- docker build -f phx_api/Dockerfile.prod -t $DOCKER_USERNAME/phx_api_prod:latest phx_api/
+  #- docker push $DOCKER_USERNAME/phx_api_prod:latest
+
+  #- docker build -t $DOCKER_USERNAME/web_app:latest web_app/
+  #- docker push $DOCKER_USERNAME/web_app:latest
+
+  
+  - mix local.hex --force
+  - mix local.rebar --force
+  - mix archive.install --force hex phx_new 1.5.1
+
+  - cd phx_api/  # Make sure to return to the phx_api directory for the following commands
+  - mix deps.get
+  - mix compile
+  - mix test
+
+branches:
+  only:
+    - main
