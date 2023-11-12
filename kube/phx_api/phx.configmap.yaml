@@ -11,5 +11,5 @@ data:
   PGDATABASE: "phx_api_dev"
   POSTGRES_PASSWORD: "yN5ehRPdEiDrszR!neYDQ8HXPQF"
   PGHOST: "postgresdb"
-  CORS_ORIGIN: "https://phx.time-manager-batman.com/"
-  HOST: "https://www.time-manager-batman.com/"
+  CORS_ORIGIN: "https://www.time-manager-batman.com/"
+  HOST: "https://phx.time-manager-batman.com/"
