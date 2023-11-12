@@ -48,9 +48,12 @@ defmodule TimeManagerWeb.WorkingtimesController do
   def get_all_by_id(conn, %{"user_id" => user_id}) do
     start_time = conn.query_params["start_time"]
     end_time = conn.query_params["end_time"]
+        IO.inspect(start_time)
+        IO.inspect(end_time)
+        IO.inspect(user_id)
 
+    IO.puts("get_all_by_id")
     workingtimes = Workingtime.list_workingtimes_filtered(user_id, start_time, end_time)
-
     render(conn, "index.json", workingtimes: workingtimes)
   end
 
@@ -111,11 +114,6 @@ defmodule TimeManagerWeb.WorkingtimesController do
   end
 
   def get_time_from_workingtimes_current_day_by_user_id(conn, %{"user_id" => user_id}) do
-    current_date = Timex.now()
-    previous_day = Timex.shift(current_date, days: -1)
-    _current_date_formatted = Timex.format!(current_date, "%Y-%m-%d %H:%M:%S", :strftime)
-    _previous_day_formatted = Timex.format!(previous_day, "%Y-%m-%d %H:%M:%S", :strftime)
-
     workingtimes = Workingtime.list_workingtimes_filtered_by_current_working_day(user_id)
     total_seconds = calculate_total_times(workingtimes)
     render(conn, "showTimes.json", seconds_to_hms(total_seconds))
@@ -124,51 +122,6 @@ defmodule TimeManagerWeb.WorkingtimesController do
   def get_global_time_from_workingtimes_by_user_id(conn, %{"user_id" => user_id}) do
     start_time = conn.query_params["start_time"]
     end_time = conn.query_params["end_time"]
-
-    workingTimes = Workingtime.list_workingtimes_filtered(user_id, start_time, end_time)
-
-    first_workingtime = List.first(workingTimes)
-    last_workingtime = List.last(workingTimes)
-
-    updated_first_workingtime =
-      cond do
-        first_workingtime.start_time < start_time ->
-          %{first_workingtime | start_time: start_time}
-
-        true ->
-          first_workingtime
-      end
-
-    updated_last_workingtime =
-      cond do
-        last_workingtime.end_time > end_time ->
-          %{last_workingtime | end_time: end_time}
-
-        true ->
-          last_workingtime
-      end
-
-    updated_workingTimes_without_first_last =
-      Enum.reject(workingTimes, fn x -> x == first_workingtime || x == last_workingtime end)
-
-    updated_workingTimes =
-      [updated_first_workingtime] ++
-        updated_workingTimes_without_first_last ++ [updated_last_workingtime]
-
-    current_start_time = start_time
-    start_date = Timex.parse!(start_time, "{ISO:Extended:Z}")
-    end_date = Timex.parse!(end_time, "{ISO:Extended:Z}")
-    current_end_time = Timex.end_of_day(start_date)
-    current_date = Timex.format!(start_date, "{YYYY}-{0M}-{0D}")
-
-    # Utilisez Timex.diff/3 pour obtenir la différence en jours
-    difference_in_days = Timex.diff(end_date, start_date, :day)
-
-    IO.puts("Différence en jours : #{difference_in_days}")
-
-    if current_end_time > end_time do
-      current_end_time = end_time
-    end
 
     data = Workingtime.get_info_by_day_from_period(user_id, start_time, end_time)
     requestData = elem(data, 1)
@@ -206,11 +159,11 @@ defmodule TimeManagerWeb.WorkingtimesController do
 
                 hms_worked = seconds_to_hours(totalSecondsForDateWorked)
                 hms_pause = seconds_to_hours(totalSecondsForDatePause)
+
                 date_obj = %{
                   date: currentDate,
                   hours_pause: hms_pause.hours,
-                  hours_work: hms_worked.hours,
-
+                  hours_work: hms_worked.hours
                 }
 
                 updated_list = [date_obj | acc_list]
@@ -220,8 +173,14 @@ defmodule TimeManagerWeb.WorkingtimesController do
             end
         end
       end)
+
     dateList = Enum.reverse(dateList)
-    render(conn, "showTimesInfo.json", %{dateList: dateList,timePause: seconds_to_hours(totalSecondsForPeriodPause),timeWork: seconds_to_hours(totalSecondsForPeriodWork)})
+
+    render(conn, "showTimesInfo.json", %{
+      dateList: dateList,
+      timePause: seconds_to_hours(totalSecondsForPeriodPause),
+      timeWork: seconds_to_hours(totalSecondsForPeriodWork)
+    })
   end
 
   defp calculate_total_times(workingtimes, total_hours \\ 0) do

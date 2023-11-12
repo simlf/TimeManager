@@ -4,8 +4,9 @@ defmodule TimeManagerWeb.UserController do
   alias TimeManager.Accounts
   alias TimeManager.Accounts.User
   alias TimeManagerWeb.GroupController
+  alias TimeManager.Clocks
 
-  action_fallback TimeManagerWeb.FallbackController
+  action_fallback(TimeManagerWeb.FallbackController)
 
   # Function used for get all users (only SM)
   def index(conn, _params) do
@@ -32,24 +33,26 @@ defmodule TimeManagerWeb.UserController do
     # -> same as current_user.group_id if current_user.role :MANAGER
     # -> nil or value inside user_params if current_user.role :SUPER_MANAGER
     group_id =
-    cond do
-      current_user.role == :MANAGER && current_user.group_id != nil ->
-        current_user.group_id
-      current_user.role == :MANAGER && current_user.group_id == nil ->
-        conn
-        |> put_status(:bad_request)
-        |> json(%{error: "You're in any group"})
-        |> halt()
-      true ->
-        id = Map.get(user_params, "group_id", nil)
+      cond do
+        current_user.role == :MANAGER && current_user.group_id != nil ->
+          current_user.group_id
 
-        if id != nil do
-          Map.delete(user_params, "group_id")
-          id
-        else
-          nil
-        end
-    end
+        current_user.role == :MANAGER && current_user.group_id == nil ->
+          conn
+          |> put_status(:bad_request)
+          |> json(%{error: "You're in any group"})
+          |> halt()
+
+        true ->
+          id = Map.get(user_params, "group_id", nil)
+
+          if id != nil do
+            Map.delete(user_params, "group_id")
+            id
+          else
+            nil
+          end
+      end
 
     with {:ok, %User{} = user} <- Accounts.register_user(user_params) do
       created_user = Accounts.get_user!(user.id)
@@ -59,10 +62,13 @@ defmodule TimeManagerWeb.UserController do
         case created_user.role do
           :EMPLOYEE ->
             GroupController.insert_employees([created_user.id], group_id)
+
           :MANAGER ->
             GroupController.insert_managers([created_user.id], group_id)
         end
       end
+
+      Clocks.create_clock(%{user_id: user.id})
 
       conn
       |> put_status(:created)
@@ -107,26 +113,28 @@ defmodule TimeManagerWeb.UserController do
         if user.role == :SUPER_MANAGER do
           Agent.update(agent, fn {value} -> {false} end)
         end
-        {_, true} ->
-          if user.role != :EMPLOYEE || user.group_id != active_manager.group_id do
+
+      {_, true} ->
+        if user.role != :EMPLOYEE || user.group_id != active_manager.group_id do
           Agent.update(agent, fn {value} -> {false} end)
         end
-      end
+    end
 
-      if Agent.get(agent, fn {value} -> value end) do
-        with {:ok, %User{} = updated_user} <- Accounts.update_user(user, user_params) do
-          # If user have group and his role is updated, need to update relation table
-          if updated_user.group_id && updated_user.role != user.role do
-            GroupController.change_user_relation_table(updated_user)
-          end
-          render(conn, "show.json", user: updated_user)
+    if Agent.get(agent, fn {value} -> value end) do
+      with {:ok, %User{} = updated_user} <- Accounts.update_user(user, user_params) do
+        # If user have group and his role is updated, need to update relation table
+        if updated_user.group_id && updated_user.role != user.role do
+          GroupController.change_user_relation_table(updated_user)
         end
-      else
-        conn
-        |> put_status(:forbidden)
-        |> json(%{error: "You can't update this user"})
-        |> halt()
+
+        render(conn, "show.json", user: updated_user)
       end
+    else
+      conn
+      |> put_status(:forbidden)
+      |> json(%{error: "You can't update this user"})
+      |> halt()
+    end
   end
 
   # Function used for update the password of connected user
@@ -148,6 +156,7 @@ defmodule TimeManagerWeb.UserController do
         |> put_status(:forbidden)
         |> json(%{error: "You can't delete a SUPER_MANAGER"})
         |> halt()
+
       _ ->
         with {:ok, %User{}} <- Accounts.delete_user(user) do
           send_resp(conn, :no_content, "")
@@ -184,6 +193,7 @@ defmodule TimeManagerWeb.UserController do
   def log_out(conn, _params) do
     if user = conn.assigns[:current_user] do
       conn = TimeManager.UserAuth.log_out_user(conn)
+
       conn
       |> put_status(:ok)
       |> json(%{message: "Logged out successfully"})
@@ -193,5 +203,4 @@ defmodule TimeManagerWeb.UserController do
       |> json(%{error: "Not authenticated"})
     end
   end
-
 end
