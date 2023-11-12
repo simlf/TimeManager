@@ -150,9 +150,13 @@ const breakTime = async () => {
     await closeWorkingtime(false) //Fermeture de la periode de travail
     await newWorkingtime('pause', true) //Nouvelle periode de pause
   }
-
   wasInBreakTime.value = !wasInBreakTime.value
   await getWorkTime()
+  updateDisplayMessage(
+    `${String(timeWorkedInDay.value.hours).padStart(2, '0')} h ${String(
+      timeWorkedInDay.value.minutes
+    ).padStart(2, '0')} m ${String(timeWorkedInDay.value.seconds).padStart(2, '0')} s`
+  )
   loading.value = false
 }
 
@@ -391,11 +395,10 @@ const handleWorkingtimeResponse = async (workingtimeResponse: AxiosResponse) => 
 const handlePauseState = async () => {
   console.log('In break')
   await getWorkTime()
-  const { hours, minutes, seconds } = calculateTimeWorked()
   updateDisplayMessage(
-    `${String(hours).padStart(2, '0')} h ${String(minutes).padStart(2, '0')} m ${String(
-      seconds
-    ).padStart(2, '0')} s`
+    `${String(timeWorkedInDay.value.hours).padStart(2, '0')} h ${String(
+      timeWorkedInDay.value.minutes
+    ).padStart(2, '0')} m ${String(timeWorkedInDay.value.seconds).padStart(2, '0')} s`
   )
 }
 
