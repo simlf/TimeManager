@@ -70,7 +70,7 @@
 To get started visit check [this out][explore-documentation].
 
 <!-- MARKDOWN LINKS & IMAGES -->
-[explore-documentation]: ./doc
+[explore-documentation]: ./doc/GETTING_STARTED.md
 [contributors-shield]: https://img.shields.io/github/contributors/simlf/TimeManager.svg?style=for-the-badge
 [contributors-url]: https://github.com/simlf/TimeManager/graphs/contributors
 [forks-shield]: https://img.shields.io/github/forks/simlf/TimeManager.svg?style=for-the-badge
