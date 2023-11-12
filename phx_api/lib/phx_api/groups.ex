@@ -24,11 +24,10 @@ defmodule TimeManager.Groups do
   def list_groups do
     groups =
       from(g in Group,
-        select: %{id: g.id, name: g.name},
+        select: %{id: g.id, name: g.name}
       )
       |> Repo.all()
 
-    groups_with_user_count =
       Enum.map(groups, fn group ->
         employee_count = count_users(group.id)
         manager_count = count_managers(group.id)
@@ -149,7 +148,7 @@ defmodule TimeManager.Groups do
     Repo.delete(group)
   end
 
-  def remove_user_from_group_id(%User{} = user, group_id) do
+  def remove_user_from_group_id(%User{} = user) do
     cond do
       user.role == :MANAGER ->
         line = Repo.get_by(Group_managers, user_id: user.id)

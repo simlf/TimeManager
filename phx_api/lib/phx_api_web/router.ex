@@ -14,6 +14,11 @@ defmodule TimeManagerWeb.Router do
     pipe_through :api
 
     post "/users/log_in", UserController, :connection
+  end
+
+  # Used for routes that require the user to be authenticated and :EMPLOYEE
+  scope "/api", TimeManagerWeb do
+    pipe_through [:api, :require_authenticated_user]
 
     post "/workingtimes/:user_id", WorkingtimesController, :create_by_user_id
     get "/workingtimes/last/:user_id", WorkingtimesController, :get_last_workingtime_by_user_id
@@ -28,13 +33,6 @@ defmodule TimeManagerWeb.Router do
     get "/clocks/:userId", ClockController, :show_clocks_by_user_id
     post "/clocks/:userId", ClockController, :create
     put "/clocks/:userId", ClockController, :update
-  end
-
-  @doc """
-  Used for routes that require the user to be authenticated and :EMPLOYEE
-  """
-  scope "/api", TimeManagerWeb do
-    pipe_through [:api, :require_authenticated_user]
 
     get "/users/check_auth", UserController, :check_auth
     put "/users/me", UserController, :update_me
@@ -42,18 +40,14 @@ defmodule TimeManagerWeb.Router do
     get "/users/log_out", UserController, :log_out
   end
 
-  @doc """
-  Used for routes that require the user to be authenticated and :MANAGER
-  """
+  # Used for routes that require the user to be authenticated and :MANAGER
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_manager_user]
 
     get "/users/employees_list", UserController, :index_for_manager
   end
 
-  @doc """
-  Used for routes that require the user to be authenticated and :SUPER_MANAGER
-  """
+  # Used for routes that require the user to be authenticated and :SUPER_MANAGER
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_super_manager_user]
 
@@ -62,9 +56,7 @@ defmodule TimeManagerWeb.Router do
     patch "/groups/:groupId/:userId", GroupController, :remove_user_from_group
   end
 
-  @doc """
-  Used for routes that require the user to be authenticated and :SUPER_MANAGER OR :MANAGER
-  """
+  # Used for routes that require the user to be authenticated and :SUPER_MANAGER OR :MANAGER
   scope "/api", TimeManagerWeb do
     pipe_through [:api, :require_authenticated_managers_user]
 

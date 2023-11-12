@@ -104,23 +104,27 @@ defmodule TimeManagerWeb.UserController do
 
   # Function used by ["MANAGER", "SUPER_MANAGER"] for update user (No possibilities to update group_id here)
   def update(conn, %{"id" => id, "user" => user_params}) do
-    {:ok, agent} = Agent.start_link(fn -> {true} end)
     active_manager = conn.assigns[:current_user]
     user = Accounts.get_user!(id)
 
+    check =
     case {active_manager.role == :SUPER_MANAGER, active_manager.role == :MANAGER} do
       {true, _} ->
         if user.role == :SUPER_MANAGER do
-          Agent.update(agent, fn {value} -> {false} end)
+          false
+        else
+          true
         end
 
       {_, true} ->
         if user.role != :EMPLOYEE || user.group_id != active_manager.group_id do
-          Agent.update(agent, fn {value} -> {false} end)
+          false
+        else
+          true
         end
     end
 
-    if Agent.get(agent, fn {value} -> value end) do
+    if check do
       with {:ok, %User{} = updated_user} <- Accounts.update_user(user, user_params) do
         # If user have group and his role is updated, need to update relation table
         if updated_user.group_id && updated_user.role != user.role do
@@ -191,7 +195,8 @@ defmodule TimeManagerWeb.UserController do
 
   # Function used for disconnect the user
   def log_out(conn, _params) do
-    if user = conn.assigns[:current_user] do
+    active_user = conn.assigns[:current_user]
+    if active_user do
       conn = TimeManager.UserAuth.log_out_user(conn)
 
       conn

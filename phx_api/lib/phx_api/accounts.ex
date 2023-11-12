@@ -19,14 +19,14 @@ defmodule TimeManager.Accounts do
     query =
     case {username != "", email != ""} do
       {true, true} ->
-        query = query
+        query
                 |> where([u], like(u.username, ^"%#{username}%"))
                 |> where([u], like(u.email, ^"%#{email}%"))
       {true, _} ->
-        query = query
+        query
                 |> where([u], like(u.username, ^"%#{username}%"))
       {_, true} ->
-        query = query
+        query
                 |> where([u], like(u.email, ^"%#{email}%"))
       _ ->
         base_query()
