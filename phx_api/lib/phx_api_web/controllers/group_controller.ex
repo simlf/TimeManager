@@ -120,7 +120,7 @@ defmodule TimeManagerWeb.GroupController do
         |> json(%{error: "Group not found"})
         |> halt()
       _ ->
-        Groups.remove_user_from_group_id(user, groupId)
+        Groups.remove_user_from_group_id(user)
         conn
         |> put_status(:ok)
         |> json(%{message: "Action done"})
@@ -223,13 +223,13 @@ defmodule TimeManagerWeb.GroupController do
     if updated_user.role == :MANAGER do
       line = Repo.get_by!(Group_users, user_id: updated_user.id)
       Repo.delete(line)
-      changeset = %Group_managers{}
-                 |> Group_managers.changeset(group_user_params)
+      %Group_managers{}
+      |> Group_managers.changeset(group_user_params)
     else
       line = Repo.get_by!(Group_managers, user_id: updated_user.id)
       Repo.delete(line)
-      changeset = %Group_users{}
-                  |> Group_users.changeset(group_user_params)
+      %Group_users{}
+      |> Group_users.changeset(group_user_params)
     end
 
     case Repo.insert(changeset) do
